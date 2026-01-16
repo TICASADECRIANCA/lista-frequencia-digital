@@ -11,7 +11,6 @@
             font-family: Inter, system-ui, sans-serif; 
             margin: 0; 
             padding: 15px; 
-            /* O código abaixo busca a imagem na mesma pasta do GitHub */
             background-image: url('fundo.jpg'); 
             background-size: cover;
             background-position: center;
@@ -22,13 +21,26 @@
         .container {
             max-width: 1150px;
             margin: 0 auto;
-            /* Fundo branco com 90% de opacidade para mostrar sua imagem atrás */
             background: rgba(255, 255, 255, 0.92); 
             padding: 18px;
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            backdrop-filter: blur(8px); /* Efeito de vidro embaçado */
+            backdrop-filter: blur(8px);
         }
+
+        /* AJUSTE DO CABEÇALHO COM LOGO */
+        .header-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .logo-escola {
+            height: 60px; /* Altura da logo */
+            width: auto;
+            object-fit: contain;
+        }
+        h1 { margin: 0; font-size: 24px; color: #333; }
 
         .controls{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap; align-items: center;}
         input, button{padding:10px;border-radius:8px;border:1px solid #d1d5db; transition: 0.2s; font-size: 14px;}
@@ -78,18 +90,24 @@
         .status-assinado{background:#dcfce7; color:#16a34a;}
 
         body.modo-colaborador #adminPanel { display: none; }
-        body.modo-colaborador h1 { font-size: 22px; text-align: center; color: var(--accent); text-shadow: 1px 1px 2px white; }
+        body.modo-colaborador h1 { font-size: 20px; }
+        body.modo-colaborador .header-container { justify-content: center; }
 
         @media (max-width: 600px) {
             .flex-col { min-width: 100%; }
             .card { padding: 15px; width: 95%; }
+            .logo-escola { height: 45px; }
+            h1 { font-size: 18px; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1 id="tituloPagina">Gestão de Frequência</h1>
+    <div class="header-container">
+        <img src="logo.png" alt="Logo Escola" class="logo-escola" onerror="this.style.display='none'">
+        <h1 id="tituloPagina">Gestão de Frequência</h1>
+    </div>
     
     <div class="controls" id="adminPanel">
         <input id="nameInput" placeholder="Novo nome..." style="width: 180px"/>
@@ -193,7 +211,6 @@
         document.querySelectorAll('.col-admin').forEach(el => el.style.display = 'none');
     }
 
-    // ADICIONAR
     document.getElementById('addBtn').onclick = () => {
         const input = document.getElementById('nameInput');
         const n = input.value.trim();
@@ -204,7 +221,6 @@
         }
     };
 
-    // IMPORTAR
     document.getElementById('importFile').onchange = (e) => {
         const file = e.target.files[0];
         if (!file) return;
