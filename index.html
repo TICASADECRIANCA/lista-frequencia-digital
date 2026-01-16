@@ -6,11 +6,33 @@
     <title>Lista de Frequência Digital</title>
     <style>
         :root{--accent:#0b74e6; --danger:#ef4444; --warning:#f97316; --bg-light:#f5f7fb;}
-        body{font-family:Inter, system-ui, sans-serif; margin:0; padding:15px; background:var(--bg-light)}
-        .container{max-width:1150px;margin:0 auto;background:#fff;padding:18px;border-radius:10px;box-shadow:0 6px 18px rgba(16,24,40,.08)}
+        
+        body {
+            font-family: Inter, system-ui, sans-serif; 
+            margin: 0; 
+            padding: 15px; 
+            /* O código abaixo busca a imagem na mesma pasta do GitHub */
+            background-image: url('fundo.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-color: #f5f7fb; 
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: 0 auto;
+            /* Fundo branco com 90% de opacidade para mostrar sua imagem atrás */
+            background: rgba(255, 255, 255, 0.92); 
+            padding: 18px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(8px); /* Efeito de vidro embaçado */
+        }
+
         .controls{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap; align-items: center;}
         input, button{padding:10px;border-radius:8px;border:1px solid #d1d5db; transition: 0.2s; font-size: 14px;}
-        button{background:var(--accent);color:#fff;border:none;cursor:pointer;white-space:nowrap;}
+        button{background:var(--accent);color:#fff;border:none;cursor:pointer;white-space:nowrap;font-weight: 600;}
         button.ghost{background:#fff;color:var(--accent);border:1px solid var(--accent);}
         button.danger{background:var(--danger); color:#fff;}
         
@@ -18,6 +40,7 @@
         
         table{width:100%;border-collapse:collapse;margin-top:12px}
         th, td{padding:10px;border-bottom:1px solid #eef2f7;text-align:left;}
+        th { background: rgba(0,0,0,0.03); }
         
         #tableBody tr { display: none; }
         .mostrar-linha { display: table-row !important; }
@@ -26,7 +49,7 @@
         .address-text{color: #16a34a; font-weight: 500; font-style: italic;}
         .signed-thumb{height:45px;border-radius:6px;border:1px solid #ddd; margin-right:5px; object-fit: cover;}
         
-        .modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:1000}
+        .modal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:1000}
         .card{
             background:#fff; padding:20px; border-radius:12px; max-width:600px;
             width:92%; max-height: 92vh; display: flex; flex-direction: column; position: relative;
@@ -37,7 +60,6 @@
         .modal-flex { display: flex; gap: 15px; flex-wrap: wrap; }
         .flex-col { flex: 1; min-width: 250px; }
         
-        /* AJUSTE DE CÂMERA E ASSINATURA */
         .signature-wrapper { border: 1px solid #ddd; border-radius: 8px; background: #fafafa; position: relative; width: 100%; height: 180px; }
         .signature-canvas { position: absolute; left: 0; top: 0; width: 100%; height: 100%; touch-action: none; }
         
@@ -56,12 +78,11 @@
         .status-assinado{background:#dcfce7; color:#16a34a;}
 
         body.modo-colaborador #adminPanel { display: none; }
-        body.modo-colaborador h1 { font-size: 18px; text-align: center; }
+        body.modo-colaborador h1 { font-size: 22px; text-align: center; color: var(--accent); text-shadow: 1px 1px 2px white; }
 
         @media (max-width: 600px) {
             .flex-col { min-width: 100%; }
-            #video, #photoPreview { height: auto; }
-            .card { padding: 15px; }
+            .card { padding: 15px; width: 95%; }
         }
     </style>
 </head>
@@ -71,9 +92,9 @@
     <h1 id="tituloPagina">Gestão de Frequência</h1>
     
     <div class="controls" id="adminPanel">
-        <input id="nameInput" placeholder="Novo nome..." style="width: 200px"/>
+        <input id="nameInput" placeholder="Novo nome..." style="width: 180px"/>
         <button id="addBtn">Add</button>
-        <button id="importBtn" onclick="document.getElementById('importFile').click()" class="ghost">Importar</button>
+        <button id="importBtn" onclick="document.getElementById('importFile').click()" class="ghost">Importar TXT</button>
         <input type="file" id="importFile" style="display:none" accept=".txt,.csv" />
         <button id="showQrBtn" class="ghost">📲 QR Code</button>
         <button id="clearAllBtn" class="danger">Limpar Banco</button>
@@ -105,7 +126,6 @@
     <div class="card">
         <h2 id="nomeAssinando" style="margin: 0 0 5px 0; font-size: 1.2rem;">Assinar</h2>
         <div id="geoStatus" class="small" style="color: var(--warning); font-weight: bold; margin-bottom: 10px;">Localizando...</div>
-        
         <div class="modal-body-scroll">
             <div class="modal-flex">
                 <div class="flex-col">
@@ -122,22 +142,21 @@
                         <div class="signature-wrapper">
                             <canvas id="sigCanvas" class="signature-canvas"></canvas>
                         </div>
-                        <button id="clearSig" class="ghost" style="width:100%; margin-top:8px">Limpar Traço</button>
+                        <button id="clearSig" class="ghost" style="width:100%; margin-top:8px">Limpar</button>
                     </div>
                 </div>
             </div>
         </div>
-
         <div class="modal-footer">
             <button onclick="fecharModais()" class="ghost" style="flex:1">Cancelar</button>
-            <button id="saveData" style="flex:2; font-weight:bold; font-size:16px; background: #16a34a;">CONFIRMAR PRESENÇA</button>
+            <button id="saveData" style="flex:2; font-weight:bold; font-size:16px; background: #16a34a; color: white;">CONFIRMAR</button>
         </div>
     </div>
 </div>
 
 <div id="qrModal" class="modal">
     <div class="card" style="text-align:center; max-width: 400px;">
-        <h2>Acesso</h2>
+        <h2>Acesso Colaborador</h2>
         <div id="qrcode" style="display:flex; justify-content:center; margin:20px 0"></div>
         <button onclick="fecharModais()" class="ghost">Fechar</button>
     </div>
@@ -174,20 +193,18 @@
         document.querySelectorAll('.col-admin').forEach(el => el.style.display = 'none');
     }
 
-    // ADICIONAR NOME CORRIGIDO
+    // ADICIONAR
     document.getElementById('addBtn').onclick = () => {
         const input = document.getElementById('nameInput');
         const n = input.value.trim();
         if(n) { 
             db.ref('participantes').push().set({ 
-                name: n, 
-                signed: false,
-                id: Math.floor(1000 + Math.random() * 9000)
+                name: n, signed: false, id: Math.floor(1000 + Math.random() * 9000)
             }).then(() => { input.value = ''; });
         }
     };
 
-    // IMPORTAR ARQUIVO CORRIGIDO
+    // IMPORTAR
     document.getElementById('importFile').onchange = (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -202,7 +219,7 @@
                     });
                 }
             });
-            alert("Importação concluída!");
+            alert("Nomes importados!");
             e.target.value = '';
         };
         reader.readAsText(file);
@@ -255,17 +272,6 @@
         }
     });
 
-    function tentarRefazer(id, nome) {
-        if(prompt("Digite a senha para REFAZER:") === ADMIN_PASSWORD) abrirAssinatura(id, nome);
-    }
-
-    document.getElementById('showQrBtn').onclick = () => {
-        document.getElementById('qrcode').innerHTML = "";
-        const linkColaborador = window.location.origin + window.location.pathname + "?modo=1";
-        new QRCode(document.getElementById('qrcode'), { text: linkColaborador, width: 180, height: 180 });
-        document.getElementById('qrModal').style.display = 'flex';
-    };
-
     async function capturarEndereco() {
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(async (pos) => {
@@ -291,7 +297,7 @@
             const canvas = document.getElementById('sigCanvas');
             canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
             if (sigPad) sigPad.off();
-            sigPad = new SignaturePad(canvas, { penColor: "rgb(0, 0, 0)", minWidth: 2, maxWidth: 4 });
+            sigPad = new SignaturePad(canvas, { minWidth: 2, maxWidth: 4 });
         }, 400);
         
         navigator.mediaDevices.getUserMedia({
@@ -306,21 +312,6 @@
         }).catch(err => alert("Erro ao acessar câmera: " + err));
     }
 
-    document.getElementById('saveData').onclick = () => {
-        const photo = document.getElementById('photoPreview').src;
-        if(sigPad.isEmpty() || !photo.startsWith('data')) return alert("Assinatura e Foto obrigatórias!");
-        db.ref('participantes/' + currentUserId).update({
-            signed: true, sigData: sigPad.toDataURL(), photo: photo, 
-            time: new Date().toLocaleString(), geo: currentGeoLabel
-        }).then(fecharModais);
-    };
-
-    function fecharModais() {
-        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
-        if(localStream) localStream.getTracks().forEach(t => t.stop());
-    }
-    
-    document.getElementById('clearSig').onclick = () => sigPad.clear();
     document.getElementById('takePhoto').onclick = () => {
         const video = document.getElementById('video');
         const canvas = document.createElement('canvas');
@@ -334,6 +325,30 @@
         if(localStream) localStream.getTracks().forEach(t => t.stop());
     };
 
+    document.getElementById('saveData').onclick = () => {
+        const photo = document.getElementById('photoPreview').src;
+        if(sigPad.isEmpty() || !photo.startsWith('data')) return alert("Foto e Assinatura são obrigatórias!");
+        db.ref('participantes/' + currentUserId).update({
+            signed: true, sigData: sigPad.toDataURL(), photo: photo, 
+            time: new Date().toLocaleString(), geo: currentGeoLabel
+        }).then(fecharModais);
+    };
+
+    function fecharModais() {
+        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        if(localStream) localStream.getTracks().forEach(t => t.stop());
+    }
+
+    document.getElementById('clearSig').onclick = () => sigPad.clear();
+    document.getElementById('showQrBtn').onclick = () => {
+        document.getElementById('qrcode').innerHTML = "";
+        const link = window.location.origin + window.location.pathname + "?modo=1";
+        new QRCode(document.getElementById('qrcode'), { text: link, width: 180, height: 180 });
+        document.getElementById('qrModal').style.display = 'flex';
+    };
+    function tentarRefazer(id, nome) {
+        if(prompt("Senha para REFAZER:") === ADMIN_PASSWORD) abrirAssinatura(id, nome);
+    }
     function excluirParticipante(id, nome) {
         if(prompt(`Senha para excluir ${nome}:`) === ADMIN_PASSWORD) db.ref('participantes/' + id).remove();
     }
