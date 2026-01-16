@@ -27,23 +27,28 @@
         .signed-thumb{height:45px;border-radius:6px;border:1px solid #ddd; margin-right:5px; object-fit: cover;}
         
         .modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:1000}
-        
         .card{
             background:#fff; padding:20px; border-radius:12px; max-width:600px;
             width:92%; max-height: 92vh; display: flex; flex-direction: column; position: relative;
         }
 
         .modal-body-scroll { overflow-y: auto; flex-grow: 1; padding-right: 5px; margin-bottom: 15px; }
-
         .modal-footer { display: flex; gap: 10px; border-top: 1px solid #eee; padding-top: 15px; background: #fff; }
-        
         .modal-flex { display: flex; gap: 15px; flex-wrap: wrap; }
         .flex-col { flex: 1; min-width: 250px; }
         
-        .signature-wrapper { border: 1px solid #ddd; border-radius: 8px; background: #fafafa; position: relative; width: 100%; height: 160px; }
+        /* AJUSTE DE CÂMERA E ASSINATURA */
+        .signature-wrapper { border: 1px solid #ddd; border-radius: 8px; background: #fafafa; position: relative; width: 100%; height: 180px; }
         .signature-canvas { position: absolute; left: 0; top: 0; width: 100%; height: 100%; touch-action: none; }
         
-        #video, #photoPreview { width: 100%; height: 160px; object-fit: cover; border-radius: 8px; background:#000; }
+        #video, #photoPreview { 
+            width: 100%; 
+            height: auto; 
+            aspect-ratio: 4 / 3; 
+            object-fit: cover; 
+            border-radius: 8px; 
+            background:#000; 
+        }
         #video { transform: scaleX(-1); }
 
         .status-badge{padding:4px 8px; border-radius:12px; font-size:11px; font-weight:bold;}
@@ -55,7 +60,7 @@
 
         @media (max-width: 600px) {
             .flex-col { min-width: 100%; }
-            .signature-wrapper, #video, #photoPreview { height: 140px; }
+            #video, #photoPreview { height: auto; }
             .card { padding: 15px; }
         }
     </style>
@@ -100,6 +105,7 @@
     <div class="card">
         <h2 id="nomeAssinando" style="margin: 0 0 5px 0; font-size: 1.2rem;">Assinar</h2>
         <div id="geoStatus" class="small" style="color: var(--warning); font-weight: bold; margin-bottom: 10px;">Localizando...</div>
+        
         <div class="modal-body-scroll">
             <div class="modal-flex">
                 <div class="flex-col">
@@ -121,6 +127,7 @@
                 </div>
             </div>
         </div>
+
         <div class="modal-footer">
             <button onclick="fecharModais()" class="ghost" style="flex:1">Cancelar</button>
             <button id="saveData" style="flex:2; font-weight:bold; font-size:16px; background: #16a34a;">CONFIRMAR PRESENÇA</button>
@@ -167,48 +174,40 @@
         document.querySelectorAll('.col-admin').forEach(el => el.style.display = 'none');
     }
 
-    // --- CORREÇÃO: ADICIONAR NOME ---
+    // ADICIONAR NOME CORRIGIDO
     document.getElementById('addBtn').onclick = () => {
         const input = document.getElementById('nameInput');
         const n = input.value.trim();
         if(n) { 
-            // Usando .push().set() de forma mais robusta [cite: 78]
             db.ref('participantes').push().set({ 
                 name: n, 
                 signed: false,
-                id: Math.floor(1000 + Math.random() * 9000) // Gera ID aleatório
-            }).then(() => {
-                input.value = ''; 
-            });
+                id: Math.floor(1000 + Math.random() * 9000)
+            }).then(() => { input.value = ''; });
         }
     };
 
-    // --- CORREÇÃO: IMPORTAR ARQUIVO ---
+    // IMPORTAR ARQUIVO CORRIGIDO
     document.getElementById('importFile').onchange = (e) => {
         const file = e.target.files[0];
         if (!file) return;
-
         const reader = new FileReader();
-        reader.onload = (event) => {
-            const content = event.target.result;
-            const lines = content.split(/\r?\n/); // Divide por linha
+        reader.onload = (ev) => {
+            const lines = ev.target.result.split(/\r?\n/);
             lines.forEach(line => {
                 const name = line.trim();
                 if (name) {
                     db.ref('participantes').push().set({
-                        name: name,
-                        signed: false,
-                        id: Math.floor(1000 + Math.random() * 9000)
+                        name: name, signed: false, id: Math.floor(1000 + Math.random() * 9000)
                     });
                 }
             });
-            alert("Nomes importados com sucesso!");
-            e.target.value = ''; // Reseta o campo
+            alert("Importação concluída!");
+            e.target.value = '';
         };
         reader.readAsText(file);
     };
 
-    // --- FUNÇÕES DE BUSCA E TABELA ---
     function filtrarTabela() {
         const filter = document.getElementById("searchInput").value.toUpperCase();
         const tr = document.getElementById("tableBody").getElementsByTagName("tr");
@@ -256,7 +255,6 @@
         }
     });
 
-    // Manutenção das outras funções (Refazer, QR Code, Geolocalização, Câmera, Assinatura, PDF)
     function tentarRefazer(id, nome) {
         if(prompt("Digite a senha para REFAZER:") === ADMIN_PASSWORD) abrirAssinatura(id, nome);
     }
@@ -293,12 +291,16 @@
             const canvas = document.getElementById('sigCanvas');
             canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
             if (sigPad) sigPad.off();
-            sigPad = new SignaturePad(canvas);
+            sigPad = new SignaturePad(canvas, { penColor: "rgb(0, 0, 0)", minWidth: 2, maxWidth: 4 });
         }, 400);
         
-        navigator.mediaDevices.getUserMedia({video: {facingMode: 'user'}}).then(s => {
+        navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }
+        }).then(s => {
             localStream = s;
-            document.getElementById('video').srcObject = s;
+            const video = document.getElementById('video');
+            video.srcObject = s;
+            video.setAttribute("playsinline", true);
             document.getElementById('photoPreview').style.display = 'none';
             document.getElementById('video').style.display = 'block';
         }).catch(err => alert("Erro ao acessar câmera: " + err));
