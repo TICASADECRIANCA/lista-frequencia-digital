@@ -3,9 +3,9 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <title>Frequência Digital Pro</title>
+    <title>Frequência Digital - Pro</title>
     <style>
-        :root{--accent:#0b74e6; --danger:#ef4444; --success:#16a34a; --bg-light:#f5f7fb;}
+        :root{--accent:#0b74e6; --danger:#ef4444; --success:#16a34a; --warning:#f97316; --bg-light:#f5f7fb;}
         
         body {
             font-family: Inter, system-ui, sans-serif;
@@ -32,17 +32,23 @@
         button { background: var(--accent); color: #fff; border: none; cursor: pointer; font-weight: 600; }
         button.ghost { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
         button.danger { background: var(--danger); color: #fff; }
+        button.excel { background: #1d6f42; color: #fff; }
         
         #searchInput { border: 2px solid var(--accent); flex-grow: 1; font-size: 15px; }
         
         .table-responsive { overflow-x: auto; width: 100%; }
         table { width: 100%; border-collapse: collapse; min-width: 350px; }
-        th, td { padding: 6px 4px; border-bottom: 1px solid #eee; text-align: left; font-size: 12px; }
+        th, td { padding: 8px 4px; border-bottom: 1px solid #eee; text-align: left; font-size: 12px; }
         
+        /* Badges de Status */
+        .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
+        .status-pendente { background: #fee2e2; color: #ef4444; }
+        .status-assinado { background: #dcfce7; color: #16a34a; }
+
         #tableBody tr { display: none; }
         .mostrar-linha { display: table-row !important; }
 
-        .signed-thumb { height: 35px; border-radius: 4px; margin-right: 2px; }
+        .signed-thumb { height: 35px; border-radius: 4px; margin-right: 2px; border: 1px solid #ddd; }
         
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: none; align-items: center; justify-content: center; z-index: 1000; }
         .card { background: #fff; padding: 15px; border-radius: 12px; width: 95%; max-width: 450px; max-height: 95vh; overflow-y: auto; }
@@ -71,17 +77,14 @@
     </div>
     
     <div class="controls" id="adminPanel">
-        <input id="nameInput" placeholder="Nome Aluno" style="flex:2"/>
+        <input id="nameInput" placeholder="Nome do Aluno" style="flex:2"/>
         <input id="turmaInput" placeholder="Turma" style="flex:1"/>
-        <button id="addBtn">Add</button>
+        <button id="addBtn">Adicionar</button>
         <button onclick="document.getElementById('importFile').click()" class="ghost">Importar TXT</button>
         <input type="file" id="importFile" style="display:none" accept=".txt" />
         <button id="showQrBtn" class="ghost">Gerar QR</button>
-        <button id="clearAllBtn" class="danger">Limpar Tudo</button>
-        <div style="width:100%; display:flex; gap:5px; margin-top:5px; border-top:1px solid #eee; padding-top:5px;">
-            <input id="pdfTurmaFilter" placeholder="Filtrar Turma para PDF" style="flex:1"/>
-            <button id="generatePdf" style="background:var(--success)">Baixar PDF</button>
-        </div>
+        <button id="clearAllBtn" class="danger">Limpar Banco</button>
+        <button id="exportExcel" class="excel">📊 Baixar Excel</button>
     </div>
 
     <div class="controls">
@@ -94,7 +97,7 @@
                 <tr>
                     <th>Status</th>
                     <th>Nome / Turma</th>
-                    <th class="admin-only">Registros</th>
+                    <th>Registros</th>
                     <th>Ação</th>
                 </tr>
             </thead>
@@ -105,9 +108,9 @@
 
 <div id="signModal" class="modal">
     <div class="card">
-        <h3 id="nomeAssinando" style="margin-top:0">Assinar Presença</h3>
+        <h3 id="nomeAssinando" style="margin-top:0">Confirmar Presença</h3>
         
-        <label style="font-size:11px"><b>1. Selfie:</b></label>
+        <label style="font-size:11px"><b>1. Foto Selfie:</b></label>
         <video id="video" autoplay playsinline></video>
         <img id="photoPreview" style="display:none;" />
         <button id="takePhoto" style="width:100%; margin: 5px 0">📸 Tirar Foto</button>
@@ -116,18 +119,18 @@
         <div class="signature-wrapper">
             <canvas id="sigCanvas" class="signature-canvas"></canvas>
         </div>
-        <button id="clearSig" class="ghost" style="width:100%; margin-top:5px; font-size:11px">ERREI, LIMPAR ASSINATURA</button>
+        <button id="clearSig" class="ghost" style="width:100%; margin-top:5px; font-size:11px">LIMPAR ASSINATURA</button>
 
         <div style="display: flex; gap: 8px; margin-top: 15px;">
-            <button onclick="fecharModais()" class="ghost" style="flex:1">Cancelar</button>
-            <button id="saveData" style="flex:2; background: var(--success)">FINALIZAR AGORA</button>
+            <button onclick="fecharModais()" class="ghost" style="flex:1">Sair</button>
+            <button id="saveData" style="flex:2; background: var(--success)">FINALIZAR</button>
         </div>
     </div>
 </div>
 
 <div id="qrModal" class="modal">
     <div class="card" style="text-align:center; max-width: 300px;">
-        <h3>Acesso pelo Celular</h3>
+        <h3>Acesso Celular</h3>
         <div id="qrcode" style="display:flex; justify-content:center; margin:15px 0"></div>
         <button onclick="fecharModais()" class="ghost" style="width:100%">Fechar</button>
     </div>
@@ -137,7 +140,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script>
     const ADMIN_PASSWORD = '1992';
@@ -165,9 +168,10 @@
         for (let i = 0; i < tr.length; i++) {
             const txtValue = tr[i].innerText.toUpperCase();
             if (eModoColaborador) {
-                // Segurança: só mostra se digitar 3 letras ou mais
+                // Modo segurança: mostra apenas após 3 caracteres
                 tr[i].classList.toggle('mostrar-linha', filter.length >= 3 && txtValue.indexOf(filter) > -1);
             } else {
+                // Modo admin: mostra tudo se vazio, ou filtra
                 tr[i].classList.toggle('mostrar-linha', filter === "" || txtValue.indexOf(filter) > -1);
             }
         }
@@ -181,9 +185,13 @@
             Object.keys(data).forEach(key => {
                 const p = data[key];
                 const tr = document.createElement('tr');
+                const statusHtml = p.signed 
+                    ? `<span class="status-badge status-assinado">Assinado</span>` 
+                    : `<span class="status-badge status-pendente">Pendente</span>`;
+
                 tr.innerHTML = `
-                    <td><span class="status-badge ${p.signed ? 'status-assinado' : 'status-pendente'}">${p.signed ? '✅' : '❌'}</span></td>
-                    <td><b>${p.name}</b><br><small>${p.turma || 'Sem Turma'}</small></td>
+                    <td>${statusHtml}</td>
+                    <td><b>${p.name}</b><br><small>${p.turma || 'S/T'}</small></td>
                     <td>${p.signed ? `<img src="${p.sigData}" class="signed-thumb"><img src="${p.photo}" class="signed-thumb">` : '-'}</td>
                     <td>
                         ${p.signed ? `<button class="ghost" onclick="tentarRefazer('${key}', '${p.name}')">Refazer</button>` : `<button onclick="abrirAssinatura('${key}', '${p.name}')">ASSINAR</button>`}
@@ -224,7 +232,6 @@
         document.getElementById('video').style.display = 'none';
     };
 
-    // --- LÓGICA DE ENCERRAMENTO DE SESSÃO ---
     document.getElementById('saveData').onclick = () => {
         const photo = document.getElementById('photoPreview').src;
         if(sigPad.isEmpty() || !photo.startsWith('data')) return alert("Capture a foto e a assinatura!");
@@ -235,12 +242,12 @@
             photo: photo, 
             time: new Date().toLocaleString()
         }).then(() => {
-            alert("Presença confirmada com sucesso!");
+            alert("Presença confirmada!");
             fecharModais();
-            // RESET DA SESSÃO:
-            document.getElementById('searchInput').value = ""; // Limpa a busca
-            filtrarTabela(); // Esconde as linhas novamente
-            window.scrollTo(0, 0); // Volta para o topo
+            // Segurança: Reset da sessão
+            document.getElementById('searchInput').value = "";
+            filtrarTabela();
+            window.scrollTo(0, 0);
         });
     };
 
@@ -259,22 +266,37 @@
         document.getElementById('qrModal').style.display = 'flex';
     };
 
-    // Admin Functions
+    // EXPORTAÇÃO EXCEL
+    document.getElementById('exportExcel').onclick = () => {
+        db.ref('participantes').once('value', (snapshot) => {
+            const data = snapshot.val();
+            const rows = [["Status", "Nome", "Turma", "Data/Hora"]];
+            if (data) {
+                Object.keys(data).forEach(key => {
+                    const p = data[key];
+                    rows.push([p.signed ? "Assinado" : "Pendente", p.name, p.turma || "S/T", p.time || "-"]);
+                });
+            }
+            const ws = XLSX.utils.aoa_to_sheet(rows);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Frequencia");
+            XLSX.writeFile(wb, "lista_frequencia.xlsx");
+        });
+    };
+
+    // Funções Admin
     function tentarRefazer(id, nome) { if(prompt("Senha Admin:") === ADMIN_PASSWORD) abrirAssinatura(id, nome); }
     document.getElementById('addBtn').onclick = () => {
         const n = document.getElementById('nameInput').value;
         const t = document.getElementById('turmaInput').value;
-        if(n) db.ref('participantes').push().set({ name: n, turma: t, signed: false });
+        if(n) {
+            db.ref('participantes').push().set({ name: n, turma: t, signed: false });
+            document.getElementById('nameInput').value = "";
+            document.getElementById('turmaInput').value = "";
+        }
     };
-
-    document.getElementById('generatePdf').onclick = () => {
-        const turma = document.getElementById('pdfTurmaFilter').value.toUpperCase();
-        const content = document.getElementById('mainTable').cloneNode(true);
-        // Remover última coluna de cada linha no clone para o PDF
-        content.querySelectorAll('tr').forEach(tr => tr.lastElementChild.remove());
-        
-        const opt = { margin: 10, filename: `frequencia_${turma||'geral'}.pdf`, jsPDF: { orientation: 'landscape' } };
-        html2pdf().set(opt).from(content).save();
+    document.getElementById('clearAllBtn').onclick = () => {
+        if(confirm("Deseja apagar tudo?") && prompt("Senha:") === ADMIN_PASSWORD) db.ref('participantes').remove();
     };
 </script>
 </body>
