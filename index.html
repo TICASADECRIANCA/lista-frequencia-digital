@@ -187,7 +187,7 @@
                 <td class="col-admin col-admin-reg">${p.signed ? `<img src="${p.sigData}" class="signed-thumb"><img src="${p.photo}" class="signed-thumb">` : '-'}</td>
                 <td class="col-admin col-admin-gps"><span class="geo-label">${p.geo || '-'}</span></td>
                 <td class="col-acao" style="display:flex; gap:2px">
-                    ${p.signed ? `<button onclick="tentarRefazer('${key}','${p.name}')">Ref.</button>` : `<button onclick="abrirAssinatura('${key}','${p.name}')">OK</button>`}
+                    ${p.signed ? `<button onclick="tentarRefazer('${key}','${p.name}')">Ref.</button>` : `<button onclick="abrirAssinatura('${key}','${p.name}')">ASSINAR</button>`}
                     ${!modoAssinante ? `<button class="danger" onclick="excluir('${key}','${p.name}')">X</button>` : ''}
                 </td>
             `;
