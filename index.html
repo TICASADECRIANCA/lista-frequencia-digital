@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <title>Frequência Digital Pro - Admin GPS</title>
+    <title>Frequência Digital Pro + GPS</title>
     <style>
         :root{--accent:#0b74e6; --danger:#ef4444; --success:#16a34a; --warning:#f97316; --bg-light:#f5f7fb;}
         
@@ -11,7 +11,7 @@
             font-family: Inter, system-ui, sans-serif; 
             margin: 0; 
             padding: 10px; 
-            /* Fundo de tela conforme solicitado */
+            /* Estilo do arquivo N APAGAR.txt */
             background-image: url('fundo.jpg'); 
             background-size: cover;
             background-position: center;
@@ -22,7 +22,6 @@
         .container { 
             max-width: 1200px; 
             margin: 0 auto; 
-            /* Container semi-transparente para destacar o fundo */
             background: rgba(255, 255, 255, 0.95); 
             padding: 15px; 
             border-radius: 12px; 
@@ -30,7 +29,6 @@
             backdrop-filter: blur(5px);
         }
 
-        /* Cabeçalho com Logo ao lado do Nome */
         .header-container { 
             display: flex; 
             align-items: center; 
@@ -38,7 +36,7 @@
             margin-bottom: 20px; 
         }
         .logo-escola { 
-            height: 50px; 
+            height: 55px; 
             width: auto; 
             object-fit: contain; 
         }
@@ -48,13 +46,13 @@
         input, button { padding: 8px; border-radius: 6px; border: 1px solid #ddd; font-size: 13px; }
         button { background: var(--accent); color: #fff; border: none; cursor: pointer; font-weight: 600; }
         button.ghost { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
-        button.danger { background: var(--danger); color: #fff; }
+        button.danger { background: var(--danger); color: #fff; padding: 8px 12px; }
         button.excel { background: #1d6f42; color: #fff; }
         
-        #searchInput { border: 2px solid var(--accent); flex-grow: 1; font-size: 15px; }
+        #searchInput { border: 2px solid var(--accent); flex-grow: 1; font-size: 15px; background: white; }
         .table-responsive { overflow-x: auto; width: 100%; }
         table { width: 100%; border-collapse: collapse; min-width: 600px; background: white; }
-        th, td { padding: 8px 4px; border-bottom: 1px solid #eee; text-align: left; font-size: 11px; }
+        th, td { padding: 8px 6px; border-bottom: 1px solid #eee; text-align: left; font-size: 11px; }
         
         .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
         .status-pendente { background: #fee2e2; color: #ef4444; }
@@ -62,16 +60,17 @@
         
         #tableBody tr { display: none; }
         .mostrar-linha { display: table-row !important; }
-        .signed-thumb { height: 35px; border-radius: 4px; margin-right: 2px; border: 1px solid #ddd; vertical-align: middle; }
-        .geo-info { font-size: 9px; color: #666; display: block; margin-top: 4px; max-width: 200px; }
+        .signed-thumb { height: 40px; border-radius: 4px; margin-right: 4px; border: 1px solid #ddd; vertical-align: middle; }
+        .geo-info { font-size: 9px; color: #666; display: block; margin-top: 4px; max-width: 200px; line-height: 1.2; }
         .map-link { color: var(--accent); text-decoration: none; font-weight: bold; }
         
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: none; align-items: center; justify-content: center; z-index: 1000; }
-        .card { background: #fff; padding: 15px; border-radius: 12px; width: 95%; max-width: 500px; }
+        .card { background: #fff; padding: 20px; border-radius: 12px; width: 95%; max-width: 550px; }
         .signature-wrapper { border: 2px solid #333; border-radius: 8px; height: 180px; touch-action: none; position: relative; }
         #video, #photoPreview { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 8px; background: #000; }
         
-        body.modo-colaborador #adminPanel, body.modo-colaborador .col-geo-admin { display: none; }
+        /* Oculta colunas administrativas no modo aluno */
+        body.modo-colaborador #adminPanel, body.modo-colaborador .col-admin { display: none; }
     </style>
 </head>
 <body>
@@ -103,9 +102,9 @@
                 <tr>
                     <th>Status</th>
                     <th>Nome / Turma</th>
-                    <th>Registros</th>
-                    <th class="col-geo-admin">Localização (GPS)</th>
-                    <th>Ação</th>
+                    <th class="col-admin">Registros</th>
+                    <th class="col-admin">Localização (GPS)</th>
+                    <th>Ações</th>
                 </tr>
             </thead>
             <tbody id="tableBody"></tbody>
@@ -188,9 +187,12 @@
                 tr.innerHTML = `
                     <td>${statusHtml}</td>
                     <td><b>${p.name}</b><br><small>${p.turma || 'S/T'}</small></td>
-                    <td>${p.signed ? `<img src="${p.sigData}" class="signed-thumb"><img src="${p.photo}" class="signed-thumb">` : '-'}</td>
-                    <td class="col-geo-admin">${geoHtml}</td>
-                    <td>${p.signed ? `<button class="ghost" onclick="tentarRefazer('${key}','${p.name}')">Refazer</button>` : `<button onclick="abrirAssinatura('${key}','${p.name}')">ASSINAR</button>`}</td>
+                    <td class="col-admin">${p.signed ? `<img src="${p.sigData}" class="signed-thumb"><img src="${p.photo}" class="signed-thumb">` : '-'}</td>
+                    <td class="col-admin">${geoHtml}</td>
+                    <td style="display:flex; gap:4px">
+                        ${p.signed ? `<button class="ghost" onclick="tentarRefazer('${key}','${p.name}')">Refazer</button>` : `<button onclick="abrirAssinatura('${key}','${p.name}')">ASSINAR</button>`}
+                        ${!eModoColaborador ? `<button class="danger" onclick="excluirParticipante('${key}','${p.name}')">X</button>` : ''}
+                    </td>
                 `;
                 tableBody.appendChild(tr);
             });
@@ -198,6 +200,7 @@
         }
     });
 
+    // Funções de localização, assinatura e câmera (arquivo ok.txt)
     function abrirAssinatura(id, nome) {
         currentUserId = id;
         document.getElementById('nomeAssinando').innerText = nome;
@@ -205,14 +208,12 @@
         
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((pos) => {
-                const lat = pos.coords.latitude;
-                const lon = pos.coords.longitude;
-                fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+                fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`)
                 .then(r => r.json()).then(data => {
                     currentFullAddress = data.display_name;
                     document.getElementById('geoStatus').innerText = "📍 Endereço capturado";
                 }).catch(() => {
-                    currentFullAddress = `${lat}, ${lon}`;
+                    currentFullAddress = `${pos.coords.latitude}, ${pos.coords.longitude}`;
                     document.getElementById('geoStatus').innerText = "📍 Coordenadas capturadas";
                 });
             });
@@ -245,12 +246,10 @@
     document.getElementById('saveData').onclick = () => {
         const photo = document.getElementById('photoPreview').src;
         if(sigPad.isEmpty() || !photo.startsWith('data')) return alert("Erro: Foto e Assinatura!");
-        
         db.ref('participantes/' + currentUserId).update({
             signed: true, sigData: sigPad.toDataURL(), photo: photo, 
             time: new Date().toLocaleString(), geo: currentFullAddress
         }).then(() => {
-            alert("Confirmado!");
             fecharModais();
             document.getElementById('searchInput').value = "";
             filtrarTabela();
@@ -261,6 +260,11 @@
         document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
         if(localStream) localStream.getTracks().forEach(t => t.stop());
         if(sigPad) sigPad.clear();
+    }
+
+    // Funções Administrativas (arquivo N APAGAR.txt)
+    function excluirParticipante(id, nome) {
+        if(prompt(`Senha para excluir ${nome}:`) === ADMIN_PASSWORD) db.ref('participantes/' + id).remove();
     }
 
     document.getElementById('exportExcel').onclick = () => {
@@ -279,17 +283,16 @@
     };
 
     document.getElementById('importFile').onchange = (e) => {
-        const file = e.target.files[0];
         const reader = new FileReader();
         reader.onload = (ev) => {
             const lines = ev.target.result.split(/\r?\n/);
             lines.forEach(l => {
                 const p = l.split(',');
-                if(p[0]) { db.ref('participantes').push().set({name:p[0].trim(), turma:p[1]?.trim()||'S/T', signed:false}); }
+                if(p[0]) db.ref('participantes').push().set({name:p[0].trim(), turma:p[1]?.trim()||'S/T', signed:false});
             });
             alert(`Nomes importados!`);
         };
-        reader.readAsText(file);
+        reader.readAsText(e.target.files[0]);
     };
 
     document.getElementById('clearSig').onclick = () => sigPad.clear();
