@@ -6,22 +6,60 @@
     <title>Frequência Digital Pro - Admin GPS</title>
     <style>
         :root{--accent:#0b74e6; --danger:#ef4444; --success:#16a34a; --warning:#f97316; --bg-light:#f5f7fb;}
-        body { font-family: Inter, system-ui, sans-serif; margin: 0; padding: 10px; background-color: var(--bg-light); }
-        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 12px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-        .header-container { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+        
+        body { 
+            font-family: Inter, system-ui, sans-serif; 
+            margin: 0; 
+            padding: 10px; 
+            /* Fundo de tela conforme solicitado */
+            background-image: url('fundo.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-color: var(--bg-light); 
+        }
+
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            /* Container semi-transparente para destacar o fundo */
+            background: rgba(255, 255, 255, 0.95); 
+            padding: 15px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+            backdrop-filter: blur(5px);
+        }
+
+        /* Cabeçalho com Logo ao lado do Nome */
+        .header-container { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            margin-bottom: 20px; 
+        }
+        .logo-escola { 
+            height: 50px; 
+            width: auto; 
+            object-fit: contain; 
+        }
+        h1 { margin: 0; font-size: 22px; color: #333; }
+
         .controls { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
         input, button { padding: 8px; border-radius: 6px; border: 1px solid #ddd; font-size: 13px; }
         button { background: var(--accent); color: #fff; border: none; cursor: pointer; font-weight: 600; }
         button.ghost { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
         button.danger { background: var(--danger); color: #fff; }
         button.excel { background: #1d6f42; color: #fff; }
+        
         #searchInput { border: 2px solid var(--accent); flex-grow: 1; font-size: 15px; }
         .table-responsive { overflow-x: auto; width: 100%; }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; background: white; }
         th, td { padding: 8px 4px; border-bottom: 1px solid #eee; text-align: left; font-size: 11px; }
+        
         .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
         .status-pendente { background: #fee2e2; color: #ef4444; }
         .status-assinado { background: #dcfce7; color: #16a34a; }
+        
         #tableBody tr { display: none; }
         .mostrar-linha { display: table-row !important; }
         .signed-thumb { height: 35px; border-radius: 4px; margin-right: 2px; border: 1px solid #ddd; vertical-align: middle; }
@@ -29,8 +67,8 @@
         .map-link { color: var(--accent); text-decoration: none; font-weight: bold; }
         
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: none; align-items: center; justify-content: center; z-index: 1000; }
-        .card { background: #fff; padding: 15px; border-radius: 12px; width: 95%; max-width: 450px; }
-        .signature-wrapper { border: 2px solid #333; border-radius: 8px; height: 180px; touch-action: none; }
+        .card { background: #fff; padding: 15px; border-radius: 12px; width: 95%; max-width: 500px; }
+        .signature-wrapper { border: 2px solid #333; border-radius: 8px; height: 180px; touch-action: none; position: relative; }
         #video, #photoPreview { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 8px; background: #000; }
         
         body.modo-colaborador #adminPanel, body.modo-colaborador .col-geo-admin { display: none; }
@@ -40,6 +78,7 @@
 
 <div class="container">
     <div class="header-container">
+        <img src="logo.png" alt="Logo" class="logo-escola" onerror="this.style.display='none'">
         <h1>Frequência Digital</h1>
     </div>
     
@@ -120,7 +159,7 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    let sigPad, localStream, currentUserId = null, currentFullAddress = "Não capturado", currentCoords = "";
+    let sigPad, localStream, currentUserId = null, currentFullAddress = "Não capturado";
 
     const urlParams = new URLSearchParams(window.location.search);
     const eModoColaborador = urlParams.has('modo');
@@ -144,14 +183,11 @@
                 const p = data[key];
                 const tr = document.createElement('tr');
                 const statusHtml = p.signed ? `<span class="status-badge status-assinado">Assinado</span>` : `<span class="status-badge status-pendente">Pendente</span>`;
-                
-                // Link para o mapa se houver coordenadas
-                const geoHtml = p.signed && p.geo ? 
-                    `<span class="geo-info">${p.geo} <br> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.geo)}" target="_blank" class="map-link">[Ver no Mapa]</a></span>` : '-';
+                const geoHtml = p.signed && p.geo ? `<span class="geo-info">${p.geo} <br> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.geo)}" target="_blank" class="map-link">[Ver no Mapa]</a></span>` : '-';
 
                 tr.innerHTML = `
                     <td>${statusHtml}</td>
-                    <td><b>${p.name}</b><br><small>${p.turma}</small></td>
+                    <td><b>${p.name}</b><br><small>${p.turma || 'S/T'}</small></td>
                     <td>${p.signed ? `<img src="${p.sigData}" class="signed-thumb"><img src="${p.photo}" class="signed-thumb">` : '-'}</td>
                     <td class="col-geo-admin">${geoHtml}</td>
                     <td>${p.signed ? `<button class="ghost" onclick="tentarRefazer('${key}','${p.name}')">Refazer</button>` : `<button onclick="abrirAssinatura('${key}','${p.name}')">ASSINAR</button>`}</td>
@@ -233,7 +269,7 @@
             const data = snapshot.val();
             if (data) Object.keys(data).forEach(k => {
                 const p = data[k];
-                rows.push([p.signed ? "Assinado" : "Pendente", p.name, p.turma, p.time || "-", p.geo || "-"]);
+                rows.push([p.signed ? "Assinado" : "Pendente", p.name, p.turma || "S/T", p.time || "-", p.geo || "-"]);
             });
             const ws = XLSX.utils.aoa_to_sheet(rows);
             const wb = XLSX.utils.book_new();
@@ -247,12 +283,11 @@
         const reader = new FileReader();
         reader.onload = (ev) => {
             const lines = ev.target.result.split(/\r?\n/);
-            let count = 0;
             lines.forEach(l => {
                 const p = l.split(',');
-                if(p[0]) { db.ref('participantes').push().set({name:p[0].trim(), turma:p[1]?.trim()||'S/T', signed:false}); count++; }
+                if(p[0]) { db.ref('participantes').push().set({name:p[0].trim(), turma:p[1]?.trim()||'S/T', signed:false}); }
             });
-            alert(`✅ ${count} nomes importados!`);
+            alert(`Nomes importados!`);
         };
         reader.readAsText(file);
     };
