@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <title>Lista de Frequência Digital</title>
+    <title>Frequência Digital Pro</title>
     <style>
         :root{--accent:#0b74e6; --danger:#ef4444; --success:#16a34a; --warning:#f97316; --bg-light:#f5f7fb;}
         
@@ -41,6 +41,7 @@
         
         #searchInput { border: 2px solid var(--accent); flex-grow: 1; font-size: 14px; background: white; }
 
+        /* AJUSTE DE LARGURAS DA TABELA */
         .table-responsive { width: 100%; overflow-x: hidden; }
         table { width: 100%; border-collapse: collapse; table-layout: fixed; } 
         
@@ -52,38 +53,42 @@
             word-wrap: break-word; 
         }
 
-        /* Larguras das colunas */
-        .col-status { width: 60px; }
-        .col-nome { width: auto; }
-        .col-admin-reg { width: 70px; }
-        .col-admin-gps { width: 90px; }
+        .col-status { width: 80px; }  /* Espaço para 'PENDENTE' */
+        .col-nome { width: 55%; }      /* Nome não ocupa a tela toda */
+        .col-admin-reg { width: 75px; }
+        .col-admin-gps { width: 110px; }
         .col-acao { width: 75px; }
 
         .status-txt { font-weight: bold; font-size: 9px; text-transform: uppercase; }
         .pendente { color: var(--danger); }
         .assinado { color: var(--success); }
         
-        .signed-thumb { height: 30px; width: 30px; border-radius: 4px; border: 1px solid #ddd; object-fit: cover; }
+        .signed-thumb { height: 32px; width: 32px; border-radius: 4px; border: 1px solid #ddd; object-fit: cover; }
         .geo-label { font-size: 8px; color: #666; display: block; line-height: 1.1; }
 
-        /* MODAIS */
+        /* MODAL E AJUSTES PARA CELULAR */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,.9); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 10px; }
-        .card { background: #fff; padding: 15px; border-radius: 12px; width: 100%; max-width: 400px; box-sizing: border-box; }
-        .signature-wrapper { border: 2px solid #333; border-radius: 8px; height: 160px; background: white; }
-        #video, #photoPreview { width: 100%; border-radius: 8px; background: #000; }
+        .card { background: #fff; padding: 12px; border-radius: 12px; width: 100%; max-width: 400px; box-sizing: border-box; max-height: 95vh; overflow-y: auto; }
+        
+        /* CÂMERA COMPACTA */
+        #video, #photoPreview { 
+            width: 100%; 
+            max-height: 180px; /* Reduzido para sobrar espaço pros botões */
+            object-fit: cover; 
+            border-radius: 8px; 
+            background: #000; 
+        }
+
+        .signature-wrapper { border: 2px solid #333; border-radius: 8px; height: 140px; background: white; margin-top: 5px; }
 
         /* LÓGICA DE VISIBILIDADE */
-        /* Quando NÃO tem "?modo=1" na URL, mostra tudo (Admin) */
-        /* Quando TEM "?modo=1", oculta o que tem a classe .col-admin */
         body.modo-assinante #adminPanel, 
         body.modo-assinante .col-admin { 
             display: none !important; 
         }
     </style>
 </head>
-<body>
-
-<div class="container">
+<body class="modo-assinante-init"> <div class="container">
     <div class="header-container">
         <img src="logo.png" alt="Logo" class="logo-escola" onerror="this.style.display='none'">
         <h1>Frequência Digital</h1>
@@ -99,7 +104,7 @@
     </div>
 
     <div class="controls">
-        <input id="searchInput" type="text" placeholder="🔍 BUSCAR MEU NOME..." onkeyup="filtrarTabela()">
+        <input id="searchInput" type="text" placeholder="🔍 BUSCAR SEU NOME..." onkeyup="filtrarTabela()">
     </div>
 
     <div class="table-responsive">
@@ -118,26 +123,29 @@
     </div>
 </div>
 
-<div id="qrModal" class="modal">
-    <div class="card" style="text-align:center;">
-        <h3>QR Code para Alunos</h3>
-        <div id="qrcode" style="display:flex; justify-content:center; margin:15px 0"></div>
-        <button onclick="fecharModais()" class="ghost" style="width:100%">Fechar</button>
+<div id="signModal" class="modal">
+    <div class="card">
+        <h3 id="nomeAssinando" style="margin:0">Assinar</h3>
+        <p id="geoStatus" style="font-size:9px; color:var(--warning); margin: 2px 0;">📍 Validando localização...</p>
+        
+        <video id="video" autoplay playsinline></video>
+        <img id="photoPreview" style="display:none;" />
+        <button id="takePhoto" style="width:100%; margin: 5px 0; background:#333; padding: 12px;">📸 TIRAR FOTO</button>
+        
+        <div class="signature-wrapper"><canvas id="sigCanvas" style="width:100%;height:100%"></canvas></div>
+        
+        <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button onclick="fecharModais()" style="background:#ccc; flex:1">Sair</button>
+            <button id="saveData" style="flex:2; background: var(--success); font-size: 14px;">CONFIRMAR</button>
+        </div>
     </div>
 </div>
 
-<div id="signModal" class="modal">
-    <div class="card">
-        <h3 id="nomeAssinando" style="margin:0">Assinar Presença</h3>
-        <p id="geoStatus" style="font-size:10px; color:var(--warning)">📍 Validando localização...</p>
-        <video id="video" autoplay playsinline></video>
-        <img id="photoPreview" style="display:none;" />
-        <button id="takePhoto" style="width:100%; margin: 5px 0; background:#333">📸 Tirar Foto</button>
-        <div class="signature-wrapper"><canvas id="sigCanvas" style="width:100%;height:100%"></canvas></div>
-        <div style="display: flex; gap: 8px; margin-top: 15px;">
-            <button onclick="fecharModais()" style="background:#ccc; flex:1">Sair</button>
-            <button id="saveData" style="flex:2; background: var(--success)">FINALIZAR</button>
-        </div>
+<div id="qrModal" class="modal">
+    <div class="card" style="text-align:center; max-width: 300px;">
+        <h3>QR Code Alunos</h3>
+        <div id="qrcode" style="display:flex; justify-content:center; margin:15px 0"></div>
+        <button onclick="fecharModais()" class="ghost" style="width:100%">Fechar</button>
     </div>
 </div>
 
@@ -157,7 +165,6 @@
     const db = firebase.database();
     let sigPad, localStream, currentUserId = null, addressReal = "Buscando...";
 
-    // Detecta o modo através da URL
     const urlParams = new URLSearchParams(window.location.search);
     const modoAssinante = urlParams.has('modo');
     if (modoAssinante) document.body.classList.add('modo-assinante');
@@ -167,7 +174,6 @@
         const tr = document.getElementById("tableBody").getElementsByTagName("tr");
         for (let i = 0; i < tr.length; i++) {
             const txt = tr[i].innerText.toUpperCase();
-            // No modo assinante, só mostra se digitar pelo menos 3 letras
             tr[i].style.display = (modoAssinante ? (filter.length >= 3 && txt.indexOf(filter) > -1) : (filter === "" || txt.indexOf(filter) > -1)) ? "" : "none";
         }
     }
@@ -187,8 +193,8 @@
                 <td class="col-admin col-admin-reg">${p.signed ? `<img src="${p.sigData}" class="signed-thumb"><img src="${p.photo}" class="signed-thumb">` : '-'}</td>
                 <td class="col-admin col-admin-gps"><span class="geo-label">${p.geo || '-'}</span></td>
                 <td class="col-acao" style="display:flex; gap:2px">
-                    ${p.signed ? `<button onclick="tentarRefazer('${key}','${p.name}')">Ref.</button>` : `<button onclick="abrirAssinatura('${key}','${p.name}')">ASSINAR</button>`}
-                    ${!modoAssinante ? `<button class="danger" onclick="excluir('${key}','${p.name}')">X</button>` : ''}
+                    ${p.signed ? `<button onclick="tentarRefazer('${key}','${p.name}')" style="font-size:9px; padding:4px">Ref.</button>` : `<button onclick="abrirAssinatura('${key}','${p.name}')" style="padding:4px 8px">OK</button>`}
+                    ${!modoAssinante ? `<button class="danger" onclick="excluir('${key}','${p.name}')" style="padding:4px 6px">X</button>` : ''}
                 </td>
             `;
             tableBody.appendChild(tr);
@@ -206,6 +212,7 @@
                 .then(r => r.json()).then(d => {
                     addressReal = d.address.road ? (d.address.road + ", " + (d.address.house_number || "S/N")) : d.display_name;
                     document.getElementById('geoStatus').innerText = "📍 Localização Confirmada";
+                    document.getElementById('geoStatus').style.color = "green";
                 });
             });
         }
@@ -240,7 +247,7 @@
             time: new Date().toLocaleString(), geo: addressReal
         }).then(() => { 
             fecharModais(); 
-            document.getElementById('searchInput').value = ""; // Limpa a busca após assinar
+            document.getElementById('searchInput').value = "";
             filtrarTabela();
         });
     };
@@ -261,13 +268,11 @@
 
     document.getElementById('showQrBtn').onclick = () => {
         document.getElementById('qrcode').innerHTML = "";
-        const urlAlunos = window.location.href.split('?')[0] + "?modo=1";
-        new QRCode(document.getElementById('qrcode'), { text: urlAlunos, width: 180, height: 180 });
+        new QRCode(document.getElementById('qrcode'), { text: window.location.href.split('?')[0] + "?modo=1", width: 180, height: 180 });
         document.getElementById('qrModal').style.display = 'flex';
     };
 
     document.getElementById('clearAllBtn').onclick = () => { if(prompt("Senha:") === ADMIN_PASSWORD) db.ref('participantes').remove(); };
-    
     document.getElementById('exportExcel').onclick = () => {
         db.ref('participantes').once('value', (snapshot) => {
             const rows = [["Status", "Nome", "Turma", "Data/Hora", "Endereço"]];
@@ -279,7 +284,7 @@
             const ws = XLSX.utils.aoa_to_sheet(rows);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Frequencia");
-            XLSX.writeFile(wb, "relatorio_frequencia.xlsx");
+            XLSX.writeFile(wb, "frequencia.xlsx");
         });
     };
 </script>
