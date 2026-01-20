@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
     <title>Lista de Frequência Digital</title>
     <style>
-        :root{--accent:#0b74e6; --danger:#ef4444; --warning:#f97316; --bg-light:#f5f7fb;}
+        :root{--accent:#0b74e6; --danger:#ef4444; --success:#16a34a; --warning:#f97316; --bg-light:#f5f7fb;}
         
         body {
             font-family: Inter, system-ui, sans-serif; 
             margin: 0; 
-            padding: 10px; 
+            padding: 8px; 
             background-image: url('fundo.jpg'); 
             background-size: cover;
             background-position: center;
@@ -19,42 +19,66 @@
         }
 
         .container {
-            max-width: 1150px;
+            max-width: 100%;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.92); 
-            padding: 15px;
+            background: rgba(255, 255, 255, 0.94); 
+            padding: 12px;
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             backdrop-filter: blur(8px);
+            box-sizing: border-box;
         }
 
         .header-container { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
-        .logo-escola { height: 50px; width: auto; }
-        h1 { margin: 0; font-size: 20px; color: #333; }
+        .logo-escola { height: 45px; width: auto; }
+        h1 { margin: 0; font-size: 18px; color: #333; }
 
-        .controls { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
-        input, button { padding: 8px; border-radius: 6px; border: 1px solid #ddd; font-size: 13px; }
+        .controls { display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap; }
+        input, button { padding: 8px; border-radius: 6px; border: 1px solid #ddd; font-size: 12px; }
         button { background: var(--accent); color: #fff; border: none; cursor: pointer; font-weight: 600; }
         button.danger { background: var(--danger); }
         button.ghost { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
         
-        #searchInput { border: 2px solid var(--accent); flex-grow: 1; font-size: 15px; background: white; }
+        #searchInput { border: 2px solid var(--accent); flex-grow: 1; font-size: 14px; background: white; }
 
-        /* AJUSTE PARA CABER NA TELA SEM ROLAR LADO A LADO */
-        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; } 
+        .table-responsive { width: 100%; overflow-x: hidden; }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; } 
         
-        th, td { padding: 8px 4px; border-bottom: 1px solid #eee; text-align: left; font-size: 11px; }
-        
-        .signed-thumb { height: 35px; border-radius: 4px; margin-right: 2px; border: 1px solid #ddd; vertical-align: middle; }
-        .geo-label { font-size: 9px; color: #666; display: block; line-height: 1.2; max-width: 150px; }
+        th, td { 
+            padding: 8px 2px; 
+            border-bottom: 1px solid #eee; 
+            text-align: left; 
+            font-size: 10px; 
+            word-wrap: break-word; 
+        }
 
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: none; align-items: center; justify-content: center; z-index: 1000; }
-        .card { background: #fff; padding: 15px; border-radius: 12px; width: 95%; max-width: 450px; }
-        .signature-wrapper { border: 2px solid #333; border-radius: 8px; height: 180px; touch-action: none; background: white; }
+        /* Larguras das colunas */
+        .col-status { width: 60px; }
+        .col-nome { width: auto; }
+        .col-admin-reg { width: 70px; }
+        .col-admin-gps { width: 90px; }
+        .col-acao { width: 75px; }
+
+        .status-txt { font-weight: bold; font-size: 9px; text-transform: uppercase; }
+        .pendente { color: var(--danger); }
+        .assinado { color: var(--success); }
+        
+        .signed-thumb { height: 30px; width: 30px; border-radius: 4px; border: 1px solid #ddd; object-fit: cover; }
+        .geo-label { font-size: 8px; color: #666; display: block; line-height: 1.1; }
+
+        /* MODAIS */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,.9); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 10px; }
+        .card { background: #fff; padding: 15px; border-radius: 12px; width: 100%; max-width: 400px; box-sizing: border-box; }
+        .signature-wrapper { border: 2px solid #333; border-radius: 8px; height: 160px; background: white; }
         #video, #photoPreview { width: 100%; border-radius: 8px; background: #000; }
 
-        body.modo-colaborador #adminPanel, body.modo-colaborador .col-admin { display: none; }
+        /* LÓGICA DE VISIBILIDADE */
+        /* Quando NÃO tem "?modo=1" na URL, mostra tudo (Admin) */
+        /* Quando TEM "?modo=1", oculta o que tem a classe .col-admin */
+        body.modo-assinante #adminPanel, 
+        body.modo-assinante .col-admin { 
+            display: none !important; 
+        }
     </style>
 </head>
 <body>
@@ -66,12 +90,12 @@
     </div>
     
     <div class="controls" id="adminPanel">
-        <input id="nameInput" placeholder="Nome do Aluno" style="flex:2"/>
-        <input id="turmaInput" placeholder="Turma" style="flex:1"/>
-        <button id="addBtn">Adicionar</button>
-        <button id="showQrBtn" class="ghost">Gerar QR</button>
-        <button id="exportExcel" style="background:#1d6f42">Excel</button>
-        <button id="clearAllBtn" class="danger">Limpar Tudo</button>
+        <input id="nameInput" placeholder="Nome" style="flex:2;"/>
+        <input id="turmaInput" placeholder="Turma" style="flex:1;"/>
+        <button id="addBtn">Add</button>
+        <button id="showQrBtn" class="ghost">QR</button>
+        <button id="exportExcel" style="background:#1d6f42">XLS</button>
+        <button id="clearAllBtn" class="danger">Limpar</button>
     </div>
 
     <div class="controls">
@@ -82,11 +106,11 @@
         <table id="mainTable">
             <thead>
                 <tr>
-                    <th>Status</th>
-                    <th>Nome / Turma</th>
-                    <th class="col-admin">Registros</th>
-                    <th class="col-admin">Localização (GPS)</th>
-                    <th>Ações</th>
+                    <th class="col-status">Status</th>
+                    <th class="col-nome">Nome/Turma</th>
+                    <th class="col-admin col-admin-reg">Fotos</th>
+                    <th class="col-admin col-admin-gps">Endereço GPS</th>
+                    <th class="col-acao">Ação</th>
                 </tr>
             </thead>
             <tbody id="tableBody"></tbody>
@@ -95,8 +119,8 @@
 </div>
 
 <div id="qrModal" class="modal">
-    <div class="card" style="text-align:center; max-width: 300px;">
-        <h3>Acesso Celular</h3>
+    <div class="card" style="text-align:center;">
+        <h3>QR Code para Alunos</h3>
         <div id="qrcode" style="display:flex; justify-content:center; margin:15px 0"></div>
         <button onclick="fecharModais()" class="ghost" style="width:100%">Fechar</button>
     </div>
@@ -104,19 +128,15 @@
 
 <div id="signModal" class="modal">
     <div class="card">
-        <h3 id="nomeAssinando" style="margin:0 0 10px 0">Assinar</h3>
-        <div id="geoStatus" style="font-size:10px; color:var(--warning); font-weight:bold">📍 Localizando endereço...</div>
-        
+        <h3 id="nomeAssinando" style="margin:0">Assinar Presença</h3>
+        <p id="geoStatus" style="font-size:10px; color:var(--warning)">📍 Validando localização...</p>
         <video id="video" autoplay playsinline></video>
         <img id="photoPreview" style="display:none;" />
         <button id="takePhoto" style="width:100%; margin: 5px 0; background:#333">📸 Tirar Foto</button>
-
         <div class="signature-wrapper"><canvas id="sigCanvas" style="width:100%;height:100%"></canvas></div>
-        <button id="clearSig" style="background:none; color:#666; width:100%; font-size:10px; border:none; margin-top:5px">LIMPAR ASSINATURA</button>
-
         <div style="display: flex; gap: 8px; margin-top: 15px;">
             <button onclick="fecharModais()" style="background:#ccc; flex:1">Sair</button>
-            <button id="saveData" style="flex:2; background: #16a34a">FINALIZAR</button>
+            <button id="saveData" style="flex:2; background: var(--success)">FINALIZAR</button>
         </div>
     </div>
 </div>
@@ -131,24 +151,24 @@
     const ADMIN_PASSWORD = '1992';
     const firebaseConfig = {
         apiKey: "AIzaSyBy4gbEfmMgm-zgMmGq6h3oQ_-gQy2l2R0",
-        authDomain: "frenquencia-digital.firebaseapp.com",
         databaseURL: "https://frenquencia-digital-default-rtdb.firebaseio.com",
-        projectId: "frenquencia-digital",
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     let sigPad, localStream, currentUserId = null, addressReal = "Buscando...";
 
+    // Detecta o modo através da URL
     const urlParams = new URLSearchParams(window.location.search);
-    const eModoColaborador = urlParams.has('modo');
-    if (eModoColaborador) document.body.classList.add('modo-colaborador');
+    const modoAssinante = urlParams.has('modo');
+    if (modoAssinante) document.body.classList.add('modo-assinante');
 
     function filtrarTabela() {
         const filter = document.getElementById("searchInput").value.toUpperCase();
         const tr = document.getElementById("tableBody").getElementsByTagName("tr");
         for (let i = 0; i < tr.length; i++) {
             const txt = tr[i].innerText.toUpperCase();
-            tr[i].style.display = (eModoColaborador ? (filter.length >= 3 && txt.indexOf(filter) > -1) : (filter === "" || txt.indexOf(filter) > -1)) ? "" : "none";
+            // No modo assinante, só mostra se digitar pelo menos 3 letras
+            tr[i].style.display = (modoAssinante ? (filter.length >= 3 && txt.indexOf(filter) > -1) : (filter === "" || txt.indexOf(filter) > -1)) ? "" : "none";
         }
     }
 
@@ -159,14 +179,16 @@
         if (data) Object.keys(data).forEach(key => {
             const p = data[key];
             const tr = document.createElement('tr');
+            const statusTxt = p.signed ? '<span class="status-txt assinado">Assinado</span>' : '<span class="status-txt pendente">Pendente</span>';
+            
             tr.innerHTML = `
-                <td>${p.signed ? '✅' : '❌'}</td>
-                <td><b>${p.name}</b><br><small>${p.turma || 'S/T'}</small></td>
-                <td class="col-admin">${p.signed ? `<img src="${p.sigData}" class="signed-thumb"><img src="${p.photo}" class="signed-thumb">` : '-'}</td>
-                <td class="col-admin"><span class="geo-label">${p.geo || '-'}</span></td>
-                <td style="display:flex; gap:4px">
-                    ${p.signed ? `<button onclick="tentarRefazer('${key}','${p.name}')">Refazer</button>` : `<button onclick="abrirAssinatura('${key}','${p.name}')">ASSINAR</button>`}
-                    ${!eModoColaborador ? `<button class="danger" onclick="excluir('${key}','${p.name}')">X</button>` : ''}
+                <td class="col-status">${statusTxt}</td>
+                <td class="col-nome"><b>${p.name}</b><br><small>${p.turma || 'S/T'}</small></td>
+                <td class="col-admin col-admin-reg">${p.signed ? `<img src="${p.sigData}" class="signed-thumb"><img src="${p.photo}" class="signed-thumb">` : '-'}</td>
+                <td class="col-admin col-admin-gps"><span class="geo-label">${p.geo || '-'}</span></td>
+                <td class="col-acao" style="display:flex; gap:2px">
+                    ${p.signed ? `<button onclick="tentarRefazer('${key}','${p.name}')">Ref.</button>` : `<button onclick="abrirAssinatura('${key}','${p.name}')">OK</button>`}
+                    ${!modoAssinante ? `<button class="danger" onclick="excluir('${key}','${p.name}')">X</button>` : ''}
                 </td>
             `;
             tableBody.appendChild(tr);
@@ -183,7 +205,7 @@
                 fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`)
                 .then(r => r.json()).then(d => {
                     addressReal = d.address.road ? (d.address.road + ", " + (d.address.house_number || "S/N")) : d.display_name;
-                    document.getElementById('geoStatus').innerText = "📍 Endereço capturado";
+                    document.getElementById('geoStatus').innerText = "📍 Localização Confirmada";
                 });
             });
         }
@@ -212,17 +234,20 @@
 
     document.getElementById('saveData').onclick = () => {
         const photo = document.getElementById('photoPreview').src;
-        if(sigPad.isEmpty() || !photo.startsWith('data')) return alert("Foto e Assinatura!");
+        if(sigPad.isEmpty() || !photo.startsWith('data')) return alert("Obrigatório: Foto e Assinatura!");
         db.ref('participantes/' + currentUserId).update({
             signed: true, sigData: sigPad.toDataURL(), photo: photo, 
             time: new Date().toLocaleString(), geo: addressReal
-        }).then(() => { fecharModais(); filtrarTabela(); });
+        }).then(() => { 
+            fecharModais(); 
+            document.getElementById('searchInput').value = ""; // Limpa a busca após assinar
+            filtrarTabela();
+        });
     };
 
     function fecharModais() {
         document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
         if(localStream) localStream.getTracks().forEach(t => t.stop());
-        if(sigPad) sigPad.clear();
     }
 
     function excluir(id, n) { if(prompt(`Senha para excluir ${n}:`) === ADMIN_PASSWORD) db.ref('participantes/' + id).remove(); }
@@ -236,18 +261,16 @@
 
     document.getElementById('showQrBtn').onclick = () => {
         document.getElementById('qrcode').innerHTML = "";
-        const link = window.location.href.split('?')[0] + "?modo=1";
-        new QRCode(document.getElementById('qrcode'), { text: link, width: 180, height: 180 });
+        const urlAlunos = window.location.href.split('?')[0] + "?modo=1";
+        new QRCode(document.getElementById('qrcode'), { text: urlAlunos, width: 180, height: 180 });
         document.getElementById('qrModal').style.display = 'flex';
     };
 
-    document.getElementById('clearAllBtn').onclick = () => { if(prompt("Senha para LIMPAR TUDO:") === ADMIN_PASSWORD) db.ref('participantes').remove(); };
-
-    document.getElementById('clearSig').onclick = () => sigPad.clear();
-
+    document.getElementById('clearAllBtn').onclick = () => { if(prompt("Senha:") === ADMIN_PASSWORD) db.ref('participantes').remove(); };
+    
     document.getElementById('exportExcel').onclick = () => {
         db.ref('participantes').once('value', (snapshot) => {
-            const rows = [["Status", "Nome", "Turma", "Data/Hora", "Localização"]];
+            const rows = [["Status", "Nome", "Turma", "Data/Hora", "Endereço"]];
             const data = snapshot.val();
             if (data) Object.keys(data).forEach(k => {
                 const p = data[k];
@@ -256,7 +279,7 @@
             const ws = XLSX.utils.aoa_to_sheet(rows);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Frequencia");
-            XLSX.writeFile(wb, "frequencia_com_gps.xlsx");
+            XLSX.writeFile(wb, "relatorio_frequencia.xlsx");
         });
     };
 </script>
