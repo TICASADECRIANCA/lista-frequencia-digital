@@ -3,74 +3,70 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <title>Lista de Frequência Digital</title>
+    <title>Frequência Digital Pro</title>
     <style>
-        :root{--accent:#0b74e6; --danger:#ef4444; --warning:#f97316; --bg-light:#f5f7fb;}
+        :root{--accent:#0b74e6; --danger:#ef4444; --success:#16a34a; --bg-light:#f5f7fb;}
         
         body {
             font-family: Inter, system-ui, sans-serif;
-            margin: 0; padding: 15px; 
-            background-color: #f5f7fb;
+            margin: 0; padding: 10px; 
+            background-color: var(--bg-light);
+            overflow-x: hidden; /* Evita rolagem lateral da página inteira */ [cite: 3]
         }
 
         .container {
             max-width: 1150px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95); 
-            padding: 15px;
+            background: white; 
+            padding: 12px;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); [cite: 5]
         }
 
-        .header-container { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
-        .logo-escola { height: 50px; width: auto; object-fit: contain; }
-        h1 { margin: 0; font-size: 20px; color: #333; }
+        .header-container { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; } [cite: 6]
+        .logo-escola { height: 40px; width: auto; } [cite: 7]
+        h1 { margin: 0; font-size: 18px; color: #333; } [cite: 9]
 
-        .controls { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
-        input, button { padding: 10px; border-radius: 8px; border: 1px solid #d1d5db; font-size: 14px; }
-        button { background: var(--accent); color: #fff; border: none; cursor: pointer; font-weight: 600; }
+        .controls { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; } [cite: 10]
+        input, button { padding: 8px; border-radius: 6px; border: 1px solid #ddd; font-size: 13px; } [cite: 11]
+        button { background: var(--accent); color: #fff; border: none; cursor: pointer; font-weight: 600; } [cite: 12]
         button.ghost { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
-        button.danger { background: var(--danger); color: #fff; }
+        button.danger { background: var(--danger); color: #fff; } [cite: 12]
         
-        #searchInput { background: #fff; border: 2px solid var(--accent); flex-grow: 1; font-size: 16px; }
+        #searchInput { border: 2px solid var(--accent); flex-grow: 1; font-size: 15px; } [cite: 13]
         
-        table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
-        th, td { padding: 8px; border-bottom: 1px solid #eef2f7; text-align: left; }
-        th { background: #f8fafc; }
+        /* Ajuste da Tabela para não vazar da tela */
+        .table-responsive { overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: collapse; min-width: 400px; } /* Min-width menor para caber em mais telas */ [cite: 14]
+        th, td { padding: 6px 4px; border-bottom: 1px solid #eee; text-align: left; font-size: 12px; } [cite: 14]
         
-        /* Controle de visibilidade da lista */
-        #tableBody tr { display: table-row; } /* Mostra por padrão no Admin */
-        body.modo-colaborador #tableBody tr { display: none; } /* Esconde no modo QR Code/Colaborador */
-        .mostrar-linha { display: table-row !important; }
+        #tableBody tr { display: none; } [cite: 15]
+        .mostrar-linha { display: table-row !important; } [cite: 16]
 
-        .signed-thumb { height: 40px; border-radius: 4px; border: 1px solid #ddd; margin-right: 3px; }
+        .signed-thumb { height: 35px; border-radius: 4px; margin-right: 2px; } [cite: 19]
         
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,.8); display: none; align-items: center; justify-content: center; z-index: 1000; }
-        .card { background: #fff; padding: 15px; border-radius: 12px; width: 95%; max-width: 600px; max-height: 95vh; overflow-y: auto; position: relative;}
+        /* Modal e Assinatura */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,.8); display: none; align-items: center; justify-content: center; z-index: 1000; } [cite: 20]
+        .card { background: #fff; padding: 15px; border-radius: 12px; width: 95%; max-width: 500px; max-height: 90vh; overflow-y: auto; } [cite: 21]
         
         .signature-wrapper { 
-            border: 2px dashed #ccc; 
+            border: 2px solid #ddd; 
             border-radius: 8px; 
-            background: #fff; 
+            background: #fafafa; 
             width: 100%; 
-            height: 200px; 
+            height: 180px; 
             position: relative;
-            touch-action: none; /* CORREÇÃO: Impede a tela de rolar ao assinar */
+            touch-action: none; /* Crucial para não arrastar a tela ao assinar */ 
         }
-        .signature-canvas { width: 100%; height: 100%; cursor: crosshair; }
+        .signature-canvas { width: 100%; height: 100%; touch-action: none; } 
         
-        #video, #photoPreview { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 8px; background: #000; }
-        #video { transform: scaleX(-1); }
+        #video, #photoPreview { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 8px; } [cite: 29]
 
-        .status-badge { padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: bold; }
-        .status-pendente { background: #fee2e2; color: #ef4444; }
-        .status-assinado { background: #dcfce7; color: #16a34a; }
-
-        body.modo-colaborador #adminPanel { display: none; }
+        body.modo-colaborador #adminPanel { display: none; } [cite: 34]
 
         @media (max-width: 600px) {
-            .controls input { flex: 1; min-width: 120px; }
-            th, td { padding: 5px; font-size: 12px; }
+            h1 { font-size: 16px; } [cite: 40]
+            td button { padding: 5px 8px; font-size: 11px; } /* Botão menor no celular */
         }
     </style>
 </head>
@@ -79,32 +75,34 @@
 <div class="container">
     <div class="header-container">
         <img src="logo.png" alt="Logo" class="logo-escola" onerror="this.style.display='none'">
-        <h1 id="tituloPagina">Gestão de Frequência</h1>
+        <h1 id="tituloPagina">Gestão de Frequência</h1> [cite: 55]
     </div>
     
     <div class="controls" id="adminPanel">
-        <input id="nameInput" placeholder="Nome Completo"/>
-        <input id="turmaInput" placeholder="Turma" style="width: 100px"/>
-        <button id="addBtn">Adicionar</button>
-        <button onclick="document.getElementById('importFile').click()" class="ghost">Importar TXT</button>
+        <input id="nameInput" placeholder="Nome" style="flex:2"/>
+        <input id="turmaInput" placeholder="Turma" style="flex:1"/>
+        <button id="addBtn">Add</button>
+        <button onclick="document.getElementById('importFile').click()" class="ghost">Importar</button>
         <input type="file" id="importFile" style="display:none" accept=".txt" />
-        <button id="showQrBtn" class="ghost">📲 QR Code</button>
-        <button id="clearAllBtn" class="danger">Limpar Banco</button>
-        <button id="generatePdf" style="margin-left:auto">Gerar PDF</button>
+        <button id="showQrBtn" class="ghost">QR</button>
+        <button id="clearAllBtn" class="danger">Limpar</button>
+        <div style="width:100%; display:flex; gap:5px; margin-top:5px; border-top:1px solid #eee; padding-top:5px;">
+            <input id="pdfTurmaFilter" placeholder="Turma p/ PDF (ex: 7A)" style="flex:1"/>
+            <button id="generatePdf" style="background:var(--success)">PDF por Turma</button> 
+        </div>
     </div>
 
     <div class="controls">
-        <input id="searchInput" type="text" placeholder="🔍 BUSCAR NOME..." onkeyup="filtrarTabela()">
+        <input id="searchInput" type="text" placeholder="🔍 DIGITE SEU NOME..." onkeyup="filtrarTabela()"> [cite: 63]
     </div>
 
-    <div style="overflow-x: auto;">
+    <div class="table-responsive">
         <table id="mainTable">
             <thead>
                 <tr>
                     <th>Status</th>
-                    <th>Nome</th>
-                    <th>Turma</th>
-                    <th>Assinatura/Foto</th>
+                    <th>Nome / Turma</th>
+                    <th>Foto/Assin</th>
                     <th>Ação</th>
                 </tr>
             </thead>
@@ -115,33 +113,32 @@
 
 <div id="signModal" class="modal">
     <div class="card">
-        <h2 id="nomeAssinando">Assinar</h2>
-        <div id="geoStatus" style="font-size: 11px; color: var(--warning); margin-bottom: 10px;">Localizando...</div>
+        <h2 id="nomeAssinando" style="margin:0">Assinar</h2>
+        <p id="geoStatus" style="font-size:10px; color:var(--warning)">Localizando...</p> [cite: 45]
         
-        <label style="font-size: 12px;"><b>1. Foto Selfie:</b></label>
-        <video id="video" autoplay playsinline></video>
+        <label style="font-size:11px"><b>1. Selfie:</b></label>
+        <video id="video" autoplay playsinline></video> [cite: 46]
         <img id="photoPreview" style="display:none;" />
-        <button id="takePhoto" style="width:100%; margin: 8px 0;">📸 Capturar Foto</button>
+        <button id="takePhoto" style="width:100%; margin: 5px 0">📸 Capturar</button> [cite: 47]
 
-        <label style="font-size: 12px;"><b>2. Assinatura:</b></label>
+        <label style="font-size:11px"><b>2. Assinatura:</b></label>
         <div class="signature-wrapper">
-            <canvas id="sigCanvas" class="signature-canvas"></canvas>
+            <canvas id="sigCanvas" class="signature-canvas"></canvas> [cite: 49]
         </div>
-        <button id="clearSig" class="ghost" style="width:100%; margin-top:5px;">LIMPAR ASSINATURA</button>
+        <button id="clearSig" class="ghost" style="width:100%; margin-top:5px">LIMPAR ASSINATURA</button> [cite: 49]
 
-        <div style="display: flex; gap: 10px; margin-top: 20px;">
-            <button onclick="fecharModais()" class="ghost" style="flex:1">Cancelar</button>
-            <button id="saveData" style="flex:2; background: #16a34a;">CONFIRMAR</button>
+        <div style="display: flex; gap: 8px; margin-top: 15px;">
+            <button onclick="fecharModais()" class="ghost" style="flex:1">Sair</button>
+            <button id="saveData" style="flex:2; background: var(--success)">CONFIRMAR</button> [cite: 50]
         </div>
     </div>
 </div>
 
 <div id="qrModal" class="modal">
-    <div class="card" style="text-align:center; max-width: 350px;">
-        <h2>Acesso Celular</h2>
-        <div id="qrcode" style="display:flex; justify-content:center; margin:20px 0"></div>
-        <p style="font-size: 12px; color: #666;">Aponte a câmera para este código para assinar pelo celular.</p>
-        <button onclick="fecharModais()" class="ghost" style="width: 100%">Fechar</button>
+    <div class="card" style="text-align:center; max-width: 300px;">
+        <h3>QR Code de Acesso</h3>
+        <div id="qrcode" style="display:flex; justify-content:center; margin:15px 0"></div>
+        <button onclick="fecharModais()" class="ghost" style="width:100%">Fechar</button> [cite: 51]
     </div>
 </div>
 
@@ -161,17 +158,17 @@
         storageBucket: "frenquencia-digital.firebasestorage.app",
         messagingSenderId: "625078117212",
         appId: "1:625078117212:web:bc5c57e18af96b305d1799"
-    };
+    }; [cite: 53]
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     let sigPad, localStream, currentUserId = null;
-    const urlParams = new URLSearchParams(window.location.search);
-    const eModoColaborador = urlParams.has('modo');
+    const urlParams = new URLSearchParams(window.location.search); [cite: 54]
+    const eModoColaborador = urlParams.has('modo'); [cite: 54]
 
     if (eModoColaborador) {
         document.getElementById('mainBody').classList.add('modo-colaborador');
-        document.getElementById('tituloPagina').innerText = "Assinatura de Presença";
+        document.getElementById('tituloPagina').innerText = "Presença Digital"; [cite: 55]
     }
 
     // Adicionar Manual
@@ -179,40 +176,37 @@
         const n = document.getElementById('nameInput').value.trim();
         const t = document.getElementById('turmaInput').value.trim() || 'S/T';
         if(n) { 
-            db.ref('participantes').push().set({ name: n, turma: t, signed: false });
-            document.getElementById('nameInput').value = '';
-            document.getElementById('turmaInput').value = '';
+            db.ref('participantes').push().set({ name: n, turma: t, signed: false }); [cite: 58]
+            document.getElementById('nameInput').value = ''; document.getElementById('turmaInput').value = '';
         }
     };
 
-    // Importar TXT (Nome, Turma)
+    // Importar TXT (Formato: Nome, Turma)
     document.getElementById('importFile').onchange = (e) => {
-        const file = e.target.files[0];
+        const file = e.target.files[0]; [cite: 59]
         const reader = new FileReader();
         reader.onload = (ev) => {
-            const lines = ev.target.result.split(/\r?\n/);
+            const lines = ev.target.result.split(/\r?\n/); [cite: 60]
             lines.forEach(line => {
-                const parts = line.split(',');
+                const parts = line.split(','); [cite: 61]
                 const name = parts[0]?.trim();
                 const turma = parts[1]?.trim() || 'S/T';
                 if (name) db.ref('participantes').push().set({ name: name, turma: turma, signed: false });
             });
-            alert("Nomes importados!");
+            alert("Importado com sucesso!"); [cite: 62]
         };
         reader.readAsText(file);
     };
 
     function filtrarTabela() {
-        const filter = document.getElementById("searchInput").value.toUpperCase();
-        const tr = document.getElementById("tableBody").getElementsByTagName("tr");
+        const filter = document.getElementById("searchInput").value.toUpperCase(); [cite: 63]
+        const tr = document.getElementById("tableBody").getElementsByTagName("tr"); [cite: 63]
         for (let i = 0; i < tr.length; i++) {
-            const txtValue = tr[i].innerText.toUpperCase();
+            const txtValue = tr[i].innerText.toUpperCase(); [cite: 65]
             if (eModoColaborador) {
-                // No celular, só mostra se digitar 2+ letras
-                tr[i].classList.toggle('mostrar-linha', filter.length >= 2 && txtValue.indexOf(filter) > -1);
+                tr[i].classList.toggle('mostrar-linha', filter.length >= 2 && txtValue.indexOf(filter) > -1); [cite: 66]
             } else {
-                // No Admin, mostra tudo se busca estiver vazia
-                tr[i].classList.toggle('mostrar-linha', filter === "" || txtValue.indexOf(filter) > -1);
+                tr[i].classList.toggle('mostrar-linha', filter === "" || txtValue.indexOf(filter) > -1); [cite: 67]
             }
         }
     }
@@ -223,34 +217,33 @@
         const data = snapshot.val();
         if (data) {
             Object.keys(data).forEach(key => {
-                const p = data[key];
+                const p = data[key]; [cite: 69]
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><span class="status-badge ${p.signed ? 'status-assinado' : 'status-pendente'}">${p.signed ? 'Assinado' : 'Pendente'}</span></td>
-                    <td><b>${p.name}</b></td>
-                    <td>${p.turma || '-'}</td>
-                    <td>${p.signed ? `<img src="${p.sigData}" class="signed-thumb"><img src="${p.photo}" class="signed-thumb">` : '-'}</td>
+                    <td><span class="status-badge ${p.signed ? 'status-assinado' : 'status-pendente'}">${p.signed ? 'Ok' : '...'}</span></td> [cite: 70]
+                    <td><b>${p.name}</b><br><small>${p.turma || ''}</small></td>
+                    <td>${p.signed ? `<img src="${p.sigData}" class="signed-thumb"><img src="${p.photo}" class="signed-thumb">` : '-'}</td> [cite: 70]
                     <td>
-                        ${p.signed ? `<button class="ghost" onclick="tentarRefazer('${key}', '${p.name}')">Refazer</button>` : `<button onclick="abrirAssinatura('${key}', '${p.name}')">Assinar</button>`}
-                        ${!eModoColaborador ? `<button class="danger" onclick="excluirParticipante('${key}', '${p.name}')">X</button>` : ''}
+                        ${p.signed ? `<button class="ghost" onclick="tentarRefazer('${key}', '${p.name}')">Refazer</button>` : `<button onclick="abrirAssinatura('${key}', '${p.name}')">Assinar</button>`} [cite: 72]
+                        ${!eModoColaborador ? `<button class="danger" onclick="excluirParticipante('${key}', '${p.name}')">X</button>` : ''} [cite: 73]
                     </td>
                 `;
-                tableBody.appendChild(tr);
+                tableBody.appendChild(tr); [cite: 74]
             });
             filtrarTabela();
         }
     });
 
     function abrirAssinatura(id, nome) {
-        currentUserId = id;
+        currentUserId = id; [cite: 79]
         document.getElementById('nomeAssinando').innerText = nome;
-        document.getElementById('signModal').style.display = 'flex';
+        document.getElementById('signModal').style.display = 'flex'; [cite: 79]
         setTimeout(() => {
             const canvas = document.getElementById('sigCanvas');
             canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
-            sigPad = new SignaturePad(canvas, { minWidth: 1, maxWidth: 3 });
+            sigPad = new SignaturePad(canvas, { minWidth: 1.5, maxWidth: 3.5 });
         }, 300);
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }).then(s => {
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }).then(s => { [cite: 80]
             localStream = s;
             document.getElementById('video').srcObject = s;
             document.getElementById('photoPreview').style.display = 'none';
@@ -259,50 +252,86 @@
     }
 
     document.getElementById('takePhoto').onclick = () => {
-        const video = document.getElementById('video');
+        const video = document.getElementById('video'); [cite: 83]
         const canvas = document.createElement('canvas');
         canvas.width = video.videoWidth; canvas.height = video.videoHeight;
         const ctx = canvas.getContext('2d');
-        ctx.translate(canvas.width, 0); ctx.scale(-1, 1);
-        ctx.drawImage(video, 0, 0);
+        ctx.translate(canvas.width, 0); ctx.scale(-1, 1); [cite: 83]
+        ctx.drawImage(video, 0, 0); [cite: 84]
         document.getElementById('photoPreview').src = canvas.toDataURL('image/jpeg');
         document.getElementById('photoPreview').style.display = 'block';
         document.getElementById('video').style.display = 'none';
     };
 
     document.getElementById('saveData').onclick = () => {
-        const photo = document.getElementById('photoPreview').src;
+        const photo = document.getElementById('photoPreview').src; [cite: 86]
         if(sigPad.isEmpty() || !photo.startsWith('data')) return alert("Foto e Assinatura obrigatórias!");
         db.ref('participantes/' + currentUserId).update({
             signed: true, sigData: sigPad.toDataURL(), photo: photo, time: new Date().toLocaleString()
-        }).then(fecharModais);
+        }).then(fecharModais); [cite: 87]
     };
 
     function fecharModais() {
-        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
-        if(localStream) localStream.getTracks().forEach(t => t.stop());
+        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); [cite: 88]
+        if(localStream) localStream.getTracks().forEach(t => t.stop()); [cite: 88]
     }
 
-    document.getElementById('clearSig').onclick = () => sigPad.clear();
+    document.getElementById('clearSig').onclick = () => sigPad.clear(); [cite: 89]
 
     document.getElementById('showQrBtn').onclick = () => {
         document.getElementById('qrcode').innerHTML = "";
-        const link = window.location.href.split('?')[0] + "?modo=1";
-        new QRCode(document.getElementById('qrcode'), { text: link, width: 200, height: 200 });
-        document.getElementById('qrModal').style.display = 'flex';
+        const link = window.location.href.split('?')[0] + "?modo=1"; [cite: 89]
+        new QRCode(document.getElementById('qrcode'), { text: link, width: 180, height: 180 }); [cite: 90]
+        document.getElementById('qrModal').style.display = 'flex'; [cite: 90]
     };
 
     function tentarRefazer(id, nome) {
-        if(prompt("Senha Admin:") === ADMIN_PASSWORD) abrirAssinatura(id, nome);
+        if(prompt("Senha Admin:") === ADMIN_PASSWORD) abrirAssinatura(id, nome); [cite: 91]
     }
     function excluirParticipante(id, nome) {
-        if(prompt(`Excluir ${nome}? Senha:`) === ADMIN_PASSWORD) db.ref('participantes/' + id).remove();
+        if(prompt(`Excluir ${nome}? Senha:`) === ADMIN_PASSWORD) db.ref('participantes/' + id).remove(); [cite: 92]
     }
     document.getElementById('clearAllBtn').onclick = () => {
-        if(prompt("Limpar tudo? Senha:") === ADMIN_PASSWORD) db.ref('participantes').remove();
+        if(confirm("Deseja apagar TODO o banco de dados?") && prompt("Senha:") === ADMIN_PASSWORD) db.ref('participantes').remove(); [cite: 93]
     };
+
+    // FUNÇÃO PARA GERAR PDF SEPARADO POR TURMA
     document.getElementById('generatePdf').onclick = () => {
-        html2pdf().from(document.getElementById('mainTable')).save('frequencia.pdf');
+        const turmaAlvo = document.getElementById('pdfTurmaFilter').value.trim().toUpperCase(); [cite: 94]
+        const originalRows = Array.from(document.querySelectorAll('#tableBody tr'));
+        
+        // Criar uma tabela temporária para o PDF
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = `<h3>Relatório de Frequência - ${turmaAlvo || 'Geral'}</h3>`;
+        const tempTable = document.createElement('table');
+        tempTable.style.width = "100%";
+        tempTable.border = "1";
+        tempTable.innerHTML = "<thead><tr><th>Status</th><th>Nome</th><th>Turma</th><th>Assinatura</th><th>Foto</th></tr></thead>";
+        const tempBody = document.createElement('tbody');
+
+        originalRows.forEach(row => {
+            const textoRow = row.innerText.toUpperCase();
+            // Se o filtro estiver vazio, pega tudo. Se tiver algo, filtra pela turma.
+            if (turmaAlvo === "" || textoRow.includes(turmaAlvo)) {
+                const clone = row.cloneNode(true);
+                // Remove a última coluna (botões de ação) do PDF
+                clone.removeChild(clone.lastElementChild);
+                tempBody.appendChild(clone);
+            }
+        });
+
+        if (tempBody.children.length === 0) return alert("Nenhum aluno encontrado para esta turma.");
+
+        tempTable.appendChild(tempBody);
+        tempDiv.appendChild(tempTable);
+        
+        const opt = {
+            margin: 10,
+            filename: `frequencia_${turmaAlvo || 'geral'}.pdf`,
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+        };
+        html2pdf().set(opt).from(tempDiv).save(); [cite: 94]
     };
 </script>
 </body>
