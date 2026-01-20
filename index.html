@@ -3,74 +3,88 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <title>Frequência Digital Pro + GPS</title>
+    <title>Frequência Digital</title>
     <style>
         :root{--accent:#0b74e6; --danger:#ef4444; --success:#16a34a; --warning:#f97316; --bg-light:#f5f7fb;}
         
         body { 
             font-family: Inter, system-ui, sans-serif; 
             margin: 0; 
-            padding: 10px; 
-            /* Estilo do arquivo N APAGAR.txt */
+            padding: 5px; 
             background-image: url('fundo.jpg'); 
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             background-color: var(--bg-light); 
+            overflow-x: hidden; /* Impede rolagem lateral no corpo */
         }
 
         .container { 
-            max-width: 1200px; 
+            max-width: 100%;
             margin: 0 auto; 
             background: rgba(255, 255, 255, 0.95); 
-            padding: 15px; 
-            border-radius: 12px; 
+            padding: 10px; 
+            border-radius: 8px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
             backdrop-filter: blur(5px);
+            box-sizing: border-box;
         }
 
-        .header-container { 
-            display: flex; 
-            align-items: center; 
-            gap: 15px; 
-            margin-bottom: 20px; 
-        }
-        .logo-escola { 
-            height: 55px; 
-            width: auto; 
-            object-fit: contain; 
-        }
-        h1 { margin: 0; font-size: 22px; color: #333; }
+        .header-container { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+        .logo-escola { height: 40px; width: auto; object-fit: contain; }
+        h1 { margin: 0; font-size: 18px; color: #333; }
 
-        .controls { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
-        input, button { padding: 8px; border-radius: 6px; border: 1px solid #ddd; font-size: 13px; }
+        .controls { display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap; }
+        input, button { padding: 8px; border-radius: 6px; border: 1px solid #ddd; font-size: 12px; }
         button { background: var(--accent); color: #fff; border: none; cursor: pointer; font-weight: 600; }
-        button.ghost { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
-        button.danger { background: var(--danger); color: #fff; padding: 8px 12px; }
-        button.excel { background: #1d6f42; color: #fff; }
+        button.danger { background: var(--danger); color: #fff; padding: 8px 10px; }
         
-        #searchInput { border: 2px solid var(--accent); flex-grow: 1; font-size: 15px; background: white; }
-        .table-responsive { overflow-x: auto; width: 100%; }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; background: white; }
-        th, td { padding: 8px 6px; border-bottom: 1px solid #eee; text-align: left; font-size: 11px; }
+        #searchInput { border: 2px solid var(--accent); flex: 1; min-width: 200px; font-size: 14px; background: white; }
         
-        .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
+        /* AJUSTE DA TABELA PARA NÃO ROLAR */
+        .table-responsive { width: 100%; overflow-x: hidden; }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; } /* Layout fixo evita expansão */
+        
+        th, td { 
+            padding: 6px 2px; 
+            border-bottom: 1px solid #eee; 
+            text-align: left; 
+            font-size: 10px; 
+            word-wrap: break-word; /* Força quebra de texto */
+        }
+
+        /* Larguras das colunas para celular */
+        th:nth-child(1), td:nth-child(1) { width: 45px; } /* Status */
+        th:nth-child(2), td:nth-child(2) { width: auto; } /* Nome */
+        th:nth-child(3), td:nth-child(3) { width: 75px; } /* Registros */
+        th:nth-child(5), td:nth-child(5) { width: 65px; } /* Ações */
+
+        .status-badge { padding: 3px 5px; border-radius: 10px; font-size: 9px; font-weight: bold; }
         .status-pendente { background: #fee2e2; color: #ef4444; }
         .status-assinado { background: #dcfce7; color: #16a34a; }
         
         #tableBody tr { display: none; }
         .mostrar-linha { display: table-row !important; }
-        .signed-thumb { height: 40px; border-radius: 4px; margin-right: 4px; border: 1px solid #ddd; vertical-align: middle; }
-        .geo-info { font-size: 9px; color: #666; display: block; margin-top: 4px; max-width: 200px; line-height: 1.2; }
-        .map-link { color: var(--accent); text-decoration: none; font-weight: bold; }
         
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: none; align-items: center; justify-content: center; z-index: 1000; }
-        .card { background: #fff; padding: 20px; border-radius: 12px; width: 95%; max-width: 550px; }
-        .signature-wrapper { border: 2px solid #333; border-radius: 8px; height: 180px; touch-action: none; position: relative; }
-        #video, #photoPreview { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 8px; background: #000; }
+        .signed-thumb { height: 30px; width: 30px; border-radius: 4px; border: 1px solid #ddd; object-fit: cover; }
         
-        /* Oculta colunas administrativas no modo aluno */
-        body.modo-colaborador #adminPanel, body.modo-colaborador .col-admin { display: none; }
+        .geo-info { 
+            font-size: 8px; 
+            color: #666; 
+            display: block; 
+            line-height: 1.1; 
+            max-width: 100%; 
+            white-space: normal; /* Permite que o endereço quebre linha */
+        }
+
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,.9); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 10px; }
+        .card { background: #fff; padding: 15px; border-radius: 12px; width: 100%; max-width: 400px; box-sizing: border-box; }
+        .signature-wrapper { border: 2px solid #333; border-radius: 8px; height: 150px; background: #fff; }
+        #video, #photoPreview { width: 100%; border-radius: 8px; background: #000; margin-bottom: 5px; }
+        
+        /* Esconde GPS no modo aluno para economizar espaço */
+        body.modo-colaborador .col-admin { display: none; }
+        body.modo-colaborador th:nth-child(2), body.modo-colaborador td:nth-child(2) { width: 60%; }
     </style>
 </head>
 <body>
@@ -78,22 +92,18 @@
 <div class="container">
     <div class="header-container">
         <img src="logo.png" alt="Logo" class="logo-escola" onerror="this.style.display='none'">
-        <h1>Frequência Digital</h1>
+        <h1>Frequência</h1>
     </div>
     
     <div class="controls" id="adminPanel">
-        <input id="nameInput" placeholder="Nome do Aluno" style="flex:2"/>
-        <input id="turmaInput" placeholder="Turma" style="flex:1"/>
-        <button id="addBtn">Adicionar</button>
-        <button onclick="document.getElementById('importFile').click()" class="ghost">Importar TXT</button>
-        <input type="file" id="importFile" style="display:none" accept=".txt" />
-        <button id="showQrBtn" class="ghost">QR Code</button>
-        <button id="clearAllBtn" class="danger">Limpar Tudo</button>
-        <button id="exportExcel" class="excel">📊 Excel</button>
+        <input id="nameInput" placeholder="Nome" style="flex:1"/>
+        <button id="addBtn">Add</button>
+        <button id="exportExcel" style="background:#1d6f42">Excel</button>
+        <button id="clearAllBtn" class="danger">Limpar</button>
     </div>
 
     <div class="controls">
-        <input id="searchInput" type="text" placeholder="🔍 DIGITE SEU NOME PARA ASSINAR..." onkeyup="filtrarTabela()">
+        <input id="searchInput" type="text" placeholder="🔍 BUSCAR MEU NOME..." onkeyup="filtrarTabela()">
     </div>
 
     <div class="table-responsive">
@@ -101,10 +111,10 @@
             <thead>
                 <tr>
                     <th>Status</th>
-                    <th>Nome / Turma</th>
-                    <th class="col-admin">Registros</th>
-                    <th class="col-admin">Localização (GPS)</th>
-                    <th>Ações</th>
+                    <th>Nome</th>
+                    <th class="col-admin">Fotos</th>
+                    <th class="col-admin">Endereço</th>
+                    <th>Ação</th>
                 </tr>
             </thead>
             <tbody id="tableBody"></tbody>
@@ -114,34 +124,26 @@
 
 <div id="signModal" class="modal">
     <div class="card">
-        <h3 id="nomeAssinando" style="margin:0 0 10px 0">Assinar</h3>
-        <div id="geoStatus" style="font-size:10px; color:var(--warning); font-weight:bold">📍 Obtendo endereço...</div>
+        <h4 id="nomeAssinando" style="margin:0 0 10px 0">Assinar</h4>
+        <div id="geoStatus" style="font-size:10px; color:var(--warning); margin-bottom:5px">📍 Localizando...</div>
         
         <video id="video" autoplay playsinline></video>
         <img id="photoPreview" style="display:none;" />
-        <button id="takePhoto" style="width:100%; margin: 5px 0">📸 Tirar Foto</button>
+        <button id="takePhoto" style="width:100%; background: #333; margin-bottom:10px">📸 Tirar Foto</button>
 
         <div class="signature-wrapper"><canvas id="sigCanvas" style="width:100%;height:100%"></canvas></div>
-        <button id="clearSig" class="ghost" style="width:100%; margin-top:5px; font-size:11px">LIMPAR</button>
+        <button id="clearSig" style="background:none; color:#666; width:100%; font-size:10px">LIMPAR ASSINATURA</button>
 
         <div style="display: flex; gap: 8px; margin-top: 15px;">
-            <button onclick="fecharModais()" class="ghost" style="flex:1">Sair</button>
+            <button onclick="fecharModais()" style="background:#ccc; flex:1">Sair</button>
             <button id="saveData" style="flex:2; background: var(--success)">FINALIZAR</button>
         </div>
-    </div>
-</div>
-
-<div id="qrModal" class="modal">
-    <div class="card" style="text-align:center; max-width: 300px;">
-        <div id="qrcode" style="display:flex; justify-content:center; margin:15px 0"></div>
-        <button onclick="fecharModais()" class="ghost" style="width:100%">Fechar</button>
     </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script>
@@ -151,9 +153,6 @@
         authDomain: "frenquencia-digital.firebaseapp.com",
         databaseURL: "https://frenquencia-digital-default-rtdb.firebaseio.com",
         projectId: "frenquencia-digital",
-        storageBucket: "frenquencia-digital.firebasestorage.app",
-        messagingSenderId: "625078117212",
-        appId: "1:625078117212:web:bc5c57e18af96b305d1799"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -181,17 +180,16 @@
             Object.keys(data).forEach(key => {
                 const p = data[key];
                 const tr = document.createElement('tr');
-                const statusHtml = p.signed ? `<span class="status-badge status-assinado">Assinado</span>` : `<span class="status-badge status-pendente">Pendente</span>`;
-                const geoHtml = p.signed && p.geo ? `<span class="geo-info">${p.geo} <br> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.geo)}" target="_blank" class="map-link">[Ver no Mapa]</a></span>` : '-';
-
+                const statusHtml = p.signed ? `<span class="status-badge status-assinado">Sim</span>` : `<span class="status-badge status-pendente">Não</span>`;
+                
                 tr.innerHTML = `
                     <td>${statusHtml}</td>
-                    <td><b>${p.name}</b><br><small>${p.turma || 'S/T'}</small></td>
+                    <td><b>${p.name}</b></td>
                     <td class="col-admin">${p.signed ? `<img src="${p.sigData}" class="signed-thumb"><img src="${p.photo}" class="signed-thumb">` : '-'}</td>
-                    <td class="col-admin">${geoHtml}</td>
-                    <td style="display:flex; gap:4px">
-                        ${p.signed ? `<button class="ghost" onclick="tentarRefazer('${key}','${p.name}')">Refazer</button>` : `<button onclick="abrirAssinatura('${key}','${p.name}')">ASSINAR</button>`}
-                        ${!eModoColaborador ? `<button class="danger" onclick="excluirParticipante('${key}','${p.name}')">X</button>` : ''}
+                    <td class="col-admin"><span class="geo-info">${p.geo || '-'}</span></td>
+                    <td style="display:flex; gap:2px">
+                        ${p.signed ? `<button onclick="tentarRefazer('${key}','${p.name}')">Ref.</button>` : `<button onclick="abrirAssinatura('${key}','${p.name}')">ASSINAR</button>`}
+                        ${!eModoColaborador ? `<button class="danger" onclick="excluir('${key}','${p.name}')">X</button>` : ''}
                     </td>
                 `;
                 tableBody.appendChild(tr);
@@ -200,7 +198,6 @@
         }
     });
 
-    // Funções de localização, assinatura e câmera (arquivo ok.txt)
     function abrirAssinatura(id, nome) {
         currentUserId = id;
         document.getElementById('nomeAssinando').innerText = nome;
@@ -210,11 +207,8 @@
             navigator.geolocation.getCurrentPosition((pos) => {
                 fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`)
                 .then(r => r.json()).then(data => {
-                    currentFullAddress = data.display_name;
-                    document.getElementById('geoStatus').innerText = "📍 Endereço capturado";
-                }).catch(() => {
-                    currentFullAddress = `${pos.coords.latitude}, ${pos.coords.longitude}`;
-                    document.getElementById('geoStatus').innerText = "📍 Coordenadas capturadas";
+                    currentFullAddress = data.address.road ? (data.address.road + ", " + (data.address.house_number || "S/N")) : data.display_name;
+                    document.getElementById('geoStatus').innerText = "📍 Local OK";
                 });
             });
         }
@@ -245,7 +239,7 @@
 
     document.getElementById('saveData').onclick = () => {
         const photo = document.getElementById('photoPreview').src;
-        if(sigPad.isEmpty() || !photo.startsWith('data')) return alert("Erro: Foto e Assinatura!");
+        if(sigPad.isEmpty() || !photo.startsWith('data')) return alert("Foto e Assinatura!");
         db.ref('participantes/' + currentUserId).update({
             signed: true, sigData: sigPad.toDataURL(), photo: photo, 
             time: new Date().toLocaleString(), geo: currentFullAddress
@@ -259,53 +253,13 @@
     function fecharModais() {
         document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
         if(localStream) localStream.getTracks().forEach(t => t.stop());
-        if(sigPad) sigPad.clear();
     }
 
-    // Funções Administrativas (arquivo N APAGAR.txt)
-    function excluirParticipante(id, nome) {
-        if(prompt(`Senha para excluir ${nome}:`) === ADMIN_PASSWORD) db.ref('participantes/' + id).remove();
-    }
-
-    document.getElementById('exportExcel').onclick = () => {
-        db.ref('participantes').once('value', (snapshot) => {
-            const rows = [["Status", "Nome", "Turma", "Data/Hora", "Localização"]];
-            const data = snapshot.val();
-            if (data) Object.keys(data).forEach(k => {
-                const p = data[k];
-                rows.push([p.signed ? "Assinado" : "Pendente", p.name, p.turma || "S/T", p.time || "-", p.geo || "-"]);
-            });
-            const ws = XLSX.utils.aoa_to_sheet(rows);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Frequencia");
-            XLSX.writeFile(wb, "frequencia_com_gps.xlsx");
-        });
-    };
-
-    document.getElementById('importFile').onchange = (e) => {
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            const lines = ev.target.result.split(/\r?\n/);
-            lines.forEach(l => {
-                const p = l.split(',');
-                if(p[0]) db.ref('participantes').push().set({name:p[0].trim(), turma:p[1]?.trim()||'S/T', signed:false});
-            });
-            alert(`Nomes importados!`);
-        };
-        reader.readAsText(e.target.files[0]);
-    };
-
-    document.getElementById('clearSig').onclick = () => sigPad.clear();
-    document.getElementById('showQrBtn').onclick = () => {
-        document.getElementById('qrcode').innerHTML = "";
-        new QRCode(document.getElementById('qrcode'), { text: window.location.href.split('?')[0] + "?modo=1", width: 180, height: 180 });
-        document.getElementById('qrModal').style.display = 'flex';
-    };
+    function excluir(id, n) { if(prompt("Senha:") === ADMIN_PASSWORD) db.ref('participantes/' + id).remove(); }
     function tentarRefazer(id, n) { if(prompt("Senha:") === ADMIN_PASSWORD) abrirAssinatura(id, n); }
     document.getElementById('addBtn').onclick = () => {
         const n = document.getElementById('nameInput').value;
-        const t = document.getElementById('turmaInput').value;
-        if(n) db.ref('participantes').push().set({ name: n, turma: t, signed: false });
+        if(n) db.ref('participantes').push().set({ name: n, turma: '', signed: false });
     };
     document.getElementById('clearAllBtn').onclick = () => { if(confirm("Apagar tudo?") && prompt("Senha:") === ADMIN_PASSWORD) db.ref('participantes').remove(); };
 </script>
