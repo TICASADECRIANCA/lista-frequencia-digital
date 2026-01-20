@@ -3,17 +3,15 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <title>Frequência Digital Pro - Admin GPS</title>
+    <title>Frequência Digital - Endereço Real</title>
     <style>
         :root{--accent:#0b74e6; --danger:#ef4444; --success:#16a34a; --warning:#f97316; --bg-light:#f5f7fb;}
         body { font-family: Inter, system-ui, sans-serif; margin: 0; padding: 10px; background-color: var(--bg-light); }
         .container { max-width: 1200px; margin: 0 auto; background: white; padding: 12px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-        .header-container { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
         .controls { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
         input, button { padding: 8px; border-radius: 6px; border: 1px solid #ddd; font-size: 13px; }
         button { background: var(--accent); color: #fff; border: none; cursor: pointer; font-weight: 600; }
         button.ghost { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
-        button.danger { background: var(--danger); color: #fff; }
         button.excel { background: #1d6f42; color: #fff; }
         #searchInput { border: 2px solid var(--accent); flex-grow: 1; font-size: 15px; }
         .table-responsive { overflow-x: auto; width: 100%; }
@@ -24,48 +22,41 @@
         .status-assinado { background: #dcfce7; color: #16a34a; }
         #tableBody tr { display: none; }
         .mostrar-linha { display: table-row !important; }
-        .signed-thumb { height: 35px; border-radius: 4px; margin-right: 2px; border: 1px solid #ddd; vertical-align: middle; }
-        .geo-info { font-size: 9px; color: #666; display: block; margin-top: 4px; max-width: 200px; }
-        .map-link { color: var(--accent); text-decoration: none; font-weight: bold; }
-        
+        .signed-thumb { height: 35px; border-radius: 4px; margin-right: 2px; border: 1px solid #ddd; }
+        .geo-text { font-size: 9px; color: #555; display: block; max-width: 180px; line-height: 1.2; }
+        .map-link { color: var(--accent); text-decoration: none; font-size: 9px; font-weight: bold; }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: none; align-items: center; justify-content: center; z-index: 1000; }
         .card { background: #fff; padding: 15px; border-radius: 12px; width: 95%; max-width: 450px; }
         .signature-wrapper { border: 2px solid #333; border-radius: 8px; height: 180px; touch-action: none; }
-        #video, #photoPreview { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 8px; background: #000; }
-        
-        body.modo-colaborador #adminPanel, body.modo-colaborador .col-geo-admin { display: none; }
+        #video, #photoPreview { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 8px; }
+        body.modo-colaborador #adminPanel, body.modo-colaborador .col-admin { display: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header-container">
-        <h1>Frequência Digital</h1>
-    </div>
-    
     <div class="controls" id="adminPanel">
-        <input id="nameInput" placeholder="Nome do Aluno" style="flex:2"/>
+        <input id="nameInput" placeholder="Nome" style="flex:2"/>
         <input id="turmaInput" placeholder="Turma" style="flex:1"/>
-        <button id="addBtn">Adicionar</button>
-        <button onclick="document.getElementById('importFile').click()" class="ghost">Importar TXT</button>
+        <button id="addBtn">Add</button>
+        <button onclick="document.getElementById('importFile').click()" class="ghost">TXT</button>
         <input type="file" id="importFile" style="display:none" accept=".txt" />
-        <button id="showQrBtn" class="ghost">QR Code</button>
-        <button id="clearAllBtn" class="danger">Limpar Tudo</button>
+        <button id="showQrBtn" class="ghost">QR</button>
         <button id="exportExcel" class="excel">📊 Excel</button>
     </div>
 
     <div class="controls">
-        <input id="searchInput" type="text" placeholder="🔍 DIGITE SEU NOME PARA ASSINAR..." onkeyup="filtrarTabela()">
+        <input id="searchInput" type="text" placeholder="🔍 PESQUISE SEU NOME..." onkeyup="filtrarTabela()">
     </div>
 
     <div class="table-responsive">
-        <table id="mainTable">
+        <table>
             <thead>
                 <tr>
                     <th>Status</th>
                     <th>Nome / Turma</th>
-                    <th>Registros</th>
-                    <th class="col-geo-admin">Localização (GPS)</th>
+                    <th class="col-admin">Registros</th>
+                    <th class="col-admin">Localização Real</th>
                     <th>Ação</th>
                 </tr>
             </thead>
@@ -76,16 +67,13 @@
 
 <div id="signModal" class="modal">
     <div class="card">
-        <h3 id="nomeAssinando" style="margin:0 0 10px 0">Assinar</h3>
-        <div id="geoStatus" style="font-size:10px; color:var(--warning); font-weight:bold">📍 Obtendo endereço...</div>
-        
+        <h3 id="nomeAssinando" style="margin:0">Assinar Presença</h3>
+        <p id="geoStatus" style="font-size:10px; color:var(--warning)">📍 Localizando...</p>
         <video id="video" autoplay playsinline></video>
         <img id="photoPreview" style="display:none;" />
         <button id="takePhoto" style="width:100%; margin: 5px 0">📸 Tirar Foto</button>
-
         <div class="signature-wrapper"><canvas id="sigCanvas" style="width:100%;height:100%"></canvas></div>
         <button id="clearSig" class="ghost" style="width:100%; margin-top:5px; font-size:11px">LIMPAR</button>
-
         <div style="display: flex; gap: 8px; margin-top: 15px;">
             <button onclick="fecharModais()" class="ghost" style="flex:1">Sair</button>
             <button id="saveData" style="flex:2; background: var(--success)">FINALIZAR</button>
@@ -93,17 +81,9 @@
     </div>
 </div>
 
-<div id="qrModal" class="modal">
-    <div class="card" style="text-align:center; max-width: 300px;">
-        <div id="qrcode" style="display:flex; justify-content:center; margin:15px 0"></div>
-        <button onclick="fecharModais()" class="ghost" style="width:100%">Fechar</button>
-    </div>
-</div>
-
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script>
@@ -113,14 +93,10 @@
         authDomain: "frenquencia-digital.firebaseapp.com",
         databaseURL: "https://frenquencia-digital-default-rtdb.firebaseio.com",
         projectId: "frenquencia-digital",
-        storageBucket: "frenquencia-digital.firebasestorage.app",
-        messagingSenderId: "625078117212",
-        appId: "1:625078117212:web:bc5c57e18af96b305d1799"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    let sigPad, localStream, currentUserId = null, currentFullAddress = "Não capturado", currentCoords = "";
+    let sigPad, localStream, currentUserId = null, addressToSave = "Endereço não obtido";
 
     const urlParams = new URLSearchParams(window.location.search);
     const eModoColaborador = urlParams.has('modo');
@@ -128,38 +104,33 @@
 
     function filtrarTabela() {
         const filter = document.getElementById("searchInput").value.toUpperCase();
-        const tr = document.getElementById("tableBody").getElementsByTagName("tr");
-        for (let i = 0; i < tr.length; i++) {
-            const txtValue = tr[i].innerText.toUpperCase();
-            tr[i].classList.toggle('mostrar-linha', eModoColaborador ? (filter.length >= 3 && txtValue.indexOf(filter) > -1) : (filter === "" || txtValue.indexOf(filter) > -1));
-        }
+        const tr = document.querySelectorAll("#tableBody tr");
+        tr.forEach(r => {
+            const txt = r.innerText.toUpperCase();
+            r.classList.toggle('mostrar-linha', eModoColaborador ? (filter.length >= 3 && txt.indexOf(filter) > -1) : (filter === "" || txt.indexOf(filter) > -1));
+        });
     }
 
-    db.ref('participantes').on('value', (snapshot) => {
+    db.ref('participantes').on('value', (snap) => {
         const tableBody = document.getElementById('tableBody');
         tableBody.innerHTML = '';
-        const data = snapshot.val();
-        if (data) {
-            Object.keys(data).forEach(key => {
-                const p = data[key];
-                const tr = document.createElement('tr');
-                const statusHtml = p.signed ? `<span class="status-badge status-assinado">Assinado</span>` : `<span class="status-badge status-pendente">Pendente</span>`;
-                
-                // Link para o mapa se houver coordenadas
-                const geoHtml = p.signed && p.geo ? 
-                    `<span class="geo-info">${p.geo} <br> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.geo)}" target="_blank" class="map-link">[Ver no Mapa]</a></span>` : '-';
-
-                tr.innerHTML = `
-                    <td>${statusHtml}</td>
-                    <td><b>${p.name}</b><br><small>${p.turma}</small></td>
-                    <td>${p.signed ? `<img src="${p.sigData}" class="signed-thumb"><img src="${p.photo}" class="signed-thumb">` : '-'}</td>
-                    <td class="col-geo-admin">${geoHtml}</td>
-                    <td>${p.signed ? `<button class="ghost" onclick="tentarRefazer('${key}','${p.name}')">Refazer</button>` : `<button onclick="abrirAssinatura('${key}','${p.name}')">ASSINAR</button>`}</td>
-                `;
-                tableBody.appendChild(tr);
-            });
-            filtrarTabela();
-        }
+        const data = snap.val();
+        if (data) Object.keys(data).forEach(key => {
+            const p = data[key];
+            const tr = document.createElement('tr');
+            const status = p.signed ? `<span class="status-badge status-assinado">Sim</span>` : `<span class="status-badge status-pendente">Não</span>`;
+            const geoInfo = p.signed && p.geo ? `<span class="geo-text">${p.geo}</span><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.geo)}" target="_blank" class="map-link">[Mapa]</a>` : '-';
+            
+            tr.innerHTML = `
+                <td>${status}</td>
+                <td><b>${p.name}</b><br><small>${p.turma}</small></td>
+                <td class="col-admin">${p.signed ? `<img src="${p.sigData}" class="signed-thumb"><img src="${p.photo}" class="signed-thumb">` : '-'}</td>
+                <td class="col-admin">${geoInfo}</td>
+                <td>${p.signed ? `<button class="ghost" onclick="tentarRefazer('${key}','${p.name}')">Refazer</button>` : `<button onclick="abrirAssinatura('${key}','${p.name}')">ASSINAR</button>`}</td>
+            `;
+            tableBody.appendChild(tr);
+        });
+        filtrarTabela();
     });
 
     function abrirAssinatura(id, nome) {
@@ -169,21 +140,16 @@
         
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((pos) => {
-                const lat = pos.coords.latitude;
-                const lon = pos.coords.longitude;
-                fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
-                .then(r => r.json()).then(data => {
-                    currentFullAddress = data.display_name;
-                    document.getElementById('geoStatus').innerText = "📍 Endereço capturado";
-                }).catch(() => {
-                    currentFullAddress = `${lat}, ${lon}`;
-                    document.getElementById('geoStatus').innerText = "📍 Coordenadas capturadas";
+                fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`)
+                .then(r => r.json()).then(d => {
+                    addressToSave = d.display_name;
+                    document.getElementById('geoStatus').innerText = "📍 Endereço OK";
                 });
             });
         }
 
         setTimeout(() => {
-            const canvas = document.querySelector("#sigCanvas");
+            const canvas = document.querySelector("canvas");
             canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
             sigPad = new SignaturePad(canvas);
         }, 300);
@@ -208,15 +174,15 @@
 
     document.getElementById('saveData').onclick = () => {
         const photo = document.getElementById('photoPreview').src;
-        if(sigPad.isEmpty() || !photo.startsWith('data')) return alert("Erro: Foto e Assinatura!");
+        if(sigPad.isEmpty() || !photo.startsWith('data')) return alert("Foto e assinatura obrigatórias!");
         
         db.ref('participantes/' + currentUserId).update({
             signed: true, sigData: sigPad.toDataURL(), photo: photo, 
-            time: new Date().toLocaleString(), geo: currentFullAddress
+            time: new Date().toLocaleString(), geo: addressToSave
         }).then(() => {
-            alert("Confirmado!");
+            alert("Presença Confirmada!");
             fecharModais();
-            document.getElementById('searchInput').value = "";
+            document.getElementById('searchInput').value = ""; // Segurança: encerra sessão
             filtrarTabela();
         });
     };
@@ -224,52 +190,40 @@
     function fecharModais() {
         document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
         if(localStream) localStream.getTracks().forEach(t => t.stop());
-        if(sigPad) sigPad.clear();
+        addressToSave = "Endereço não obtido";
     }
 
     document.getElementById('exportExcel').onclick = () => {
-        db.ref('participantes').once('value', (snapshot) => {
-            const rows = [["Status", "Nome", "Turma", "Data/Hora", "Localização"]];
-            const data = snapshot.val();
-            if (data) Object.keys(data).forEach(k => {
+        db.ref('participantes').once('value', (snap) => {
+            const rows = [["Status", "Nome", "Turma", "Data/Hora", "Endereço Real"]];
+            const data = snap.val();
+            if(data) Object.keys(data).forEach(k => {
                 const p = data[k];
-                rows.push([p.signed ? "Assinado" : "Pendente", p.name, p.turma, p.time || "-", p.geo || "-"]);
+                rows.push([p.signed ? "Sim" : "Não", p.name, p.turma, p.time||"-", p.geo||"-"]);
             });
             const ws = XLSX.utils.aoa_to_sheet(rows);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Frequencia");
-            XLSX.writeFile(wb, "frequencia_com_gps.xlsx");
+            XLSX.writeFile(wb, "frequencia_gps.xlsx");
         });
     };
 
     document.getElementById('importFile').onchange = (e) => {
-        const file = e.target.files[0];
         const reader = new FileReader();
         reader.onload = (ev) => {
-            const lines = ev.target.result.split(/\r?\n/);
-            let count = 0;
+            const lines = ev.target.result.split('\n');
+            let c = 0;
             lines.forEach(l => {
                 const p = l.split(',');
-                if(p[0]) { db.ref('participantes').push().set({name:p[0].trim(), turma:p[1]?.trim()||'S/T', signed:false}); count++; }
+                if(p[0]) { db.ref('participantes').push().set({name:p[0].trim(), turma:p[1]?.trim()||'S/T', signed:false}); c++; }
             });
-            alert(`✅ ${count} nomes importados!`);
+            alert(c + " nomes importados!");
         };
-        reader.readAsText(file);
+        reader.readAsText(e.target.files[0]);
     };
-
+    
     document.getElementById('clearSig').onclick = () => sigPad.clear();
-    document.getElementById('showQrBtn').onclick = () => {
-        document.getElementById('qrcode').innerHTML = "";
-        new QRCode(document.getElementById('qrcode'), { text: window.location.href.split('?')[0] + "?modo=1", width: 180, height: 180 });
-        document.getElementById('qrModal').style.display = 'flex';
-    };
     function tentarRefazer(id, n) { if(prompt("Senha:") === ADMIN_PASSWORD) abrirAssinatura(id, n); }
-    document.getElementById('addBtn').onclick = () => {
-        const n = document.getElementById('nameInput').value;
-        const t = document.getElementById('turmaInput').value;
-        if(n) db.ref('participantes').push().set({ name: n, turma: t, signed: false });
-    };
-    document.getElementById('clearAllBtn').onclick = () => { if(confirm("Apagar tudo?") && prompt("Senha:") === ADMIN_PASSWORD) db.ref('participantes').remove(); };
 </script>
 </body>
 </html>
