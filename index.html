@@ -38,14 +38,15 @@
         th, td { padding: 8px; border-bottom: 1px solid #eef2f7; text-align: left; }
         th { background: #f8fafc; }
         
-        #tableBody tr { display: none; }
+        /* Controle de visibilidade da lista */
+        #tableBody tr { display: table-row; } /* Mostra por padrão no Admin */
+        body.modo-colaborador #tableBody tr { display: none; } /* Esconde no modo QR Code/Colaborador */
         .mostrar-linha { display: table-row !important; }
 
         .signed-thumb { height: 40px; border-radius: 4px; border: 1px solid #ddd; margin-right: 3px; }
         
-        /* Modal e Assinatura */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,.8); display: none; align-items: center; justify-content: center; z-index: 1000; }
-        .card { background: #fff; padding: 15px; border-radius: 12px; width: 95%; max-width: 600px; max-height: 95vh; overflow-y: auto; }
+        .card { background: #fff; padding: 15px; border-radius: 12px; width: 95%; max-width: 600px; max-height: 95vh; overflow-y: auto; position: relative;}
         
         .signature-wrapper { 
             border: 2px dashed #ccc; 
@@ -54,7 +55,7 @@
             width: 100%; 
             height: 200px; 
             position: relative;
-            touch-action: none; /* IMPEDE MOVIMENTAÇÃO DA TELA AO ASSINAR */
+            touch-action: none; /* CORREÇÃO: Impede a tela de rolar ao assinar */
         }
         .signature-canvas { width: 100%; height: 100%; cursor: crosshair; }
         
@@ -65,14 +66,15 @@
         .status-pendente { background: #fee2e2; color: #ef4444; }
         .status-assinado { background: #dcfce7; color: #16a34a; }
 
+        body.modo-colaborador #adminPanel { display: none; }
+
         @media (max-width: 600px) {
             .controls input { flex: 1; min-width: 120px; }
             th, td { padding: 5px; font-size: 12px; }
-            button { padding: 8px; }
         }
     </style>
 </head>
-<body>
+<body id="mainBody">
 
 <div class="container">
     <div class="header-container">
@@ -83,15 +85,16 @@
     <div class="controls" id="adminPanel">
         <input id="nameInput" placeholder="Nome Completo"/>
         <input id="turmaInput" placeholder="Turma" style="width: 100px"/>
-        <button id="addBtn">Add</button>
-        <button id="importBtn" onclick="document.getElementById('importFile').click()" class="ghost">Importar TXT</button>
+        <button id="addBtn">Adicionar</button>
+        <button onclick="document.getElementById('importFile').click()" class="ghost">Importar TXT</button>
         <input type="file" id="importFile" style="display:none" accept=".txt" />
-        <button id="clearAllBtn" class="danger">Limpar Tudo</button>
+        <button id="showQrBtn" class="ghost">📲 QR Code</button>
+        <button id="clearAllBtn" class="danger">Limpar Banco</button>
         <button id="generatePdf" style="margin-left:auto">Gerar PDF</button>
     </div>
 
     <div class="controls">
-        <input id="searchInput" type="text" placeholder="🔍 DIGITE SEU NOME PARA ASSINAR..." onkeyup="filtrarTabela()">
+        <input id="searchInput" type="text" placeholder="🔍 BUSCAR NOME..." onkeyup="filtrarTabela()">
     </div>
 
     <div style="overflow-x: auto;">
@@ -102,7 +105,7 @@
                     <th>Nome</th>
                     <th>Turma</th>
                     <th>Assinatura/Foto</th>
-                    <th class="col-admin">Ação</th>
+                    <th>Ação</th>
                 </tr>
             </thead>
             <tbody id="tableBody"></tbody>
@@ -112,7 +115,7 @@
 
 <div id="signModal" class="modal">
     <div class="card">
-        <h2 id="nomeAssinando" style="margin: 0; font-size: 1.1rem;">Assinar</h2>
+        <h2 id="nomeAssinando">Assinar</h2>
         <div id="geoStatus" style="font-size: 11px; color: var(--warning); margin-bottom: 10px;">Localizando...</div>
         
         <label style="font-size: 12px;"><b>1. Foto Selfie:</b></label>
@@ -120,22 +123,32 @@
         <img id="photoPreview" style="display:none;" />
         <button id="takePhoto" style="width:100%; margin: 8px 0;">📸 Capturar Foto</button>
 
-        <label style="font-size: 12px;"><b>2. Assinatura:</b> (Assine no quadro abaixo)</label>
+        <label style="font-size: 12px;"><b>2. Assinatura:</b></label>
         <div class="signature-wrapper">
             <canvas id="sigCanvas" class="signature-canvas"></canvas>
         </div>
-        <button id="clearSig" class="ghost" style="width:100%; margin-top:5px;">Limpar Assinatura</button>
+        <button id="clearSig" class="ghost" style="width:100%; margin-top:5px;">LIMPAR ASSINATURA</button>
 
         <div style="display: flex; gap: 10px; margin-top: 20px;">
-            <button onclick="fecharModais()" class="ghost" style="flex:1">Sair</button>
-            <button id="saveData" style="flex:2; background: #16a34a;">CONFIRMAR PRESENÇA</button>
+            <button onclick="fecharModais()" class="ghost" style="flex:1">Cancelar</button>
+            <button id="saveData" style="flex:2; background: #16a34a;">CONFIRMAR</button>
         </div>
+    </div>
+</div>
+
+<div id="qrModal" class="modal">
+    <div class="card" style="text-align:center; max-width: 350px;">
+        <h2>Acesso Celular</h2>
+        <div id="qrcode" style="display:flex; justify-content:center; margin:20px 0"></div>
+        <p style="font-size: 12px; color: #666;">Aponte a câmera para este código para assinar pelo celular.</p>
+        <button onclick="fecharModais()" class="ghost" style="width: 100%">Fechar</button>
     </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <script>
@@ -152,23 +165,27 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    let sigPad, localStream, currentUserId = null, currentGeoLabel = "Não capturado";
+    let sigPad, localStream, currentUserId = null;
+    const urlParams = new URLSearchParams(window.location.search);
+    const eModoColaborador = urlParams.has('modo');
 
-    // Adicionar Participante Manualmente
+    if (eModoColaborador) {
+        document.getElementById('mainBody').classList.add('modo-colaborador');
+        document.getElementById('tituloPagina').innerText = "Assinatura de Presença";
+    }
+
+    // Adicionar Manual
     document.getElementById('addBtn').onclick = () => {
-        const nameInput = document.getElementById('nameInput');
-        const turmaInput = document.getElementById('turmaInput');
-        if(nameInput.value.trim()) { 
-            db.ref('participantes').push().set({ 
-                name: nameInput.value.trim(), 
-                turma: turmaInput.value.trim() || 'S/T',
-                signed: false 
-            });
-            nameInput.value = ''; turmaInput.value = '';
+        const n = document.getElementById('nameInput').value.trim();
+        const t = document.getElementById('turmaInput').value.trim() || 'S/T';
+        if(n) { 
+            db.ref('participantes').push().set({ name: n, turma: t, signed: false });
+            document.getElementById('nameInput').value = '';
+            document.getElementById('turmaInput').value = '';
         }
     };
 
-    // Importação TXT: Nome, Turma
+    // Importar TXT (Nome, Turma)
     document.getElementById('importFile').onchange = (e) => {
         const file = e.target.files[0];
         const reader = new FileReader();
@@ -178,11 +195,9 @@
                 const parts = line.split(',');
                 const name = parts[0]?.trim();
                 const turma = parts[1]?.trim() || 'S/T';
-                if (name) {
-                    db.ref('participantes').push().set({ name: name, turma: turma, signed: false });
-                }
+                if (name) db.ref('participantes').push().set({ name: name, turma: turma, signed: false });
             });
-            alert("Lista Importada!");
+            alert("Nomes importados!");
         };
         reader.readAsText(file);
     };
@@ -192,8 +207,13 @@
         const tr = document.getElementById("tableBody").getElementsByTagName("tr");
         for (let i = 0; i < tr.length; i++) {
             const txtValue = tr[i].innerText.toUpperCase();
-            tr[i].classList.toggle('mostrar-linha', filter.length >= 2 && txtValue.indexOf(filter) > -1);
-            if(filter === "") tr[i].classList.remove('mostrar-linha');
+            if (eModoColaborador) {
+                // No celular, só mostra se digitar 2+ letras
+                tr[i].classList.toggle('mostrar-linha', filter.length >= 2 && txtValue.indexOf(filter) > -1);
+            } else {
+                // No Admin, mostra tudo se busca estiver vazia
+                tr[i].classList.toggle('mostrar-linha', filter === "" || txtValue.indexOf(filter) > -1);
+            }
         }
     }
 
@@ -206,17 +226,18 @@
                 const p = data[key];
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><span class="status-badge ${p.signed ? 'status-assinado' : 'status-pendente'}">${p.signed ? 'Presente' : 'Ausente'}</span></td>
+                    <td><span class="status-badge ${p.signed ? 'status-assinado' : 'status-pendente'}">${p.signed ? 'Assinado' : 'Pendente'}</span></td>
                     <td><b>${p.name}</b></td>
                     <td>${p.turma || '-'}</td>
                     <td>${p.signed ? `<img src="${p.sigData}" class="signed-thumb"><img src="${p.photo}" class="signed-thumb">` : '-'}</td>
                     <td>
                         ${p.signed ? `<button class="ghost" onclick="tentarRefazer('${key}', '${p.name}')">Refazer</button>` : `<button onclick="abrirAssinatura('${key}', '${p.name}')">Assinar</button>`}
-                        <button class="danger" onclick="excluirParticipante('${key}', '${p.name}')">X</button>
+                        ${!eModoColaborador ? `<button class="danger" onclick="excluirParticipante('${key}', '${p.name}')">X</button>` : ''}
                     </td>
                 `;
                 tableBody.appendChild(tr);
             });
+            filtrarTabela();
         }
     });
 
@@ -224,15 +245,11 @@
         currentUserId = id;
         document.getElementById('nomeAssinando').innerText = nome;
         document.getElementById('signModal').style.display = 'flex';
-        
-        // Setup Canvas
         setTimeout(() => {
             const canvas = document.getElementById('sigCanvas');
             canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
             sigPad = new SignaturePad(canvas, { minWidth: 1, maxWidth: 3 });
         }, 300);
-
-        // Câmera
         navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }).then(s => {
             localStream = s;
             document.getElementById('video').srcObject = s;
@@ -255,35 +272,35 @@
 
     document.getElementById('saveData').onclick = () => {
         const photo = document.getElementById('photoPreview').src;
-        if(sigPad.isEmpty() || !photo.startsWith('data')) return alert("Foto e Assinatura são obrigatórias!");
-        
+        if(sigPad.isEmpty() || !photo.startsWith('data')) return alert("Foto e Assinatura obrigatórias!");
         db.ref('participantes/' + currentUserId).update({
-            signed: true, 
-            sigData: sigPad.toDataURL(), 
-            photo: photo, 
-            time: new Date().toLocaleString()
+            signed: true, sigData: sigPad.toDataURL(), photo: photo, time: new Date().toLocaleString()
         }).then(fecharModais);
     };
 
     function fecharModais() {
-        document.getElementById('signModal').style.display = 'none';
+        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
         if(localStream) localStream.getTracks().forEach(t => t.stop());
     }
 
     document.getElementById('clearSig').onclick = () => sigPad.clear();
 
-    function tentarRefazer(id, nome) {
-        if(prompt("Senha:") === ADMIN_PASSWORD) abrirAssinatura(id, nome);
-    }
+    document.getElementById('showQrBtn').onclick = () => {
+        document.getElementById('qrcode').innerHTML = "";
+        const link = window.location.href.split('?')[0] + "?modo=1";
+        new QRCode(document.getElementById('qrcode'), { text: link, width: 200, height: 200 });
+        document.getElementById('qrModal').style.display = 'flex';
+    };
 
+    function tentarRefazer(id, nome) {
+        if(prompt("Senha Admin:") === ADMIN_PASSWORD) abrirAssinatura(id, nome);
+    }
     function excluirParticipante(id, nome) {
         if(prompt(`Excluir ${nome}? Senha:`) === ADMIN_PASSWORD) db.ref('participantes/' + id).remove();
     }
-
     document.getElementById('clearAllBtn').onclick = () => {
-        if(prompt("LIMPAR TUDO? Senha:") === ADMIN_PASSWORD) db.ref('participantes').remove();
+        if(prompt("Limpar tudo? Senha:") === ADMIN_PASSWORD) db.ref('participantes').remove();
     };
-
     document.getElementById('generatePdf').onclick = () => {
         html2pdf().from(document.getElementById('mainTable')).save('frequencia.pdf');
     };
