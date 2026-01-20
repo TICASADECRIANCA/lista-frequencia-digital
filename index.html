@@ -49,7 +49,7 @@
             padding: 8px 2px; 
             border-bottom: 1px solid #eee; 
             text-align: left; 
-            font-size: 10px; 
+            font-size: 14px; 
             word-wrap: break-word; 
         }
 
@@ -197,7 +197,7 @@
                 <td class="col-admin col-admin-gps"><span class="geo-label">${p.geo || '-'}</span></td>
                 <td class="col-acao" style="display:flex; gap:2px">
                     ${p.signed ? `<button onclick="tentarRefazer('${key}','${p.name}')" style="font-size:9px; padding:4px">Ref.</button>` : `<button onclick="abrirAssinatura('${key}','${p.name}')" style="padding:4px 8px">ASSINAR</button>`}
-                    ${!modoAssinante ? `<button class="danger" onclick="excluir('${key}','${p.name}')" style="padding:4px 6px">REFAZER</button>` : ''}
+                    ${!modoAssinante ? `<button class="danger" onclick="excluir('${key}','${p.name}')" style="padding:4px 6px">X</button>` : ''}
                 </td>
             `;
             tableBody.appendChild(tr);
