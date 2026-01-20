@@ -11,7 +11,7 @@
             font-family: Inter, system-ui, sans-serif;
             margin: 0; padding: 10px; 
             background-color: var(--bg-light);
-            overflow-x: hidden; /* Evita rolagem lateral da página inteira */ [cite: 3]
+            overflow-x: hidden;
         }
 
         .container {
@@ -20,54 +20,46 @@
             background: white; 
             padding: 12px;
             border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08); [cite: 5]
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
 
-        .header-container { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; } [cite: 6]
-        .logo-escola { height: 40px; width: auto; } [cite: 7]
-        h1 { margin: 0; font-size: 18px; color: #333; } [cite: 9]
+        .header-container { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+        .logo-escola { height: 40px; width: auto; }
+        h1 { margin: 0; font-size: 18px; color: #333; }
 
-        .controls { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; } [cite: 10]
-        input, button { padding: 8px; border-radius: 6px; border: 1px solid #ddd; font-size: 13px; } [cite: 11]
-        button { background: var(--accent); color: #fff; border: none; cursor: pointer; font-weight: 600; } [cite: 12]
+        .controls { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+        input, button { padding: 8px; border-radius: 6px; border: 1px solid #ddd; font-size: 13px; }
+        button { background: var(--accent); color: #fff; border: none; cursor: pointer; font-weight: 600; }
         button.ghost { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
-        button.danger { background: var(--danger); color: #fff; } [cite: 12]
+        button.danger { background: var(--danger); color: #fff; }
         
-        #searchInput { border: 2px solid var(--accent); flex-grow: 1; font-size: 15px; } [cite: 13]
+        #searchInput { border: 2px solid var(--accent); flex-grow: 1; font-size: 15px; }
         
-        /* Ajuste da Tabela para não vazar da tela */
-        .table-responsive { overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch; }
-        table { width: 100%; border-collapse: collapse; min-width: 400px; } /* Min-width menor para caber em mais telas */ [cite: 14]
-        th, td { padding: 6px 4px; border-bottom: 1px solid #eee; text-align: left; font-size: 12px; } [cite: 14]
+        .table-responsive { overflow-x: auto; width: 100%; }
+        table { width: 100%; border-collapse: collapse; min-width: 350px; }
+        th, td { padding: 6px 4px; border-bottom: 1px solid #eee; text-align: left; font-size: 12px; }
         
-        #tableBody tr { display: none; } [cite: 15]
-        .mostrar-linha { display: table-row !important; } [cite: 16]
+        #tableBody tr { display: none; }
+        .mostrar-linha { display: table-row !important; }
 
-        .signed-thumb { height: 35px; border-radius: 4px; margin-right: 2px; } [cite: 19]
+        .signed-thumb { height: 35px; border-radius: 4px; margin-right: 2px; }
         
-        /* Modal e Assinatura */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,.8); display: none; align-items: center; justify-content: center; z-index: 1000; } [cite: 20]
-        .card { background: #fff; padding: 15px; border-radius: 12px; width: 95%; max-width: 500px; max-height: 90vh; overflow-y: auto; } [cite: 21]
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .card { background: #fff; padding: 15px; border-radius: 12px; width: 95%; max-width: 450px; max-height: 95vh; overflow-y: auto; }
         
         .signature-wrapper { 
-            border: 2px solid #ddd; 
+            border: 2px solid #333; 
             border-radius: 8px; 
-            background: #fafafa; 
+            background: #fff; 
             width: 100%; 
             height: 180px; 
-            position: relative;
-            touch-action: none; /* Crucial para não arrastar a tela ao assinar */ 
+            touch-action: none;
         }
-        .signature-canvas { width: 100%; height: 100%; touch-action: none; } 
+        .signature-canvas { width: 100%; height: 100%; touch-action: none; }
         
-        #video, #photoPreview { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 8px; } [cite: 29]
+        #video, #photoPreview { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 8px; background: #000; }
 
-        body.modo-colaborador #adminPanel { display: none; } [cite: 34]
-
-        @media (max-width: 600px) {
-            h1 { font-size: 16px; } [cite: 40]
-            td button { padding: 5px 8px; font-size: 11px; } /* Botão menor no celular */
-        }
+        body.modo-colaborador #adminPanel { display: none; }
     </style>
 </head>
 <body id="mainBody">
@@ -75,25 +67,25 @@
 <div class="container">
     <div class="header-container">
         <img src="logo.png" alt="Logo" class="logo-escola" onerror="this.style.display='none'">
-        <h1 id="tituloPagina">Gestão de Frequência</h1> [cite: 55]
+        <h1>Frequência Escolar</h1>
     </div>
     
     <div class="controls" id="adminPanel">
-        <input id="nameInput" placeholder="Nome" style="flex:2"/>
+        <input id="nameInput" placeholder="Nome Aluno" style="flex:2"/>
         <input id="turmaInput" placeholder="Turma" style="flex:1"/>
         <button id="addBtn">Add</button>
-        <button onclick="document.getElementById('importFile').click()" class="ghost">Importar</button>
+        <button onclick="document.getElementById('importFile').click()" class="ghost">Importar TXT</button>
         <input type="file" id="importFile" style="display:none" accept=".txt" />
-        <button id="showQrBtn" class="ghost">QR</button>
-        <button id="clearAllBtn" class="danger">Limpar</button>
+        <button id="showQrBtn" class="ghost">Gerar QR</button>
+        <button id="clearAllBtn" class="danger">Limpar Tudo</button>
         <div style="width:100%; display:flex; gap:5px; margin-top:5px; border-top:1px solid #eee; padding-top:5px;">
-            <input id="pdfTurmaFilter" placeholder="Turma p/ PDF (ex: 7A)" style="flex:1"/>
-            <button id="generatePdf" style="background:var(--success)">PDF por Turma</button> 
+            <input id="pdfTurmaFilter" placeholder="Filtrar Turma para PDF" style="flex:1"/>
+            <button id="generatePdf" style="background:var(--success)">Baixar PDF</button>
         </div>
     </div>
 
     <div class="controls">
-        <input id="searchInput" type="text" placeholder="🔍 DIGITE SEU NOME..." onkeyup="filtrarTabela()"> [cite: 63]
+        <input id="searchInput" type="text" placeholder="🔍 DIGITE SEU NOME PARA ASSINAR..." onkeyup="filtrarTabela()">
     </div>
 
     <div class="table-responsive">
@@ -102,7 +94,7 @@
                 <tr>
                     <th>Status</th>
                     <th>Nome / Turma</th>
-                    <th>Foto/Assin</th>
+                    <th class="admin-only">Registros</th>
                     <th>Ação</th>
                 </tr>
             </thead>
@@ -113,32 +105,31 @@
 
 <div id="signModal" class="modal">
     <div class="card">
-        <h2 id="nomeAssinando" style="margin:0">Assinar</h2>
-        <p id="geoStatus" style="font-size:10px; color:var(--warning)">Localizando...</p> [cite: 45]
+        <h3 id="nomeAssinando" style="margin-top:0">Assinar Presença</h3>
         
         <label style="font-size:11px"><b>1. Selfie:</b></label>
-        <video id="video" autoplay playsinline></video> [cite: 46]
+        <video id="video" autoplay playsinline></video>
         <img id="photoPreview" style="display:none;" />
-        <button id="takePhoto" style="width:100%; margin: 5px 0">📸 Capturar</button> [cite: 47]
+        <button id="takePhoto" style="width:100%; margin: 5px 0">📸 Tirar Foto</button>
 
         <label style="font-size:11px"><b>2. Assinatura:</b></label>
         <div class="signature-wrapper">
-            <canvas id="sigCanvas" class="signature-canvas"></canvas> [cite: 49]
+            <canvas id="sigCanvas" class="signature-canvas"></canvas>
         </div>
-        <button id="clearSig" class="ghost" style="width:100%; margin-top:5px">LIMPAR ASSINATURA</button> [cite: 49]
+        <button id="clearSig" class="ghost" style="width:100%; margin-top:5px; font-size:11px">ERREI, LIMPAR ASSINATURA</button>
 
         <div style="display: flex; gap: 8px; margin-top: 15px;">
-            <button onclick="fecharModais()" class="ghost" style="flex:1">Sair</button>
-            <button id="saveData" style="flex:2; background: var(--success)">CONFIRMAR</button> [cite: 50]
+            <button onclick="fecharModais()" class="ghost" style="flex:1">Cancelar</button>
+            <button id="saveData" style="flex:2; background: var(--success)">FINALIZAR AGORA</button>
         </div>
     </div>
 </div>
 
 <div id="qrModal" class="modal">
     <div class="card" style="text-align:center; max-width: 300px;">
-        <h3>QR Code de Acesso</h3>
+        <h3>Acesso pelo Celular</h3>
         <div id="qrcode" style="display:flex; justify-content:center; margin:15px 0"></div>
-        <button onclick="fecharModais()" class="ghost" style="width:100%">Fechar</button> [cite: 51]
+        <button onclick="fecharModais()" class="ghost" style="width:100%">Fechar</button>
     </div>
 </div>
 
@@ -158,55 +149,26 @@
         storageBucket: "frenquencia-digital.firebasestorage.app",
         messagingSenderId: "625078117212",
         appId: "1:625078117212:web:bc5c57e18af96b305d1799"
-    }; [cite: 53]
+    };
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     let sigPad, localStream, currentUserId = null;
-    const urlParams = new URLSearchParams(window.location.search); [cite: 54]
-    const eModoColaborador = urlParams.has('modo'); [cite: 54]
+    const urlParams = new URLSearchParams(window.location.search);
+    const eModoColaborador = urlParams.has('modo');
 
-    if (eModoColaborador) {
-        document.getElementById('mainBody').classList.add('modo-colaborador');
-        document.getElementById('tituloPagina').innerText = "Presença Digital"; [cite: 55]
-    }
-
-    // Adicionar Manual
-    document.getElementById('addBtn').onclick = () => {
-        const n = document.getElementById('nameInput').value.trim();
-        const t = document.getElementById('turmaInput').value.trim() || 'S/T';
-        if(n) { 
-            db.ref('participantes').push().set({ name: n, turma: t, signed: false }); [cite: 58]
-            document.getElementById('nameInput').value = ''; document.getElementById('turmaInput').value = '';
-        }
-    };
-
-    // Importar TXT (Formato: Nome, Turma)
-    document.getElementById('importFile').onchange = (e) => {
-        const file = e.target.files[0]; [cite: 59]
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            const lines = ev.target.result.split(/\r?\n/); [cite: 60]
-            lines.forEach(line => {
-                const parts = line.split(','); [cite: 61]
-                const name = parts[0]?.trim();
-                const turma = parts[1]?.trim() || 'S/T';
-                if (name) db.ref('participantes').push().set({ name: name, turma: turma, signed: false });
-            });
-            alert("Importado com sucesso!"); [cite: 62]
-        };
-        reader.readAsText(file);
-    };
+    if (eModoColaborador) document.body.classList.add('modo-colaborador');
 
     function filtrarTabela() {
-        const filter = document.getElementById("searchInput").value.toUpperCase(); [cite: 63]
-        const tr = document.getElementById("tableBody").getElementsByTagName("tr"); [cite: 63]
+        const filter = document.getElementById("searchInput").value.toUpperCase();
+        const tr = document.getElementById("tableBody").getElementsByTagName("tr");
         for (let i = 0; i < tr.length; i++) {
-            const txtValue = tr[i].innerText.toUpperCase(); [cite: 65]
+            const txtValue = tr[i].innerText.toUpperCase();
             if (eModoColaborador) {
-                tr[i].classList.toggle('mostrar-linha', filter.length >= 2 && txtValue.indexOf(filter) > -1); [cite: 66]
+                // Segurança: só mostra se digitar 3 letras ou mais
+                tr[i].classList.toggle('mostrar-linha', filter.length >= 3 && txtValue.indexOf(filter) > -1);
             } else {
-                tr[i].classList.toggle('mostrar-linha', filter === "" || txtValue.indexOf(filter) > -1); [cite: 67]
+                tr[i].classList.toggle('mostrar-linha', filter === "" || txtValue.indexOf(filter) > -1);
             }
         }
     }
@@ -217,33 +179,32 @@
         const data = snapshot.val();
         if (data) {
             Object.keys(data).forEach(key => {
-                const p = data[key]; [cite: 69]
+                const p = data[key];
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><span class="status-badge ${p.signed ? 'status-assinado' : 'status-pendente'}">${p.signed ? 'Ok' : '...'}</span></td> [cite: 70]
-                    <td><b>${p.name}</b><br><small>${p.turma || ''}</small></td>
-                    <td>${p.signed ? `<img src="${p.sigData}" class="signed-thumb"><img src="${p.photo}" class="signed-thumb">` : '-'}</td> [cite: 70]
+                    <td><span class="status-badge ${p.signed ? 'status-assinado' : 'status-pendente'}">${p.signed ? '✅' : '❌'}</span></td>
+                    <td><b>${p.name}</b><br><small>${p.turma || 'Sem Turma'}</small></td>
+                    <td>${p.signed ? `<img src="${p.sigData}" class="signed-thumb"><img src="${p.photo}" class="signed-thumb">` : '-'}</td>
                     <td>
-                        ${p.signed ? `<button class="ghost" onclick="tentarRefazer('${key}', '${p.name}')">Refazer</button>` : `<button onclick="abrirAssinatura('${key}', '${p.name}')">Assinar</button>`} [cite: 72]
-                        ${!eModoColaborador ? `<button class="danger" onclick="excluirParticipante('${key}', '${p.name}')">X</button>` : ''} [cite: 73]
+                        ${p.signed ? `<button class="ghost" onclick="tentarRefazer('${key}', '${p.name}')">Refazer</button>` : `<button onclick="abrirAssinatura('${key}', '${p.name}')">ASSINAR</button>`}
                     </td>
                 `;
-                tableBody.appendChild(tr); [cite: 74]
+                tableBody.appendChild(tr);
             });
             filtrarTabela();
         }
     });
 
     function abrirAssinatura(id, nome) {
-        currentUserId = id; [cite: 79]
+        currentUserId = id;
         document.getElementById('nomeAssinando').innerText = nome;
-        document.getElementById('signModal').style.display = 'flex'; [cite: 79]
+        document.getElementById('signModal').style.display = 'flex';
         setTimeout(() => {
             const canvas = document.getElementById('sigCanvas');
             canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
             sigPad = new SignaturePad(canvas, { minWidth: 1.5, maxWidth: 3.5 });
         }, 300);
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }).then(s => { [cite: 80]
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }).then(s => {
             localStream = s;
             document.getElementById('video').srcObject = s;
             document.getElementById('photoPreview').style.display = 'none';
@@ -252,86 +213,68 @@
     }
 
     document.getElementById('takePhoto').onclick = () => {
-        const video = document.getElementById('video'); [cite: 83]
+        const video = document.getElementById('video');
         const canvas = document.createElement('canvas');
         canvas.width = video.videoWidth; canvas.height = video.videoHeight;
         const ctx = canvas.getContext('2d');
-        ctx.translate(canvas.width, 0); ctx.scale(-1, 1); [cite: 83]
-        ctx.drawImage(video, 0, 0); [cite: 84]
+        ctx.translate(canvas.width, 0); ctx.scale(-1, 1);
+        ctx.drawImage(video, 0, 0);
         document.getElementById('photoPreview').src = canvas.toDataURL('image/jpeg');
         document.getElementById('photoPreview').style.display = 'block';
         document.getElementById('video').style.display = 'none';
     };
 
+    // --- LÓGICA DE ENCERRAMENTO DE SESSÃO ---
     document.getElementById('saveData').onclick = () => {
-        const photo = document.getElementById('photoPreview').src; [cite: 86]
-        if(sigPad.isEmpty() || !photo.startsWith('data')) return alert("Foto e Assinatura obrigatórias!");
+        const photo = document.getElementById('photoPreview').src;
+        if(sigPad.isEmpty() || !photo.startsWith('data')) return alert("Capture a foto e a assinatura!");
+        
         db.ref('participantes/' + currentUserId).update({
-            signed: true, sigData: sigPad.toDataURL(), photo: photo, time: new Date().toLocaleString()
-        }).then(fecharModais); [cite: 87]
+            signed: true, 
+            sigData: sigPad.toDataURL(), 
+            photo: photo, 
+            time: new Date().toLocaleString()
+        }).then(() => {
+            alert("Presença confirmada com sucesso!");
+            fecharModais();
+            // RESET DA SESSÃO:
+            document.getElementById('searchInput').value = ""; // Limpa a busca
+            filtrarTabela(); // Esconde as linhas novamente
+            window.scrollTo(0, 0); // Volta para o topo
+        });
     };
 
     function fecharModais() {
-        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); [cite: 88]
-        if(localStream) localStream.getTracks().forEach(t => t.stop()); [cite: 88]
+        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        if(localStream) localStream.getTracks().forEach(t => t.stop());
+        if(sigPad) sigPad.clear();
     }
 
-    document.getElementById('clearSig').onclick = () => sigPad.clear(); [cite: 89]
+    document.getElementById('clearSig').onclick = () => sigPad.clear();
 
     document.getElementById('showQrBtn').onclick = () => {
         document.getElementById('qrcode').innerHTML = "";
-        const link = window.location.href.split('?')[0] + "?modo=1"; [cite: 89]
-        new QRCode(document.getElementById('qrcode'), { text: link, width: 180, height: 180 }); [cite: 90]
-        document.getElementById('qrModal').style.display = 'flex'; [cite: 90]
+        const link = window.location.href.split('?')[0] + "?modo=1";
+        new QRCode(document.getElementById('qrcode'), { text: link, width: 180, height: 180 });
+        document.getElementById('qrModal').style.display = 'flex';
     };
 
-    function tentarRefazer(id, nome) {
-        if(prompt("Senha Admin:") === ADMIN_PASSWORD) abrirAssinatura(id, nome); [cite: 91]
-    }
-    function excluirParticipante(id, nome) {
-        if(prompt(`Excluir ${nome}? Senha:`) === ADMIN_PASSWORD) db.ref('participantes/' + id).remove(); [cite: 92]
-    }
-    document.getElementById('clearAllBtn').onclick = () => {
-        if(confirm("Deseja apagar TODO o banco de dados?") && prompt("Senha:") === ADMIN_PASSWORD) db.ref('participantes').remove(); [cite: 93]
+    // Admin Functions
+    function tentarRefazer(id, nome) { if(prompt("Senha Admin:") === ADMIN_PASSWORD) abrirAssinatura(id, nome); }
+    document.getElementById('addBtn').onclick = () => {
+        const n = document.getElementById('nameInput').value;
+        const t = document.getElementById('turmaInput').value;
+        if(n) db.ref('participantes').push().set({ name: n, turma: t, signed: false });
     };
 
-    // FUNÇÃO PARA GERAR PDF SEPARADO POR TURMA
     document.getElementById('generatePdf').onclick = () => {
-        const turmaAlvo = document.getElementById('pdfTurmaFilter').value.trim().toUpperCase(); [cite: 94]
-        const originalRows = Array.from(document.querySelectorAll('#tableBody tr'));
+        const turma = document.getElementById('pdfTurmaFilter').value.toUpperCase();
+        const content = document.getElementById('mainTable').cloneNode(true);
+        // Remover última coluna de cada linha no clone para o PDF
+        content.querySelectorAll('tr').forEach(tr => tr.lastElementChild.remove());
         
-        // Criar uma tabela temporária para o PDF
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = `<h3>Relatório de Frequência - ${turmaAlvo || 'Geral'}</h3>`;
-        const tempTable = document.createElement('table');
-        tempTable.style.width = "100%";
-        tempTable.border = "1";
-        tempTable.innerHTML = "<thead><tr><th>Status</th><th>Nome</th><th>Turma</th><th>Assinatura</th><th>Foto</th></tr></thead>";
-        const tempBody = document.createElement('tbody');
-
-        originalRows.forEach(row => {
-            const textoRow = row.innerText.toUpperCase();
-            // Se o filtro estiver vazio, pega tudo. Se tiver algo, filtra pela turma.
-            if (turmaAlvo === "" || textoRow.includes(turmaAlvo)) {
-                const clone = row.cloneNode(true);
-                // Remove a última coluna (botões de ação) do PDF
-                clone.removeChild(clone.lastElementChild);
-                tempBody.appendChild(clone);
-            }
-        });
-
-        if (tempBody.children.length === 0) return alert("Nenhum aluno encontrado para esta turma.");
-
-        tempTable.appendChild(tempBody);
-        tempDiv.appendChild(tempTable);
-        
-        const opt = {
-            margin: 10,
-            filename: `frequencia_${turmaAlvo || 'geral'}.pdf`,
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-        };
-        html2pdf().set(opt).from(tempDiv).save(); [cite: 94]
+        const opt = { margin: 10, filename: `frequencia_${turma||'geral'}.pdf`, jsPDF: { orientation: 'landscape' } };
+        html2pdf().set(opt).from(content).save();
     };
 </script>
 </body>
