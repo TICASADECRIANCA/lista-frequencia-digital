@@ -8,96 +8,67 @@
         :root{--accent:#0b74e6; --danger:#ef4444; --warning:#f97316; --bg-light:#f5f7fb;}
         
         body {
-            font-family: Inter, system-ui, sans-serif; 
-            margin: 0; 
-            padding: 15px; 
-            background-image: url('fundo.jpg'); 
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            background-color: #f5f7fb; 
+            font-family: Inter, system-ui, sans-serif;
+            margin: 0; padding: 15px; 
+            background-color: #f5f7fb;
         }
 
         .container {
             max-width: 1150px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.92); 
-            padding: 18px;
+            background: rgba(255, 255, 255, 0.95); 
+            padding: 15px;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            backdrop-filter: blur(8px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
-        /* AJUSTE DO CABEÇALHO COM LOGO */
-        .header-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        .logo-escola {
-            height: 60px; /* Altura da logo */
-            width: auto;
-            object-fit: contain;
-        }
-        h1 { margin: 0; font-size: 24px; color: #333; }
+        .header-container { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .logo-escola { height: 50px; width: auto; object-fit: contain; }
+        h1 { margin: 0; font-size: 20px; color: #333; }
 
-        .controls{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap; align-items: center;}
-        input, button{padding:10px;border-radius:8px;border:1px solid #d1d5db; transition: 0.2s; font-size: 14px;}
-        button{background:var(--accent);color:#fff;border:none;cursor:pointer;white-space:nowrap;font-weight: 600;}
-        button.ghost{background:#fff;color:var(--accent);border:1px solid var(--accent);}
-        button.danger{background:var(--danger); color:#fff;}
+        .controls { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
+        input, button { padding: 10px; border-radius: 8px; border: 1px solid #d1d5db; font-size: 14px; }
+        button { background: var(--accent); color: #fff; border: none; cursor: pointer; font-weight: 600; }
+        button.ghost { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
+        button.danger { background: var(--danger); color: #fff; }
         
-        #searchInput { background: #fff; border: 2px solid var(--accent); flex-grow: 1; font-size: 16px; padding: 12px;}
+        #searchInput { background: #fff; border: 2px solid var(--accent); flex-grow: 1; font-size: 16px; }
         
-        table{width:100%;border-collapse:collapse;margin-top:12px}
-        th, td{padding:10px;border-bottom:1px solid #eef2f7;text-align:left;}
-        th { background: rgba(0,0,0,0.03); }
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+        th, td { padding: 8px; border-bottom: 1px solid #eef2f7; text-align: left; }
+        th { background: #f8fafc; }
         
         #tableBody tr { display: none; }
         .mostrar-linha { display: table-row !important; }
 
-        .small{font-size:11px;color:#6b7280; display: block; margin-top: 4px;}
-        .address-text{color: #16a34a; font-weight: 500; font-style: italic;}
-        .signed-thumb{height:45px;border-radius:6px;border:1px solid #ddd; margin-right:5px; object-fit: cover;}
+        .signed-thumb { height: 40px; border-radius: 4px; border: 1px solid #ddd; margin-right: 3px; }
         
-        .modal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:1000}
-        .card{
-            background:#fff; padding:20px; border-radius:12px; max-width:600px;
-            width:92%; max-height: 92vh; display: flex; flex-direction: column; position: relative;
-        }
-
-        .modal-body-scroll { overflow-y: auto; flex-grow: 1; padding-right: 5px; margin-bottom: 15px; }
-        .modal-footer { display: flex; gap: 10px; border-top: 1px solid #eee; padding-top: 15px; background: #fff; }
-        .modal-flex { display: flex; gap: 15px; flex-wrap: wrap; }
-        .flex-col { flex: 1; min-width: 250px; }
+        /* Modal e Assinatura */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,.8); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .card { background: #fff; padding: 15px; border-radius: 12px; width: 95%; max-width: 600px; max-height: 95vh; overflow-y: auto; }
         
-        .signature-wrapper { border: 1px solid #ddd; border-radius: 8px; background: #fafafa; position: relative; width: 100%; height: 180px; }
-        .signature-canvas { position: absolute; left: 0; top: 0; width: 100%; height: 100%; touch-action: none; }
-        
-        #video, #photoPreview { 
-            width: 100%; 
-            height: auto; 
-            aspect-ratio: 4 / 3; 
-            object-fit: cover; 
+        .signature-wrapper { 
+            border: 2px dashed #ccc; 
             border-radius: 8px; 
-            background:#000; 
+            background: #fff; 
+            width: 100%; 
+            height: 200px; 
+            position: relative;
+            touch-action: none; /* IMPEDE MOVIMENTAÇÃO DA TELA AO ASSINAR */
         }
+        .signature-canvas { width: 100%; height: 100%; cursor: crosshair; }
+        
+        #video, #photoPreview { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 8px; background: #000; }
         #video { transform: scaleX(-1); }
 
-        .status-badge{padding:4px 8px; border-radius:12px; font-size:11px; font-weight:bold;}
-        .status-pendente{background:#fee2e2; color:#ef4444;}
-        .status-assinado{background:#dcfce7; color:#16a34a;}
-
-        body.modo-colaborador #adminPanel { display: none; }
-        body.modo-colaborador h1 { font-size: 20px; }
-        body.modo-colaborador .header-container { justify-content: center; }
+        .status-badge { padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: bold; }
+        .status-pendente { background: #fee2e2; color: #ef4444; }
+        .status-assinado { background: #dcfce7; color: #16a34a; }
 
         @media (max-width: 600px) {
-            .flex-col { min-width: 100%; }
-            .card { padding: 15px; width: 95%; }
-            .logo-escola { height: 45px; }
-            h1 { font-size: 18px; }
+            .controls input { flex: 1; min-width: 120px; }
+            th, td { padding: 5px; font-size: 12px; }
+            button { padding: 8px; }
         }
     </style>
 </head>
@@ -105,17 +76,17 @@
 
 <div class="container">
     <div class="header-container">
-        <img src="logo.png" alt="Logo Escola" class="logo-escola" onerror="this.style.display='none'">
+        <img src="logo.png" alt="Logo" class="logo-escola" onerror="this.style.display='none'">
         <h1 id="tituloPagina">Gestão de Frequência</h1>
     </div>
     
     <div class="controls" id="adminPanel">
-        <input id="nameInput" placeholder="Novo nome..." style="width: 180px"/>
+        <input id="nameInput" placeholder="Nome Completo"/>
+        <input id="turmaInput" placeholder="Turma" style="width: 100px"/>
         <button id="addBtn">Add</button>
         <button id="importBtn" onclick="document.getElementById('importFile').click()" class="ghost">Importar TXT</button>
-        <input type="file" id="importFile" style="display:none" accept=".txt,.csv" />
-        <button id="showQrBtn" class="ghost">📲 QR Code</button>
-        <button id="clearAllBtn" class="danger">Limpar Banco</button>
+        <input type="file" id="importFile" style="display:none" accept=".txt" />
+        <button id="clearAllBtn" class="danger">Limpar Tudo</button>
         <button id="generatePdf" style="margin-left:auto">Gerar PDF</button>
     </div>
 
@@ -129,10 +100,9 @@
                 <tr>
                     <th>Status</th>
                     <th>Nome</th>
-                    <th class="col-admin">ID</th>
+                    <th>Turma</th>
                     <th>Assinatura/Foto</th>
-                    <th class="col-admin">Data / Local</th>
-                    <th>Ação</th>
+                    <th class="col-admin">Ação</th>
                 </tr>
             </thead>
             <tbody id="tableBody"></tbody>
@@ -142,48 +112,30 @@
 
 <div id="signModal" class="modal">
     <div class="card">
-        <h2 id="nomeAssinando" style="margin: 0 0 5px 0; font-size: 1.2rem;">Assinar</h2>
-        <div id="geoStatus" class="small" style="color: var(--warning); font-weight: bold; margin-bottom: 10px;">Localizando...</div>
-        <div class="modal-body-scroll">
-            <div class="modal-flex">
-                <div class="flex-col">
-                    <label class="small"><b>1. Selfie:</b></label>
-                    <div style="margin-top:5px">
-                        <video id="video" autoplay playsinline></video>
-                        <img id="photoPreview" style="display:none;" />
-                        <button id="takePhoto" style="width:100%; margin-top:8px">📸 Capturar Foto</button>
-                    </div>
-                </div>
-                <div class="flex-col">
-                    <label class="small"><b>2. Assinatura:</b></label>
-                    <div style="margin-top:5px">
-                        <div class="signature-wrapper">
-                            <canvas id="sigCanvas" class="signature-canvas"></canvas>
-                        </div>
-                        <button id="clearSig" class="ghost" style="width:100%; margin-top:8px">Limpar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button onclick="fecharModais()" class="ghost" style="flex:1">Cancelar</button>
-            <button id="saveData" style="flex:2; font-weight:bold; font-size:16px; background: #16a34a; color: white;">CONFIRMAR</button>
-        </div>
-    </div>
-</div>
+        <h2 id="nomeAssinando" style="margin: 0; font-size: 1.1rem;">Assinar</h2>
+        <div id="geoStatus" style="font-size: 11px; color: var(--warning); margin-bottom: 10px;">Localizando...</div>
+        
+        <label style="font-size: 12px;"><b>1. Foto Selfie:</b></label>
+        <video id="video" autoplay playsinline></video>
+        <img id="photoPreview" style="display:none;" />
+        <button id="takePhoto" style="width:100%; margin: 8px 0;">📸 Capturar Foto</button>
 
-<div id="qrModal" class="modal">
-    <div class="card" style="text-align:center; max-width: 400px;">
-        <h2>Acesso Frequência</h2>
-        <div id="qrcode" style="display:flex; justify-content:center; margin:20px 0"></div>
-        <button onclick="fecharModais()" class="ghost">Fechar</button>
+        <label style="font-size: 12px;"><b>2. Assinatura:</b> (Assine no quadro abaixo)</label>
+        <div class="signature-wrapper">
+            <canvas id="sigCanvas" class="signature-canvas"></canvas>
+        </div>
+        <button id="clearSig" class="ghost" style="width:100%; margin-top:5px;">Limpar Assinatura</button>
+
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button onclick="fecharModais()" class="ghost" style="flex:1">Sair</button>
+            <button id="saveData" style="flex:2; background: #16a34a;">CONFIRMAR PRESENÇA</button>
+        </div>
     </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <script>
@@ -202,41 +154,35 @@
     const db = firebase.database();
     let sigPad, localStream, currentUserId = null, currentGeoLabel = "Não capturado";
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const eModoColaborador = urlParams.has('modo');
-
-    if (eModoColaborador) {
-        document.body.classList.add('modo-colaborador');
-        document.getElementById('tituloPagina').innerText = "Lista de Presença Digital";
-        document.querySelectorAll('.col-admin').forEach(el => el.style.display = 'none');
-    }
-
+    // Adicionar Participante Manualmente
     document.getElementById('addBtn').onclick = () => {
-        const input = document.getElementById('nameInput');
-        const n = input.value.trim();
-        if(n) { 
+        const nameInput = document.getElementById('nameInput');
+        const turmaInput = document.getElementById('turmaInput');
+        if(nameInput.value.trim()) { 
             db.ref('participantes').push().set({ 
-                name: n, signed: false, id: Math.floor(1000 + Math.random() * 9000)
-            }).then(() => { input.value = ''; });
+                name: nameInput.value.trim(), 
+                turma: turmaInput.value.trim() || 'S/T',
+                signed: false 
+            });
+            nameInput.value = ''; turmaInput.value = '';
         }
     };
 
+    // Importação TXT: Nome, Turma
     document.getElementById('importFile').onchange = (e) => {
         const file = e.target.files[0];
-        if (!file) return;
         const reader = new FileReader();
         reader.onload = (ev) => {
             const lines = ev.target.result.split(/\r?\n/);
             lines.forEach(line => {
-                const name = line.trim();
+                const parts = line.split(',');
+                const name = parts[0]?.trim();
+                const turma = parts[1]?.trim() || 'S/T';
                 if (name) {
-                    db.ref('participantes').push().set({
-                        name: name, signed: false, id: Math.floor(1000 + Math.random() * 9000)
-                    });
+                    db.ref('participantes').push().set({ name: name, turma: turma, signed: false });
                 }
             });
-            alert("Nomes importados!");
-            e.target.value = '';
+            alert("Lista Importada!");
         };
         reader.readAsText(file);
     };
@@ -245,17 +191,9 @@
         const filter = document.getElementById("searchInput").value.toUpperCase();
         const tr = document.getElementById("tableBody").getElementsByTagName("tr");
         for (let i = 0; i < tr.length; i++) {
-            const tdNome = tr[i].getElementsByTagName("td")[1];
-            if (tdNome) {
-                const txtValue = tdNome.innerText.toUpperCase();
-                if (filter.length >= 2 && txtValue.indexOf(filter) > -1) {
-                    tr[i].classList.add('mostrar-linha');
-                } else if (!eModoColaborador && filter === "") {
-                    tr[i].classList.add('mostrar-linha');
-                } else {
-                    tr[i].classList.remove('mostrar-linha');
-                }
-            }
+            const txtValue = tr[i].innerText.toUpperCase();
+            tr[i].classList.toggle('mostrar-linha', filter.length >= 2 && txtValue.indexOf(filter) > -1);
+            if(filter === "") tr[i].classList.remove('mostrar-linha');
         }
     }
 
@@ -268,64 +206,39 @@
                 const p = data[key];
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><span class="status-badge ${p.signed ? 'status-assinado' : 'status-pendente'}">${p.signed ? 'Assinado' : 'Pendente'}</span></td>
+                    <td><span class="status-badge ${p.signed ? 'status-assinado' : 'status-pendente'}">${p.signed ? 'Presente' : 'Ausente'}</span></td>
                     <td><b>${p.name}</b></td>
-                    <td class="col-admin">${p.id || '-'}</td>
+                    <td>${p.turma || '-'}</td>
                     <td>${p.signed ? `<img src="${p.sigData}" class="signed-thumb"><img src="${p.photo}" class="signed-thumb">` : '-'}</td>
-                    <td class="col-admin small">${p.time || '-'} <br><span class="address-text">${p.geo || ''}</span></td>
                     <td>
-                        ${p.signed ? 
-                            `<button class="ghost" onclick="tentarRefazer('${key}', '${p.name}')">Refazer</button>` : 
-                            `<button onclick="abrirAssinatura('${key}', '${p.name}')">Assinar</button>`
-                        }
-                        ${!eModoColaborador ? `<button class="danger" onclick="excluirParticipante('${key}', '${p.name}')">X</button>` : ''}
+                        ${p.signed ? `<button class="ghost" onclick="tentarRefazer('${key}', '${p.name}')">Refazer</button>` : `<button onclick="abrirAssinatura('${key}', '${p.name}')">Assinar</button>`}
+                        <button class="danger" onclick="excluirParticipante('${key}', '${p.name}')">X</button>
                     </td>
                 `;
                 tableBody.appendChild(tr);
             });
-            if (eModoColaborador) document.querySelectorAll('.col-admin').forEach(el => el.style.display = 'none');
-            filtrarTabela();
         }
     });
-
-    async function capturarEndereco() {
-        if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(async (pos) => {
-                const lat = pos.coords.latitude, lon = pos.coords.longitude;
-                try {
-                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18`);
-                    const data = await response.json();
-                    const r = data.address;
-                    currentGeoLabel = `${r.road || 'Rua'}${r.house_number ? ', ' + r.house_number : ''} - ${r.suburb || r.city || ''}`;
-                    document.getElementById('geoStatus').innerText = "📍 Local: " + currentGeoLabel;
-                    document.getElementById('geoStatus').style.color = "green";
-                } catch (e) { currentGeoLabel = `${lat.toFixed(4)}, ${lon.toFixed(4)}`; }
-            });
-        }
-    }
 
     function abrirAssinatura(id, nome) {
         currentUserId = id;
         document.getElementById('nomeAssinando').innerText = nome;
         document.getElementById('signModal').style.display = 'flex';
-        capturarEndereco();
+        
+        // Setup Canvas
         setTimeout(() => {
             const canvas = document.getElementById('sigCanvas');
             canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
-            if (sigPad) sigPad.off();
-            sigPad = new SignaturePad(canvas, { minWidth: 2, maxWidth: 4 });
-        }, 400);
-        
-        navigator.mediaDevices.getUserMedia({
-            video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }
-        }).then(s => {
+            sigPad = new SignaturePad(canvas, { minWidth: 1, maxWidth: 3 });
+        }, 300);
+
+        // Câmera
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }).then(s => {
             localStream = s;
-            const video = document.getElementById('video');
-            video.srcObject = s;
-            video.setAttribute("playsinline", true);
+            document.getElementById('video').srcObject = s;
             document.getElementById('photoPreview').style.display = 'none';
             document.getElementById('video').style.display = 'block';
-        }).catch(err => alert("Erro ao acessar câmera: " + err));
+        });
     }
 
     document.getElementById('takePhoto').onclick = () => {
@@ -338,42 +251,41 @@
         document.getElementById('photoPreview').src = canvas.toDataURL('image/jpeg');
         document.getElementById('photoPreview').style.display = 'block';
         document.getElementById('video').style.display = 'none';
-        if(localStream) localStream.getTracks().forEach(t => t.stop());
     };
 
     document.getElementById('saveData').onclick = () => {
         const photo = document.getElementById('photoPreview').src;
         if(sigPad.isEmpty() || !photo.startsWith('data')) return alert("Foto e Assinatura são obrigatórias!");
+        
         db.ref('participantes/' + currentUserId).update({
-            signed: true, sigData: sigPad.toDataURL(), photo: photo, 
-            time: new Date().toLocaleString(), geo: currentGeoLabel
+            signed: true, 
+            sigData: sigPad.toDataURL(), 
+            photo: photo, 
+            time: new Date().toLocaleString()
         }).then(fecharModais);
     };
 
     function fecharModais() {
-        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        document.getElementById('signModal').style.display = 'none';
         if(localStream) localStream.getTracks().forEach(t => t.stop());
     }
 
     document.getElementById('clearSig').onclick = () => sigPad.clear();
-    document.getElementById('showQrBtn').onclick = () => {
-        document.getElementById('qrcode').innerHTML = "";
-        const link = window.location.origin + window.location.pathname + "?modo=1";
-        new QRCode(document.getElementById('qrcode'), { text: link, width: 180, height: 180 });
-        document.getElementById('qrModal').style.display = 'flex';
-    };
+
     function tentarRefazer(id, nome) {
-        if(prompt("Senha para REFAZER:") === ADMIN_PASSWORD) abrirAssinatura(id, nome);
+        if(prompt("Senha:") === ADMIN_PASSWORD) abrirAssinatura(id, nome);
     }
+
     function excluirParticipante(id, nome) {
-        if(prompt(`Senha para excluir ${nome}:`) === ADMIN_PASSWORD) db.ref('participantes/' + id).remove();
+        if(prompt(`Excluir ${nome}? Senha:`) === ADMIN_PASSWORD) db.ref('participantes/' + id).remove();
     }
+
     document.getElementById('clearAllBtn').onclick = () => {
-        if(prompt("Senha para LIMPAR TUDO:") === ADMIN_PASSWORD) db.ref('participantes').remove();
+        if(prompt("LIMPAR TUDO? Senha:") === ADMIN_PASSWORD) db.ref('participantes').remove();
     };
+
     document.getElementById('generatePdf').onclick = () => {
-        const el = document.getElementById('mainTable');
-        html2pdf().set({ margin: 5, filename: 'frequencia.pdf', jsPDF: { orientation: 'landscape' } }).from(el).save();
+        html2pdf().from(document.getElementById('mainTable')).save('frequencia.pdf');
     };
 </script>
 </body>
