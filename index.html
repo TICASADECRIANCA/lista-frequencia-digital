@@ -3,14 +3,12 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <title>Frequência Digital Pro + GPS Detalhado</title>
+    <title>Frequência Digital Pro - Admin GPS</title>
     <style>
         :root{--accent:#0b74e6; --danger:#ef4444; --success:#16a34a; --warning:#f97316; --bg-light:#f5f7fb;}
-        body { font-family: Inter, system-ui, sans-serif; margin: 0; padding: 10px; background-color: var(--bg-light); overflow-x: hidden; }
-        .container { max-width: 1150px; margin: 0 auto; background: white; padding: 12px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        body { font-family: Inter, system-ui, sans-serif; margin: 0; padding: 10px; background-color: var(--bg-light); }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 12px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
         .header-container { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
-        .logo-escola { height: 40px; width: auto; }
-        h1 { margin: 0; font-size: 18px; color: #333; }
         .controls { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
         input, button { padding: 8px; border-radius: 6px; border: 1px solid #ddd; font-size: 13px; }
         button { background: var(--accent); color: #fff; border: none; cursor: pointer; font-weight: 600; }
@@ -19,28 +17,29 @@
         button.excel { background: #1d6f42; color: #fff; }
         #searchInput { border: 2px solid var(--accent); flex-grow: 1; font-size: 15px; }
         .table-responsive { overflow-x: auto; width: 100%; }
-        table { width: 100%; border-collapse: collapse; min-width: 350px; }
-        th, td { padding: 8px 4px; border-bottom: 1px solid #eee; text-align: left; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th, td { padding: 8px 4px; border-bottom: 1px solid #eee; text-align: left; font-size: 11px; }
         .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
         .status-pendente { background: #fee2e2; color: #ef4444; }
         .status-assinado { background: #dcfce7; color: #16a34a; }
         #tableBody tr { display: none; }
         .mostrar-linha { display: table-row !important; }
-        .signed-thumb { height: 35px; border-radius: 4px; margin-right: 2px; border: 1px solid #ddd; }
+        .signed-thumb { height: 35px; border-radius: 4px; margin-right: 2px; border: 1px solid #ddd; vertical-align: middle; }
+        .geo-info { font-size: 9px; color: #666; display: block; margin-top: 4px; max-width: 200px; }
+        .map-link { color: var(--accent); text-decoration: none; font-weight: bold; }
+        
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: none; align-items: center; justify-content: center; z-index: 1000; }
-        .card { background: #fff; padding: 15px; border-radius: 12px; width: 95%; max-width: 450px; max-height: 95vh; overflow-y: auto; }
-        .signature-wrapper { border: 2px solid #333; border-radius: 8px; background: #fff; width: 100%; height: 180px; touch-action: none; }
-        .signature-canvas { width: 100%; height: 100%; touch-action: none; }
+        .card { background: #fff; padding: 15px; border-radius: 12px; width: 95%; max-width: 450px; }
+        .signature-wrapper { border: 2px solid #333; border-radius: 8px; height: 180px; touch-action: none; }
         #video, #photoPreview { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 8px; background: #000; }
-        #geoStatus { font-size: 10px; color: var(--warning); margin-bottom: 5px; font-weight: bold; }
-        body.modo-colaborador #adminPanel { display: none; }
+        
+        body.modo-colaborador #adminPanel, body.modo-colaborador .col-geo-admin { display: none; }
     </style>
 </head>
-<body id="mainBody">
+<body>
 
 <div class="container">
     <div class="header-container">
-        <img src="logo.png" alt="Logo" class="logo-escola" onerror="this.style.display='none'">
         <h1>Frequência Digital</h1>
     </div>
     
@@ -50,13 +49,13 @@
         <button id="addBtn">Adicionar</button>
         <button onclick="document.getElementById('importFile').click()" class="ghost">Importar TXT</button>
         <input type="file" id="importFile" style="display:none" accept=".txt" />
-        <button id="showQrBtn" class="ghost">Gerar QR</button>
-        <button id="clearAllBtn" class="danger">Limpar Banco</button>
-        <button id="exportExcel" class="excel">📊 Baixar Excel</button>
+        <button id="showQrBtn" class="ghost">QR Code</button>
+        <button id="clearAllBtn" class="danger">Limpar Tudo</button>
+        <button id="exportExcel" class="excel">📊 Excel</button>
     </div>
 
     <div class="controls">
-        <input id="searchInput" type="text" placeholder="🔍 DIGITE SEU NOME..." onkeyup="filtrarTabela()">
+        <input id="searchInput" type="text" placeholder="🔍 DIGITE SEU NOME PARA ASSINAR..." onkeyup="filtrarTabela()">
     </div>
 
     <div class="table-responsive">
@@ -66,6 +65,7 @@
                     <th>Status</th>
                     <th>Nome / Turma</th>
                     <th>Registros</th>
+                    <th class="col-geo-admin">Localização (GPS)</th>
                     <th>Ação</th>
                 </tr>
             </thead>
@@ -76,16 +76,14 @@
 
 <div id="signModal" class="modal">
     <div class="card">
-        <h3 id="nomeAssinando" style="margin-top:0">Confirmar Presença</h3>
-        <div id="geoStatus">📍 Localizando endereço...</div>
+        <h3 id="nomeAssinando" style="margin:0 0 10px 0">Assinar</h3>
+        <div id="geoStatus" style="font-size:10px; color:var(--warning); font-weight:bold">📍 Obtendo endereço...</div>
         
-        <label style="font-size:11px"><b>1. Foto Selfie:</b></label>
         <video id="video" autoplay playsinline></video>
         <img id="photoPreview" style="display:none;" />
         <button id="takePhoto" style="width:100%; margin: 5px 0">📸 Tirar Foto</button>
 
-        <label style="font-size:11px"><b>2. Assinatura:</b></label>
-        <div class="signature-wrapper"><canvas id="sigCanvas" class="signature-canvas"></canvas></div>
+        <div class="signature-wrapper"><canvas id="sigCanvas" style="width:100%;height:100%"></canvas></div>
         <button id="clearSig" class="ghost" style="width:100%; margin-top:5px; font-size:11px">LIMPAR</button>
 
         <div style="display: flex; gap: 8px; margin-top: 15px;">
@@ -97,7 +95,6 @@
 
 <div id="qrModal" class="modal">
     <div class="card" style="text-align:center; max-width: 300px;">
-        <h3>Acesso Celular</h3>
         <div id="qrcode" style="display:flex; justify-content:center; margin:15px 0"></div>
         <button onclick="fecharModais()" class="ghost" style="width:100%">Fechar</button>
     </div>
@@ -123,31 +120,11 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    let sigPad, localStream, currentUserId = null, currentFullAddress = "Não capturado";
+    let sigPad, localStream, currentUserId = null, currentFullAddress = "Não capturado", currentCoords = "";
 
     const urlParams = new URLSearchParams(window.location.search);
     const eModoColaborador = urlParams.has('modo');
     if (eModoColaborador) document.body.classList.add('modo-colaborador');
-
-    // IMPORTAÇÃO COM BALÃO
-    document.getElementById('importFile').onchange = (e) => {
-        const file = e.target.files[0];
-        if(!file) return;
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            const lines = ev.target.result.split(/\r?\n/);
-            let contador = 0;
-            lines.forEach(line => {
-                const parts = line.split(',');
-                if (parts[0]?.trim()) {
-                    db.ref('participantes').push().set({ name: parts[0].trim(), turma: parts[1]?.trim() || 'S/T', signed: false });
-                    contador++;
-                }
-            });
-            alert(`✅ Sucesso! Foram importados ${contador} nomes.`);
-        };
-        reader.readAsText(file);
-    };
 
     function filtrarTabela() {
         const filter = document.getElementById("searchInput").value.toUpperCase();
@@ -167,7 +144,18 @@
                 const p = data[key];
                 const tr = document.createElement('tr');
                 const statusHtml = p.signed ? `<span class="status-badge status-assinado">Assinado</span>` : `<span class="status-badge status-pendente">Pendente</span>`;
-                tr.innerHTML = `<td>${statusHtml}</td><td><b>${p.name}</b><br><small>${p.turma}</small></td><td>${p.signed ? `<img src="${p.sigData}" class="signed-thumb"><img src="${p.photo}" class="signed-thumb">` : '-'}</td><td>${p.signed ? `<button class="ghost" onclick="tentarRefazer('${key}','${p.name}')">Refazer</button>` : `<button onclick="abrirAssinatura('${key}','${p.name}')">ASSINAR</button>`}</td>`;
+                
+                // Link para o mapa se houver coordenadas
+                const geoHtml = p.signed && p.geo ? 
+                    `<span class="geo-info">${p.geo} <br> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.geo)}" target="_blank" class="map-link">[Ver no Mapa]</a></span>` : '-';
+
+                tr.innerHTML = `
+                    <td>${statusHtml}</td>
+                    <td><b>${p.name}</b><br><small>${p.turma}</small></td>
+                    <td>${p.signed ? `<img src="${p.sigData}" class="signed-thumb"><img src="${p.photo}" class="signed-thumb">` : '-'}</td>
+                    <td class="col-geo-admin">${geoHtml}</td>
+                    <td>${p.signed ? `<button class="ghost" onclick="tentarRefazer('${key}','${p.name}')">Refazer</button>` : `<button onclick="abrirAssinatura('${key}','${p.name}')">ASSINAR</button>`}</td>
+                `;
                 tableBody.appendChild(tr);
             });
             filtrarTabela();
@@ -181,21 +169,23 @@
         
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((pos) => {
-                fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`)
+                const lat = pos.coords.latitude;
+                const lon = pos.coords.longitude;
+                fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
                 .then(r => r.json()).then(data => {
                     currentFullAddress = data.display_name;
                     document.getElementById('geoStatus').innerText = "📍 Endereço capturado";
                 }).catch(() => {
-                    currentFullAddress = `${pos.coords.latitude}, ${pos.coords.longitude}`;
+                    currentFullAddress = `${lat}, ${lon}`;
                     document.getElementById('geoStatus').innerText = "📍 Coordenadas capturadas";
                 });
             });
         }
 
         setTimeout(() => {
-            const canvas = document.getElementById('sigCanvas');
+            const canvas = document.querySelector("#sigCanvas");
             canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
-            sigPad = new SignaturePad(canvas, { minWidth: 1.5, maxWidth: 3.5 });
+            sigPad = new SignaturePad(canvas);
         }, 300);
 
         navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }).then(s => {
@@ -210,9 +200,7 @@
         const video = document.getElementById('video');
         const canvas = document.createElement('canvas');
         canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-        const ctx = canvas.getContext('2d');
-        ctx.translate(canvas.width, 0); ctx.scale(-1, 1);
-        ctx.drawImage(video, 0, 0);
+        canvas.getContext('2d').drawImage(video, 0, 0);
         document.getElementById('photoPreview').src = canvas.toDataURL('image/jpeg');
         document.getElementById('photoPreview').style.display = 'block';
         document.getElementById('video').style.display = 'none';
@@ -220,13 +208,13 @@
 
     document.getElementById('saveData').onclick = () => {
         const photo = document.getElementById('photoPreview').src;
-        if(sigPad.isEmpty() || !photo.startsWith('data')) return alert("Capture a foto e a assinatura!");
+        if(sigPad.isEmpty() || !photo.startsWith('data')) return alert("Erro: Foto e Assinatura!");
         
         db.ref('participantes/' + currentUserId).update({
             signed: true, sigData: sigPad.toDataURL(), photo: photo, 
             time: new Date().toLocaleString(), geo: currentFullAddress
         }).then(() => {
-            alert("Presença confirmada!");
+            alert("Confirmado!");
             fecharModais();
             document.getElementById('searchInput').value = "";
             filtrarTabela();
@@ -237,13 +225,12 @@
         document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
         if(localStream) localStream.getTracks().forEach(t => t.stop());
         if(sigPad) sigPad.clear();
-        document.getElementById('geoStatus').innerText = "📍 Localizando endereço...";
     }
 
     document.getElementById('exportExcel').onclick = () => {
         db.ref('participantes').once('value', (snapshot) => {
+            const rows = [["Status", "Nome", "Turma", "Data/Hora", "Localização"]];
             const data = snapshot.val();
-            const rows = [["Status", "Nome", "Turma", "Data/Hora", "Localização Detalhada"]];
             if (data) Object.keys(data).forEach(k => {
                 const p = data[k];
                 rows.push([p.signed ? "Assinado" : "Pendente", p.name, p.turma, p.time || "-", p.geo || "-"]);
@@ -251,8 +238,23 @@
             const ws = XLSX.utils.aoa_to_sheet(rows);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Frequencia");
-            XLSX.writeFile(wb, "frequencia.xlsx");
+            XLSX.writeFile(wb, "frequencia_com_gps.xlsx");
         });
+    };
+
+    document.getElementById('importFile').onchange = (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            const lines = ev.target.result.split(/\r?\n/);
+            let count = 0;
+            lines.forEach(l => {
+                const p = l.split(',');
+                if(p[0]) { db.ref('participantes').push().set({name:p[0].trim(), turma:p[1]?.trim()||'S/T', signed:false}); count++; }
+            });
+            alert(`✅ ${count} nomes importados!`);
+        };
+        reader.readAsText(file);
     };
 
     document.getElementById('clearSig').onclick = () => sigPad.clear();
@@ -261,7 +263,7 @@
         new QRCode(document.getElementById('qrcode'), { text: window.location.href.split('?')[0] + "?modo=1", width: 180, height: 180 });
         document.getElementById('qrModal').style.display = 'flex';
     };
-    function tentarRefazer(id, n) { if(prompt("Senha Admin:") === ADMIN_PASSWORD) abrirAssinatura(id, n); }
+    function tentarRefazer(id, n) { if(prompt("Senha:") === ADMIN_PASSWORD) abrirAssinatura(id, n); }
     document.getElementById('addBtn').onclick = () => {
         const n = document.getElementById('nameInput').value;
         const t = document.getElementById('turmaInput').value;
