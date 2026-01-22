@@ -8,77 +8,77 @@
         :root{--accent:#0b74e6; --danger:#ef4444; --success:#16a34a; --warning:#f97316; --bg-light:#f5f7fb;}
         
         body {
-            [cite_start]font-family: Inter, system-ui, sans-serif; [cite: 3]
+            font-family: Inter, system-ui, sans-serif; 
             margin: 0; 
             padding: 8px; 
             background-image: url('fundo.jpg'); 
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            [cite_start]overflow-x: hidden; [cite: 3]
+            overflow-x: hidden;
         }
 
         .container {
-            [cite_start]max-width: 100%; [cite: 5]
+            max-width: 100%;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.94); 
             padding: 12px;
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            [cite_start]backdrop-filter: blur(8px); [cite: 5]
-            [cite_start]box-sizing: border-box; [cite: 6]
+            backdrop-filter: blur(8px);
+            box-sizing: border-box;
         }
 
-        .header-container { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; [cite_start]} [cite: 7]
-        .logo-escola { height: 45px; width: auto; [cite_start]} [cite: 8]
-        h1 { margin: 0; font-size: 18px; color: #333; [cite_start]} [cite: 9]
+        .header-container { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+        .logo-escola { height: 45px; width: auto; }
+        h1 { margin: 0; font-size: 18px; color: #333; }
 
-        .controls { display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap; [cite_start]} [cite: 10]
-        input, button { padding: 8px; border-radius: 6px; border: 1px solid #ddd; font-size: 12px; [cite_start]} [cite: 11]
-        button { background: var(--accent); color: #fff; border: none; cursor: pointer; font-weight: 600; [cite_start]} [cite: 12]
-        button.danger { background: var(--danger); [cite_start]} [cite: 13]
-        button.ghost { background: #fff; color: var(--accent); border: 1px solid var(--accent); [cite_start]} [cite: 14]
+        .controls { display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap; }
+        input, button { padding: 8px; border-radius: 6px; border: 1px solid #ddd; font-size: 12px; }
+        button { background: var(--accent); color: #fff; border: none; cursor: pointer; font-weight: 600; }
+        button.danger { background: var(--danger); }
+        button.ghost { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
         
-        #searchInput { border: 2px solid var(--accent); flex-grow: 1; font-size: 14px; background: white; [cite_start]} [cite: 15]
+        #searchInput { border: 2px solid var(--accent); flex-grow: 1; font-size: 14px; background: white; }
 
-        .table-responsive { width: 100%; overflow-x: hidden; [cite_start]} [cite: 16]
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; [cite_start]} [cite: 17]
+        .table-responsive { width: 100%; overflow-x: hidden; }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; } 
         
         th, td { 
-            [cite_start]padding: 8px 2px; [cite: 18]
+            padding: 8px 2px;
             border-bottom: 1px solid #eee; 
             text-align: left; 
             font-size: 14px; 
-            [cite_start]word-wrap: break-word; [cite: 19]
+            word-wrap: break-word;
         }
 
-        .col-status { width: 80px; [cite_start]} [cite: 20]
-        .col-nome { width: 55%; [cite_start]} [cite: 21]
-        .col-admin-reg { width: 75px; [cite_start]} [cite: 22]
-        .col-admin-gps { width: 110px; [cite_start]} [cite: 23]
-        .col-acao { width: 75px; [cite_start]} [cite: 24]
+        .col-status { width: 80px; }
+        .col-nome { width: 55%; }
+        .col-admin-reg { width: 75px; }
+        .col-admin-gps { width: 110px; }
+        .col-acao { width: 75px; }
 
-        .status-txt { font-weight: bold; font-size: 9px; text-transform: uppercase; [cite_start]} [cite: 25]
-        .pendente { color: var(--danger); [cite_start]} [cite: 26]
-        .assinado { color: var(--success); [cite_start]} [cite: 27]
+        .status-txt { font-weight: bold; font-size: 9px; text-transform: uppercase; }
+        .pendente { color: var(--danger); }
+        .assinado { color: var(--success); }
         
-        .signed-thumb { height: 32px; width: 32px; border-radius: 4px; border: 1px solid #ddd; object-fit: cover; [cite_start]} [cite: 28, 29]
-        .geo-label { font-size: 8px; color: #666; display: block; line-height: 1.1; [cite_start]} [cite: 30]
+        .signed-thumb { height: 32px; width: 32px; border-radius: 4px; border: 1px solid #ddd; object-fit: cover; }
+        .geo-label { font-size: 8px; color: #666; display: block; line-height: 1.1; }
 
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,.9); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 10px; [cite_start]} [cite: 31, 32]
-        .card { background: #fff; padding: 12px; border-radius: 12px; width: 100%; max-width: 400px; box-sizing: border-box; max-height: 95vh; overflow-y: auto; position: relative; [cite_start]} [cite: 33]
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,.9); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 10px; }
+        .card { background: #fff; padding: 12px; border-radius: 12px; width: 100%; max-width: 400px; box-sizing: border-box; max-height: 95vh; overflow-y: auto; position: relative; }
         
-        #video, #photoPreview { width: 100%; max-height: 230px; object-fit: cover; border-radius: 8px; background: #000; [cite_start]} [cite: 34]
-        .signature-wrapper { border: 2px solid #333; border-radius: 8px; height: 140px; background: white; margin-top: 5px; [cite_start]} [cite: 35]
+        #video, #photoPreview { width: 100%; max-height: 230px; object-fit: cover; border-radius: 8px; background: #000; }
+        .signature-wrapper { border: 2px solid #333; border-radius: 8px; height: 140px; background: white; margin-top: 5px; }
 
         #successToast {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: var(--success); color: white; padding: 20px 40px; border-radius: 50px;
             font-weight: bold; font-size: 18px; z-index: 2000; display: none;
-            [cite_start]box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center; [cite: 36, 37, 38]
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center;
         }
 
-        body.modo-assinante #adminPanel, body.modo-assinante .col-admin { display: none !important; [cite_start]} [cite: 39]
+        body.modo-assinante #adminPanel, body.modo-assinante .col-admin { display: none !important; }
     </style>
 </head>
 <body>
@@ -95,12 +95,12 @@
         <input id="nameInput" placeholder="Nome" style="flex:2;"/>
         <input id="turmaInput" placeholder="Turma" style="flex:1;"/>
         <button id="addBtn">Adicionar</button>
-
+        
         <input type="file" id="importFile" accept=".txt" style="display:none;">
         <button id="importBtn" style="background:#6366f1">Importar TXT</button>
         
         <button id="showQrBtn" class="ghost">QRcode</button>
-        [cite_start]<button id="exportExcel" style="background:#1d6f42">Gerar Planilha</button> [cite: 40]
+        <button id="exportExcel" style="background:#1d6f42">Gerar Planilha</button>
         <button id="clearAllBtn" class="danger">Limpar Tabela</button>
     </div>
 
@@ -112,12 +112,12 @@
         <table id="mainTable">
             <thead>
                 <tr>
-                    [cite_start]<th class="col-status">Status</th> [cite: 41]
+                    <th class="col-status">Status</th>
                     <th class="col-nome">Nome/Turma</th>
                     <th class="col-admin col-admin-reg">Fotos</th>
                     <th class="col-admin col-admin-gps">GPS</th>
                     <th class="col-acao">Ação</th>
-                [cite_start]</tr> [cite: 42]
+                </tr>
             </thead>
             <tbody id="tableBody"></tbody>
         </table>
@@ -127,22 +127,22 @@
 <div id="signModal" class="modal">
     <div class="card">
         <h3 id="nomeAssinando" style="margin:0">Assinar</h3>
-        [cite_start]<p id="geoStatus" style="font-size:9px; color:var(--warning); margin: 2px 0;">📍 Validando localização...</p> [cite: 43]
+        <p id="geoStatus" style="font-size:9px; color:var(--warning); margin: 2px 0;">📍 Validando localização...</p>
         <video id="video" autoplay playsinline></video>
         <img id="photoPreview" style="display:none;" />
-        [cite_start]<button id="takePhoto" style="width:100%; margin: 5px 0; background:#333; padding: 12px;">📸 TIRAR FOTO</button> [cite: 44]
+        <button id="takePhoto" style="width:100%; margin: 5px 0; background:#333; padding: 12px;">📸 TIRAR FOTO</button>
         <div class="signature-wrapper"><canvas id="sigCanvas" style="width:100%;height:100%"></canvas></div>
-        [cite_start]<div style="display: flex; gap: 8px; margin-top: 10px;"> [cite: 45]
-            [cite_start]<button onclick="fecharModais()" style="background:#ccc; flex:1">Sair</button> [cite: 46]
-            [cite_start]<button id="saveData" style="flex:2; background: var(--success); font-size: 14px;">CONFIRMAR</button> [cite: 47]
+        <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button onclick="fecharModais()" style="background:#ccc; flex:1">Sair</button>
+            <button id="saveData" style="flex:2; background: var(--success); font-size: 14px;">CONFIRMAR</button>
         </div>
     </div>
 </div>
 
 <div id="qrModal" class="modal">
-    [cite_start]<div class="card" style="text-align:center; max-width: 300px;"> [cite: 48]
+    <div class="card" style="text-align:center; max-width: 300px;">
         <h3>QR Code Alunos</h3>
-        [cite_start]<div id="qrcode" style="display:flex; justify-content:center; margin:15px 0"></div> [cite: 49]
+        <div id="qrcode" style="display:flex; justify-content:center; margin:15px 0"></div>
         <button onclick="fecharModais()" class="ghost" style="width:100%">Fechar</button>
     </div>
 </div>
@@ -164,15 +164,15 @@
     let sigPad, localStream, currentUserId = null, addressReal = "Buscando...";
 
     const urlParams = new URLSearchParams(window.location.search);
-    [cite_start]const modoAssinante = urlParams.has('modo'); [cite: 50]
+    const modoAssinante = urlParams.has('modo');
     if (modoAssinante) document.body.classList.add('modo-assinante');
 
     function filtrarTabela() {
         const filter = document.getElementById("searchInput").value.toUpperCase();
-        [cite_start]const tr = document.getElementById("tableBody").getElementsByTagName("tr"); [cite: 51]
+        const tr = document.getElementById("tableBody").getElementsByTagName("tr");
         for (let i = 0; i < tr.length; i++) {
             const txt = tr[i].innerText.toUpperCase();
-            tr[i].style.display = (modoAssinante ? (filter.length >= 3 && txt.indexOf(filter) > -1) : (filter === "" || txt.indexOf(filter) > -1)) ? [cite_start]"" : "none"; [cite: 52, 53]
+            tr[i].style.display = (modoAssinante ? (filter.length >= 3 && txt.indexOf(filter) > -1) : (filter === "" || txt.indexOf(filter) > -1)) ? "" : "none";
         }
     }
 
@@ -183,14 +183,14 @@
         if (data) Object.keys(data).forEach(key => {
             const p = data[key];
             const tr = document.createElement('tr');
-            [cite_start]const statusTxt = p.signed ? '<span class="status-txt assinado">Assinado</span>' : '<span class="status-txt pendente">Pendente</span>'; [cite: 54]
+            const statusTxt = p.signed ? '<span class="status-txt assinado">Assinado</span>' : '<span class="status-txt pendente">Pendente</span>';
             tr.innerHTML = `
                 <td class="col-status">${statusTxt}</td>
                 <td class="col-nome"><b>${p.name}</b><br><small>${p.turma || 'S/T'}</small></td>
                 <td class="col-admin col-admin-reg">${p.signed ? `<img src="${p.sigData}" class="signed-thumb"><img src="${p.photo}" class="signed-thumb">` : '-'}</td>
-                <td class="col-admin col-admin-gps"><span class="geo-label">${p.geo || [cite_start]'-'}</span></td> [cite: 55]
-                [cite_start]<td class="col-acao" style="display:flex; gap:2px"> [cite: 56]
-                    ${p.signed ? [cite_start]`<button onclick="tentarRefazer('${key}','${p.name}')" style="font-size:9px; padding:4px">Ref.</button>` : `<button onclick="abrirAssinatura('${key}','${p.name}')" style="padding:4px 8px">ASSINAR</button>`} [cite: 57]
+                <td class="col-admin col-admin-gps"><span class="geo-label">${p.geo || '-'}</span></td>
+                <td class="col-acao" style="display:flex; gap:2px">
+                    ${p.signed ? `<button onclick="tentarRefazer('${key}','${p.name}')" style="font-size:9px; padding:4px">Ref.</button>` : `<button onclick="abrirAssinatura('${key}','${p.name}')" style="padding:4px 8px">ASSINAR</button>`}
                     ${!modoAssinante ? `<button class="danger" onclick="excluir('${key}','${p.name}')" style="padding:4px 6px">X</button>` : ''}
                 </td>
             `;
@@ -199,7 +199,7 @@
         filtrarTabela();
     });
 
-    // --- LOGICA DE IMPORTAÇÃO TXT ---
+    // --- NOVA LÓGICA DE IMPORTAÇÃO TXT ---
     document.getElementById('importBtn').onclick = () => document.getElementById('importFile').click();
     document.getElementById('importFile').onchange = (e) => {
         const file = e.target.files[0];
@@ -213,52 +213,52 @@
                     if (nome) db.ref('participantes').push().set({ name: nome, turma: turma, signed: false });
                 }
             });
-            alert("Importação concluída!");
+            alert("Importação de texto concluída!");
             e.target.value = "";
         };
         reader.readAsText(file);
     };
 
-    [cite_start]function abrirAssinatura(id, nome) { [cite: 58]
+    function abrirAssinatura(id, nome) {
         currentUserId = id;
         document.getElementById('nomeAssinando').innerText = nome;
         document.getElementById('signModal').style.display = 'flex';
-        [cite_start]if (navigator.geolocation) { [cite: 58]
+        if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((pos) => {
                 fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`)
                 .then(r => r.json()).then(d => {
-                    [cite_start]addressReal = d.address.road ? (d.address.road + ", " + (d.address.house_number || "S/N")) : d.display_name; [cite: 59, 60]
+                    addressReal = d.address.road ? (d.address.road + ", " + (d.address.house_number || "S/N")) : d.display_name;
                     document.getElementById('geoStatus').innerText = "📍 Local OK";
                     document.getElementById('geoStatus').style.color = "green";
                 });
             });
-        [cite_start]} [cite: 61]
+        }
         setTimeout(() => {
             const canvas = document.querySelector("#sigCanvas");
             canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
             sigPad = new SignaturePad(canvas);
         }, 300);
-        [cite_start]navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }).then(s => { [cite: 62]
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }).then(s => {
             localStream = s;
             document.getElementById('video').srcObject = s;
             document.getElementById('photoPreview').style.display = 'none';
             document.getElementById('video').style.display = 'block';
         });
-    [cite_start]} [cite: 63]
+    }
 
     document.getElementById('takePhoto').onclick = () => {
         const video = document.getElementById('video');
-        [cite_start]const canvas = document.createElement('canvas'); [cite: 64]
+        const canvas = document.createElement('canvas');
         canvas.width = video.videoWidth; canvas.height = video.videoHeight;
         canvas.getContext('2d').drawImage(video, 0, 0);
         document.getElementById('photoPreview').src = canvas.toDataURL('image/jpeg');
         document.getElementById('photoPreview').style.display = 'block';
-        [cite_start]document.getElementById('video').style.display = 'none'; [cite: 65]
+        document.getElementById('video').style.display = 'none';
     };
 
     document.getElementById('saveData').onclick = () => {
         const photo = document.getElementById('photoPreview').src;
-        [cite_start]if(sigPad.isEmpty() || !photo.startsWith('data')) return alert("Foto e Assinatura!"); [cite: 66]
+        if(sigPad.isEmpty() || !photo.startsWith('data')) return alert("Foto e Assinatura!");
         db.ref('participantes/' + currentUserId).update({
             signed: true, sigData: sigPad.toDataURL(), photo: photo, 
             time: new Date().toLocaleString(), geo: addressReal
@@ -266,47 +266,47 @@
             fecharModais();
             const toast = document.getElementById('successToast');
             toast.style.display = 'block';
-            [cite_start]setTimeout(() => {  [cite: 67]
+            setTimeout(() => { 
                 toast.style.display = 'none';
                 document.getElementById('searchInput').value = "";
                 filtrarTabela();
             }, 2000);
         });
-    [cite_start]}; [cite: 68]
+    };
 
     function fecharModais() {
         document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
         if(localStream) localStream.getTracks().forEach(t => t.stop());
-    [cite_start]} [cite: 69]
+    }
 
     document.getElementById('addBtn').onclick = () => {
-        [cite_start]const n = document.getElementById('nameInput').value; [cite: 70]
+        const n = document.getElementById('nameInput').value;
         const t = document.getElementById('turmaInput').value;
         if(n) db.ref('participantes').push().set({ name: n, turma: t, signed: false });
     };
 
-    [cite_start]document.getElementById('showQrBtn').onclick = () => { [cite: 71]
+    document.getElementById('showQrBtn').onclick = () => {
         document.getElementById('qrcode').innerHTML = "";
-        [cite_start]new QRCode(document.getElementById('qrcode'), { text: window.location.href.split('?')[0] + "?modo=1", width: 180, height: 180 }); [cite: 72]
+        new QRCode(document.getElementById('qrcode'), { text: window.location.href.split('?')[0] + "?modo=1", width: 180, height: 180 });
         document.getElementById('qrModal').style.display = 'flex';
     };
 
-    function excluir(id, n) { if(prompt(`Senha p/ excluir ${n}:`) === ADMIN_PASSWORD) db.ref('participantes/' + id).remove(); [cite_start]} [cite: 73, 74]
-    function tentarRefazer(id, n) { if(prompt("Senha p/ REFAZER:") === ADMIN_PASSWORD) abrirAssinatura(id, n); [cite_start]} [cite: 75]
+    function excluir(id, n) { if(prompt(`Senha p/ excluir ${n}:`) === ADMIN_PASSWORD) db.ref('participantes/' + id).remove(); }
+    function tentarRefazer(id, n) { if(prompt("Senha p/ REFAZER:") === ADMIN_PASSWORD) abrirAssinatura(id, n); }
     document.getElementById('clearAllBtn').onclick = () => { if(prompt("Senha:") === ADMIN_PASSWORD) db.ref('participantes').remove(); };
-    [cite_start]document.getElementById('exportExcel').onclick = () => { [cite: 76]
+    document.getElementById('exportExcel').onclick = () => {
         db.ref('participantes').once('value', (snapshot) => {
             const rows = [["Status", "Nome", "Turma", "Data/Hora", "Localização"]];
             snapshot.forEach(child => {
                 const p = child.val();
                 rows.push([p.signed ? "Assinado" : "Pendente", p.name, p.turma || "S/T", p.time || "-", p.geo || "-"]);
-            [cite_start]}); [cite: 77]
+            });
             const ws = XLSX.utils.aoa_to_sheet(rows);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Frequencia");
             XLSX.writeFile(wb, "frequencia.xlsx");
         });
-    [cite_start]}; [cite: 78]
+    };
 </script>
 </body>
 </html>
