@@ -9,77 +9,85 @@
         
         body {
             font-family: Inter, system-ui, sans-serif;
-            margin: 0; 
-            padding: 8px; 
-            background-image: url('fundo.jpg'); 
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            overflow-x: hidden;
+            [cite_start]margin: 0; [cite: 3]
+            [cite_start]padding: 8px; [cite: 3]
+            [cite_start]background-image: url('fundo.jpg'); [cite: 3]
+            [cite_start]background-size: cover; [cite: 3]
+            [cite_start]background-position: center; [cite: 3]
+            [cite_start]background-attachment: fixed; [cite: 3]
+            [cite_start]overflow-x: hidden; [cite: 3]
         }
 
         .container {
-            max-width: 100%;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.94); 
-            padding: 12px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            backdrop-filter: blur(8px);
-            box-sizing: border-box;
+            [cite_start]max-width: 100%; [cite: 4]
+            [cite_start]margin: 0 auto; [cite: 5]
+            [cite_start]background: rgba(255, 255, 255, 0.94); [cite: 5]
+            [cite_start]padding: 12px; [cite: 5]
+            [cite_start]border-radius: 12px; [cite: 5]
+            [cite_start]box-shadow: 0 10px 30px rgba(0,0,0,0.3); [cite: 5]
+            [cite_start]backdrop-filter: blur(8px); [cite: 5]
+            [cite_start]box-sizing: border-box; [cite: 6]
         }
 
-        .header-container { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
-        .logo-escola { height: 45px; width: auto; }
-        h1 { margin: 0; font-size: 18px; color: #333; }
+        [cite_start].header-container { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; [cite: 6] }
+        [cite_start].logo-escola { height: 45px; width: auto; [cite: 7] }
+        [cite_start]h1 { margin: 0; font-size: 18px; color: #333; [cite: 8] }
 
-        .controls { display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap; }
-        input, button { padding: 8px; border-radius: 6px; border: 1px solid #ddd; font-size: 12px; }
-        button { background: var(--accent); color: #fff; border: none; cursor: pointer; font-weight: 600; }
-        button.danger { background: var(--danger); }
-        button.ghost { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
+        [cite_start].controls { display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap; [cite: 9] }
+        [cite_start]input, button { padding: 8px; border-radius: 6px; border: 1px solid #ddd; [cite: 10] font-size: 12px; [cite_start]} [cite: 11]
+        [cite_start]button { background: var(--accent); color: #fff; border: none; cursor: pointer; [cite: 11] font-weight: 600; [cite_start]} [cite: 12]
+        [cite_start]button.danger { background: var(--danger); [cite: 12] }
+        [cite_start]button.ghost { background: #fff; color: var(--accent); border: 1px solid var(--accent); [cite: 13] }
         
-        #searchInput { border: 2px solid var(--accent); flex-grow: 1; font-size: 14px; background: white; }
+        [cite_start]#searchInput { border: 2px solid var(--accent); [cite: 14] flex-grow: 1; font-size: 14px; background: white; [cite_start]} [cite: 15]
 
-        .table-responsive { width: 100%; overflow-x: hidden; }
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; } 
+        [cite_start].table-responsive { width: 100%; [cite: 15] overflow-x: hidden; [cite_start]} [cite: 16]
+        [cite_start]table { width: 100%; border-collapse: collapse; table-layout: fixed; [cite: 16] [cite_start]} [cite: 17]
         
         th, td { 
-            padding: 8px 2px;
-            border-bottom: 1px solid #eee; 
-            text-align: left; 
-            font-size: 14px; 
-            word-wrap: break-word;
+            [cite_start]padding: 8px 2px; [cite: 17]
+            [cite_start]border-bottom: 1px solid #eee; [cite: 18]
+            [cite_start]text-align: left; [cite: 18]
+            [cite_start]font-size: 14px; [cite: 18]
+            [cite_start]word-wrap: break-word; [cite: 18]
         }
 
-        .col-status { width: 80px; }
-        .col-nome { width: 55%; }
-        .col-admin-reg { width: 75px; }
-        .col-admin-gps { width: 110px; }
-        .col-acao { width: 75px; }
+        [cite_start].col-status { width: 80px; [cite: 19] }
+        [cite_start].col-nome { width: 55%; [cite: 20] }
+        [cite_start].col-admin-reg { width: 75px; [cite: 21] }
+        [cite_start].col-admin-gps { width: 110px; [cite: 22] }
+        [cite_start].col-acao { width: 75px; [cite: 23] }
 
-        .status-txt { font-weight: bold; font-size: 9px; text-transform: uppercase; }
-        .pendente { color: var(--danger); }
-        .assinado { color: var(--success); }
+        [cite_start].status-txt { font-weight: bold; font-size: 9px; text-transform: uppercase; [cite: 24] }
+        [cite_start].pendente { color: var(--danger); [cite: 25] }
+        [cite_start].assinado { color: var(--success); [cite: 26] }
         
-        .signed-thumb { height: 32px; width: 32px; border-radius: 4px; border: 1px solid #ddd; object-fit: cover; }
-        .geo-label { font-size: 8px; color: #666; display: block; line-height: 1.1; }
+        [cite_start].signed-thumb { height: 32px; [cite: 27] [cite_start]width: 32px; border-radius: 4px; border: 1px solid #ddd; object-fit: cover; [cite: 28] }
+        [cite_start].geo-label { font-size: 8px; color: #666; display: block; line-height: 1.1; [cite: 29] }
 
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,.9); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 10px; }
-        .card { background: #fff; padding: 12px; border-radius: 12px; width: 100%; max-width: 400px; box-sizing: border-box; max-height: 95vh; overflow-y: auto; position: relative; }
+        [cite_start].modal { position: fixed; [cite: 30] [cite_start]inset: 0; background: rgba(0,0,0,.9); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 10px; [cite: 31] }
+        [cite_start].card { background: #fff; padding: 12px; border-radius: 12px; width: 100%; max-width: 400px; [cite: 32] box-sizing: border-box; max-height: 95vh; overflow-y: auto; position: relative; }
         
-        #video, #photoPreview { width: 100%; max-height: 230px; object-fit: cover; border-radius: 8px; background: #000; }
-        .signature-wrapper { border: 2px solid #333; border-radius: 8px; height: 140px; background: white; margin-top: 5px; }
+        #video, #photoPreview { 
+            [cite_start]width: 100%; [cite: 33]
+            [cite_start]max-height: 230px; [cite: 34]
+            [cite_start]object-fit: cover; [cite: 34]
+            [cite_start]border-radius: 8px; [cite: 34]
+            [cite_start]background: #000; [cite: 34]
+        }
+
+        [cite_start].signature-wrapper { border: 2px solid #333; [cite: 34] border-radius: 8px; height: 140px; background: white; margin-top: 5px; [cite_start]} [cite: 35]
 
         #successToast {
-            position: fixed;
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: var(--success); color: white; padding: 20px 40px; border-radius: 50px;
-            font-weight: bold; font-size: 18px; z-index: 2000; display: none;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center;
+            [cite_start]position: fixed; [cite: 35]
+            [cite_start]top: 50%; left: 50%; transform: translate(-50%, -50%); [cite: 36]
+            [cite_start]background: var(--success); color: white; padding: 20px 40px; border-radius: 50px; [cite: 36]
+            [cite_start]font-weight: bold; font-size: 18px; [cite: 36]
+            [cite_start]z-index: 2000; display: none; [cite: 37]
+            [cite_start]box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center; [cite: 38]
         }
 
-        body.modo-assinante #adminPanel, body.modo-assinante .col-admin { display: none !important; }
+        [cite_start]body.modo-assinante #adminPanel, body.modo-assinante .col-admin { display: none !important; [cite: 38] }
     </style>
 </head>
 <body>
@@ -98,26 +106,26 @@
         <button id="addBtn">Adicionar</button>
         
         <input type="file" id="importFile" accept=".txt" style="display:none;">
-        <button id="importBtn" style="background:#6366f1">Importar</button>
+        <button id="importBtn" style="background:#6366f1">Importar TXT</button>
         
-        <button id="showQrBtn" class="ghost">QRcode</button>
-        <button id="exportExcel" style="background:#1d6f42">Gerar Planilha</button>
-        <button id="clearAllBtn" class="danger">Limpar Tabela</button>
+        [cite_start]<button id="showQrBtn" class="ghost">QRcode</button> [cite: 39]
+        [cite_start]<button id="exportExcel" style="background:#1d6f42">Gerar Planilha</button> [cite: 39]
+        [cite_start]<button id="clearAllBtn" class="danger">Limpar Tabela</button> [cite: 40]
     </div>
 
     <div class="controls">
-        <input id="searchInput" type="text" placeholder="🔍 BUSCAR SEU NOME..." onkeyup="filtrarTabela()">
+        [cite_start]<input id="searchInput" type="text" placeholder="🔍 BUSCAR SEU NOME..." onkeyup="filtrarTabela()"> [cite: 40]
     </div>
 
     <div class="table-responsive">
         <table id="mainTable">
             <thead>
                 <tr>
-                    <th class="col-status">Status</th>
-                    <th class="col-nome">Nome/Turma</th>
-                    <th class="col-admin col-admin-reg">Fotos</th>
-                    <th class="col-admin col-admin-gps">GPS</th>
-                    <th class="col-acao">Ação</th>
+                    [cite_start]<th class="col-status">Status</th> [cite: 41]
+                    [cite_start]<th class="col-nome">Nome/Turma</th> [cite: 41]
+                    [cite_start]<th class="col-admin col-admin-reg">Fotos</th> [cite: 41]
+                    [cite_start]<th class="col-admin col-admin-gps">GPS</th> [cite: 41]
+                    [cite_start]<th class="col-acao">Ação</th> [cite: 41]
                 </tr>
             </thead>
             <tbody id="tableBody"></tbody>
@@ -128,23 +136,23 @@
 <div id="signModal" class="modal">
     <div class="card">
         <h3 id="nomeAssinando" style="margin:0">Assinar</h3>
-        <p id="geoStatus" style="font-size:9px; color:var(--warning); margin: 2px 0;">📍 Validando localização...</p>
-        <video id="video" autoplay playsinline></video>
-        <img id="photoPreview" style="display:none;" />
-        <button id="takePhoto" style="width:100%; margin: 5px 0; background:#333; padding: 12px;">📸 TIRAR FOTO</button>
-        <div class="signature-wrapper"><canvas id="sigCanvas" style="width:100%;height:100%"></canvas></div>
-        <div style="display: flex; gap: 8px; margin-top: 10px;">
-            <button onclick="fecharModais()" style="background:#ccc; flex:1">Sair</button>
-            <button id="saveData" style="flex:2; background: var(--success); font-size: 14px;">CONFIRMAR</button>
+        [cite_start]<p id="geoStatus" style="font-size:9px; color:var(--warning); margin: 2px 0;">📍 Validando localização...</p> [cite: 42]
+        [cite_start]<video id="video" autoplay playsinline></video> [cite: 43]
+        <img id="photoPreview" style="display:none;" [cite_start]/> [cite: 43]
+        [cite_start]<button id="takePhoto" style="width:100%; margin: 5px 0; background:#333; padding: 12px;">📸 TIRAR FOTO</button> [cite: 43]
+        [cite_start]<div class="signature-wrapper"><canvas id="sigCanvas" style="width:100%;height:100%"></canvas></div> [cite: 44]
+        [cite_start]<div style="display: flex; gap: 8px; margin-top: 10px;"> [cite: 44]
+            [cite_start]<button onclick="fecharModais()" style="background:#ccc; flex:1">Sair</button> [cite: 45]
+            [cite_start]<button id="saveData" style="flex:2; background: var(--success); font-size: 14px;">CONFIRMAR</button> [cite: 46]
         </div>
     </div>
 </div>
 
 <div id="qrModal" class="modal">
-    <div class="card" style="text-align:center; max-width: 300px;">
+    [cite_start]<div class="card" style="text-align:center; max-width: 300px;"> [cite: 47]
         <h3>QR Code Alunos</h3>
-        <div id="qrcode" style="display:flex; justify-content:center; margin:15px 0"></div>
-        <button onclick="fecharModais()" class="ghost" style="width:100%">Fechar</button>
+        [cite_start]<div id="qrcode" style="display:flex; justify-content:center; margin:15px 0"></div> [cite: 48]
+        [cite_start]<button onclick="fecharModais()" class="ghost" style="width:100%">Fechar</button> [cite: 49]
     </div>
 </div>
 
@@ -155,36 +163,36 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script>
-    const ADMIN_PASSWORD = '1992';
+    [cite_start]const ADMIN_PASSWORD = '1992'; [cite: 49]
     const firebaseConfig = {
-        apiKey: "AIzaSyBy4gbEfmMgm-zgMmGq6h3oQ_-gQy2l2R0",
-        databaseURL: "https://frenquencia-digital-default-rtdb.firebaseio.com",
+        [cite_start]apiKey: "AIzaSyBy4gbEfmMgm-zgMmGq6h3oQ_-gQy2l2R0", [cite: 49]
+        [cite_start]databaseURL: "https://frenquencia-digital-default-rtdb.firebaseio.com", [cite: 49]
     };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    let sigPad, localStream, currentUserId = null, addressReal = "Buscando...";
+    [cite_start]firebase.initializeApp(firebaseConfig); [cite: 49]
+    [cite_start]const db = firebase.database(); [cite: 49]
+    [cite_start]let sigPad, localStream, currentUserId = null, addressReal = "Buscando..."; [cite: 49]
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const modoAssinante = urlParams.has('modo');
-    if (modoAssinante) document.body.classList.add('modo-assinante');
+    [cite_start]const urlParams = new URLSearchParams(window.location.search); [cite: 49]
+    [cite_start]const modoAssinante = urlParams.has('modo'); [cite: 50]
+    [cite_start]if (modoAssinante) document.body.classList.add('modo-assinante'); [cite: 50]
 
     function filtrarTabela() {
-        const filter = document.getElementById("searchInput").value.toUpperCase();
-        const tr = document.getElementById("tableBody").getElementsByTagName("tr");
+        [cite_start]const filter = document.getElementById("searchInput").value.toUpperCase(); [cite: 50]
+        [cite_start]const tr = document.getElementById("tableBody").getElementsByTagName("tr"); [cite: 51]
         for (let i = 0; i < tr.length; i++) {
-            const txt = tr[i].innerText.toUpperCase();
-            tr[i].style.display = (modoAssinante ? (filter.length >= 3 && txt.indexOf(filter) > -1) : (filter === "" || txt.indexOf(filter) > -1)) ? "" : "none";
+            [cite_start]const txt = tr[i].innerText.toUpperCase(); [cite: 52]
+            tr[i].style.display = (modoAssinante ? (filter.length >= 3 && txt.indexOf(filter) > -1) : (filter === "" || txt.indexOf(filter) > -1)) ? [cite_start]"" : "none"; [cite: 52]
         }
     }
 
     db.ref('participantes').on('value', (snapshot) => {
-        const tableBody = document.getElementById('tableBody');
-        tableBody.innerHTML = '';
-        const data = snapshot.val();
+        [cite_start]const tableBody = document.getElementById('tableBody'); [cite: 53]
+        [cite_start]tableBody.innerHTML = ''; [cite: 53]
+        [cite_start]const data = snapshot.val(); [cite: 53]
         if (data) Object.keys(data).forEach(key => {
-            const p = data[key];
-            const tr = document.createElement('tr');
-            const statusTxt = p.signed ? '<span class="status-txt assinado">Assinado</span>' : '<span class="status-txt pendente">Pendente</span>';
+            [cite_start]const p = data[key]; [cite: 53]
+            [cite_start]const tr = document.createElement('tr'); [cite: 53]
+            const statusTxt = p.signed ? [cite_start]'<span class="status-txt assinado">Assinado</span>' : '<span class="status-txt pendente">Pendente</span>'; [cite: 54]
             tr.innerHTML = `
                 <td class="col-status">${statusTxt}</td>
                 <td class="col-nome"><b>${p.name}</b><br><small>${p.turma || 'S/T'}</small></td>
@@ -194,13 +202,13 @@
                     ${p.signed ? `<button onclick="tentarRefazer('${key}','${p.name}')" style="font-size:9px; padding:4px">Ref.</button>` : `<button onclick="abrirAssinatura('${key}','${p.name}')" style="padding:4px 8px">ASSINAR</button>`}
                     ${!modoAssinante ? `<button class="danger" onclick="excluir('${key}','${p.name}')" style="padding:4px 6px">X</button>` : ''}
                 </td>
-            `;
-            tableBody.appendChild(tr);
+            [cite_start]`; [cite: 54, 55, 56, 57]
+            [cite_start]tableBody.appendChild(tr); [cite: 57]
         });
-        filtrarTabela();
+        [cite_start]filtrarTabela(); [cite: 57]
     });
 
-    // --- LÓGICA DE IMPORTAÇÃO EM MASSA ---
+    // --- LÓGICA DE IMPORTAÇÃO TXT ---
     document.getElementById('importBtn').onclick = () => document.getElementById('importFile').click();
     
     document.getElementById('importFile').onchange = (e) => {
@@ -209,114 +217,122 @@
 
         const reader = new FileReader();
         reader.onload = (evt) => {
-            const workbook = XLSX.read(evt.target.result, { type: 'binary' });
-            const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            const data = XLSX.utils.sheet_to_json(sheet);
-            
-            if (confirm(`Importar ${data.length} alunos?`)) {
-                data.forEach(item => {
-                    const nome = item.Nome || item.nome || item.NOME;
-                    const turma = item.Turma || item.turma || item.TURMA || "";
+            const conteudo = evt.target.result;
+            const linhas = conteudo.split(/\r?\n/); // Divide por quebra de linha
+            let contagem = 0;
+
+            linhas.forEach(linha => {
+                if (linha.trim() !== "" && linha.includes(",")) {
+                    const partes = linha.split(",");
+                    const nome = partes[0].trim();
+                    const turma = partes[1].trim();
+                    
                     if (nome) {
-                        db.ref('participantes').push().set({ name: nome, turma: turma, signed: false });
+                        db.ref('participantes').push().set({ 
+                            name: nome, 
+                            turma: turma, 
+                            signed: false 
+                        });
+                        contagem++;
                     }
-                });
-                alert("Importação finalizada!");
-                e.target.value = "";
-            }
+                }
+            });
+            
+            alert(`${contagem} alunos foram importados com sucesso!`);
+            e.target.value = ""; // Reseta o input de arquivo
         };
-        reader.readAsBinaryString(file);
+        reader.readAsText(file);
     };
 
-    function abrirAssinatura(id, nome) {
-        currentUserId = id;
-        document.getElementById('nomeAssinando').innerText = nome;
-        document.getElementById('signModal').style.display = 'flex';
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((pos) => {
-                fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`)
-                .then(r => r.json()).then(d => {
-                    addressReal = d.address.road ? (d.address.road + ", " + (d.address.house_number || "S/N")) : d.display_name;
-                    document.getElementById('geoStatus').innerText = "📍 Local OK";
-                    document.getElementById('geoStatus').style.color = "green";
+    [cite_start]function abrirAssinatura(id, nome) { [cite: 57]
+        [cite_start]currentUserId = id; [cite: 58]
+        [cite_start]document.getElementById('nomeAssinando').innerText = nome; [cite: 58]
+        [cite_start]document.getElementById('signModal').style.display = 'flex'; [cite: 58]
+        [cite_start]if (navigator.geolocation) { [cite: 58]
+            [cite_start]navigator.geolocation.getCurrentPosition((pos) => { [cite: 58]
+                [cite_start]fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`) [cite: 58]
+                [cite_start].then(r => r.json()).then(d => { [cite: 58]
+                    addressReal = d.address.road ? (d.address.road + ", " + (d.address.house_number || "S/N")[cite_start]) : d.display_name; [cite: 59, 60]
+                    [cite_start]document.getElementById('geoStatus').innerText = "📍 Local OK"; [cite: 60]
+                    [cite_start]document.getElementById('geoStatus').style.color = "green"; [cite: 60]
                 });
             });
-        }
-        setTimeout(() => {
-            const canvas = document.querySelector("#sigCanvas");
-            canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
-            sigPad = new SignaturePad(canvas);
-        }, 300);
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }).then(s => {
-            localStream = s;
-            document.getElementById('video').srcObject = s;
-            document.getElementById('photoPreview').style.display = 'none';
-            document.getElementById('video').style.display = 'block';
+        [cite_start]} [cite: 61]
+        [cite_start]setTimeout(() => { [cite: 61]
+            [cite_start]const canvas = document.querySelector("#sigCanvas"); [cite: 61]
+            [cite_start]canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; [cite: 61]
+            [cite_start]sigPad = new SignaturePad(canvas); [cite: 61]
+        [cite_start]}, 300); [cite: 61]
+        [cite_start]navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }).then(s => { [cite: 62]
+            [cite_start]localStream = s; [cite: 62]
+            [cite_start]document.getElementById('video').srcObject = s; [cite: 62]
+            [cite_start]document.getElementById('photoPreview').style.display = 'none'; [cite: 62]
+            [cite_start]document.getElementById('video').style.display = 'block'; [cite: 62]
         });
-    }
+    [cite_start]} [cite: 63]
 
-    document.getElementById('takePhoto').onclick = () => {
-        const video = document.getElementById('video');
-        const canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-        canvas.getContext('2d').drawImage(video, 0, 0);
-        document.getElementById('photoPreview').src = canvas.toDataURL('image/jpeg');
-        document.getElementById('photoPreview').style.display = 'block';
-        document.getElementById('video').style.display = 'none';
+    [cite_start]document.getElementById('takePhoto').onclick = () => { [cite: 63]
+        [cite_start]const video = document.getElementById('video'); [cite: 63]
+        [cite_start]const canvas = document.createElement('canvas'); [cite: 64]
+        [cite_start]canvas.width = video.videoWidth; canvas.height = video.videoHeight; [cite: 64]
+        [cite_start]canvas.getContext('2d').drawImage(video, 0, 0); [cite: 64]
+        [cite_start]document.getElementById('photoPreview').src = canvas.toDataURL('image/jpeg'); [cite: 64]
+        [cite_start]document.getElementById('photoPreview').style.display = 'block'; [cite: 64]
+        [cite_start]document.getElementById('video').style.display = 'none'; [cite: 65]
     };
 
-    document.getElementById('saveData').onclick = () => {
-        const photo = document.getElementById('photoPreview').src;
-        if(sigPad.isEmpty() || !photo.startsWith('data')) return alert("Foto e Assinatura!");
-        db.ref('participantes/' + currentUserId).update({
-            signed: true, sigData: sigPad.toDataURL(), photo: photo, 
-            time: new Date().toLocaleString(), geo: addressReal
-        }).then(() => { 
-            fecharModais();
-            const toast = document.getElementById('successToast');
-            toast.style.display = 'block';
-            setTimeout(() => { 
-                toast.style.display = 'none';
-                document.getElementById('searchInput').value = "";
-                filtrarTabela();
-            }, 2000);
+    [cite_start]document.getElementById('saveData').onclick = () => { [cite: 65]
+        [cite_start]const photo = document.getElementById('photoPreview').src; [cite: 65]
+        [cite_start]if(sigPad.isEmpty() || !photo.startsWith('data')) return alert("Foto e Assinatura!"); [cite: 66]
+        [cite_start]db.ref('participantes/' + currentUserId).update({ [cite: 66]
+            [cite_start]signed: true, sigData: sigPad.toDataURL(), photo: photo, [cite: 66]
+            [cite_start]time: new Date().toLocaleString(), geo: addressReal [cite: 66]
+        [cite_start]}).then(() => { [cite: 66]
+            [cite_start]fecharModais(); [cite: 66]
+            [cite_start]const toast = document.getElementById('successToast'); [cite: 66]
+            [cite_start]toast.style.display = 'block'; [cite: 66]
+            [cite_start]setTimeout(() => { [cite: 67]
+                [cite_start]toast.style.display = 'none'; [cite: 67]
+                [cite_start]document.getElementById('searchInput').value = ""; [cite: 67]
+                [cite_start]filtrarTabela(); [cite: 67]
+            [cite_start]}, 2000); [cite: 67]
         });
+    [cite_start]}; [cite: 68]
+
+    [cite_start]function fecharModais() { [cite: 68]
+        [cite_start]document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); [cite: 68]
+        [cite_start]if(localStream) localStream.getTracks().forEach(t => t.stop()); [cite: 68]
+    [cite_start]} [cite: 69]
+
+    [cite_start]document.getElementById('addBtn').onclick = () => { [cite: 69]
+        [cite_start]const n = document.getElementById('nameInput').value; [cite: 69]
+        [cite_start]const t = document.getElementById('turmaInput').value; [cite: 70]
+        [cite_start]if(n) db.ref('participantes').push().set({ name: n, turma: t, signed: false }); [cite: 70]
     };
 
-    function fecharModais() {
-        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
-        if(localStream) localStream.getTracks().forEach(t => t.stop());
-    }
+    [cite_start]document.getElementById('showQrBtn').onclick = () => { [cite: 71]
+        [cite_start]document.getElementById('qrcode').innerHTML = ""; [cite: 71]
+        [cite_start]new QRCode(document.getElementById('qrcode'), { text: window.location.href.split('?')[0] + "?modo=1", width: 180, height: 180 }); [cite: 72]
+        [cite_start]document.getElementById('qrModal').style.display = 'flex'; [cite: 72]
+    [cite_start]}; [cite: 73]
 
-    document.getElementById('addBtn').onclick = () => {
-        const n = document.getElementById('nameInput').value;
-        const t = document.getElementById('turmaInput').value;
-        if(n) db.ref('participantes').push().set({ name: n, turma: t, signed: false });
-    };
-
-    document.getElementById('showQrBtn').onclick = () => {
-        document.getElementById('qrcode').innerHTML = "";
-        new QRCode(document.getElementById('qrcode'), { text: window.location.href.split('?')[0] + "?modo=1", width: 180, height: 180 });
-        document.getElementById('qrModal').style.display = 'flex';
-    };
-
-    function excluir(id, n) { if(prompt(`Senha p/ excluir ${n}:`) === ADMIN_PASSWORD) db.ref('participantes/' + id).remove(); }
-    function tentarRefazer(id, n) { if(prompt("Senha p/ REFAZER:") === ADMIN_PASSWORD) abrirAssinatura(id, n); }
-    document.getElementById('clearAllBtn').onclick = () => { if(prompt("Senha:") === ADMIN_PASSWORD) db.ref('participantes').remove(); };
+    function excluir(id, n) { if(prompt(`Senha p/ excluir ${n}:`) === ADMIN_PASSWORD) db.ref('participantes/' + id).remove(); [cite_start]} [cite: 73]
+    function tentarRefazer(id, n) { if(prompt("Senha p/ REFAZER:") === ADMIN_PASSWORD) abrirAssinatura(id, n); [cite_start]} [cite: 74]
+    document.getElementById('clearAllBtn').onclick = () => { if(prompt("Senha:") === ADMIN_PASSWORD) db.ref('participantes').remove(); [cite_start]}; [cite: 75]
     
-    document.getElementById('exportExcel').onclick = () => {
-        db.ref('participantes').once('value', (snapshot) => {
-            const rows = [["Status", "Nome", "Turma", "Data/Hora", "Localização"]];
-            snapshot.forEach(child => {
-                const p = child.val();
-                rows.push([p.signed ? "Assinado" : "Pendente", p.name, p.turma || "S/T", p.time || "-", p.geo || "-"]);
-            });
-            const ws = XLSX.utils.aoa_to_sheet(rows);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Frequencia");
-            XLSX.writeFile(wb, "frequencia.xlsx");
+    [cite_start]document.getElementById('exportExcel').onclick = () => { [cite: 76]
+        [cite_start]db.ref('participantes').once('value', (snapshot) => { [cite: 76]
+            [cite_start]const rows = [["Status", "Nome", "Turma", "Data/Hora", "Localização"]]; [cite: 76]
+            [cite_start]snapshot.forEach(child => { [cite: 76]
+                [cite_start]const p = child.val(); [cite: 76]
+                [cite_start]rows.push([p.signed ? "Assinado" : "Pendente", p.name, p.turma || "S/T", p.time || "-", p.geo || "-"]); [cite: 76]
+            [cite_start]}); [cite: 77]
+            [cite_start]const ws = XLSX.utils.aoa_to_sheet(rows); [cite: 77]
+            [cite_start]const wb = XLSX.utils.book_new(); [cite: 77]
+            [cite_start]XLSX.utils.book_append_sheet(wb, ws, "Frequencia"); [cite: 77]
+            [cite_start]XLSX.writeFile(wb, "frequencia.xlsx"); [cite: 77]
         });
-    };
+    [cite_start]}; [cite: 78]
 </script>
 </body>
 </html>
