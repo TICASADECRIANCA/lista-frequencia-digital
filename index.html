@@ -113,7 +113,6 @@
     <div id="successToast">✅ ASSINATURA CONCLUÍDA!</div>
     <div class="container">
         <div class="header-container">
-            <img src="logo.png" class="logo-escola" onerror="this.style.display='none'">
             <h1>Frequência Digital</h1>
             <button onclick="location.reload()" style="margin-left:auto; background:#ddd; color:#333; padding:4px 8px; font-size:10px">Sair</button>
         </div>
@@ -159,14 +158,20 @@
             </div>
         </div>
         <p id="geoStatus" style="font-size:10px; color:var(--warning); font-weight: bold;">📍 Validando GPS...</p>
-        <video id="video" autoplay playsinline></video>
-        <img id="photoPreview" style="display:none;" />
-        <button id="takePhoto" style="width:100%; margin: 5px 0; background:#333; padding: 12px;">📸 TIRAR FOTO</button>
-        <button id="clearMedia" onclick="resetMedia()" style="width:100%; margin-bottom: 5px; background:var(--warning); color:white; border:none; padding: 6px; border-radius: 6px;">🔄 LIMPAR E REFAZER</button>
+        
+        <div id="cameraArea">
+            <video id="video" autoplay playsinline></video>
+            <img id="photoPreview" style="display:none;" />
+        </div>
+        
+        <button id="takePhoto" style="width:100%; margin: 5px 0; background:#333; padding: 12px; font-weight: bold;">📸 TIRAR FOTO (OBRIGATÓRIO)</button>
+        <button id="clearMedia" onclick="resetMedia()" style="width:100%; margin-bottom: 5px; background:var(--warning); color:white; border:none; padding: 6px; border-radius: 6px;">🔄 LIMPAR E REFAZER FOTO</button>
+        
         <div class="signature-wrapper"><canvas id="sigCanvas"></canvas></div>
+        
         <div style="display: flex; gap: 8px; margin-top: 10px;">
             <button onclick="fecharModais()" style="background:#ccc; flex:1">Sair</button>
-            <button id="saveData" style="flex:2; background: var(--success); font-weight:bold;">CONFIRMAR</button>
+            <button id="saveData" style="flex:2; background: var(--success); font-weight:bold; font-size: 16px;">CONFIRMAR TUDO</button>
         </div>
     </div>
 </div>
@@ -194,6 +199,7 @@
     const db = firebase.database();
     
     let sigPad, localStream, currentUserId = null, addressReal = "Buscando...", autorizacaoSelecionada = null;
+    let fotoCapturada = null; // Variável para garantir que a foto foi tirada AGORA
 
     function escolherAcesso(tipo) {
         if (tipo === 'aluno') {
@@ -261,7 +267,10 @@
     }
 
     function abrirAssinatura(id, nome) {
-        currentUserId = id; autorizacaoSelecionada = null;
+        currentUserId = id; 
+        autorizacaoSelecionada = null;
+        fotoCapturada = null; // Reseta a foto obrigatória ao abrir
+        
         document.getElementById('nomeAssinando').innerText = nome;
         document.getElementById('btnSim').className = 'btn-auth';
         document.getElementById('btnNao').className = 'btn-auth';
@@ -273,6 +282,8 @@
                 addressReal = d.address.road ? (d.address.road + ", " + (d.address.house_number || "S/N")) : d.display_name;
                 document.getElementById('geoStatus').innerText = "📍 " + addressReal;
             });
+        }, () => {
+            document.getElementById('geoStatus').innerText = "📍 GPS não disponível";
         });
 
         navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }).then(s => {
@@ -293,25 +304,35 @@
         const c = document.createElement('canvas');
         c.width = v.videoWidth; c.height = v.videoHeight;
         c.getContext('2d').drawImage(v, 0, 0);
-        document.getElementById('photoPreview').src = c.toDataURL('image/jpeg');
+        
+        fotoCapturada = c.toDataURL('image/jpeg'); // Salva na variável global
+        document.getElementById('photoPreview').src = fotoCapturada;
         document.getElementById('photoPreview').style.display = 'block';
         v.style.display = 'none';
     };
 
     function resetMedia() {
-        if(sigPad) sigPad.clear();
+        fotoCapturada = null; // Exige nova foto
         document.getElementById('photoPreview').style.display = 'none';
         document.getElementById('video').style.display = 'block';
     }
 
     document.getElementById('saveData').onclick = () => {
-        if (!autorizacaoSelecionada) return alert("Responda SIM ou NÃO para a autorização.");
-        const photo = document.getElementById('photoPreview').src;
-        if (sigPad.isEmpty() || !photo.startsWith('data')) return alert("Foto e assinatura obrigatórias.");
+        // Validação 1: Autorização
+        if (!autorizacaoSelecionada) return alert("⚠️ Você deve responder SIM ou NÃO na autorização.");
+        
+        // Validação 2: Foto (Travado para só aceitar se tiver clicado no botão)
+        if (!fotoCapturada) return alert("⚠️ É OBRIGATÓRIO tirar a foto para confirmar a presença!");
+        
+        // Validação 3: Assinatura
+        if (sigPad.isEmpty()) return alert("⚠️ É OBRIGATÓRIO assinar o campo abaixo!");
 
         db.ref('participantes/' + currentUserId).update({
-            signed: true, photo: photo, sigData: sigPad.toDataURL('image/jpeg'),
-            time: new Date().toLocaleString(), geo: addressReal,
+            signed: true, 
+            photo: fotoCapturada, 
+            sigData: sigPad.toDataURL('image/jpeg'),
+            time: new Date().toLocaleString(), 
+            geo: addressReal,
             autorizado: autorizacaoSelecionada
         }).then(() => {
             fecharModais();
