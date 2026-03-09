@@ -31,7 +31,7 @@
         button { background: var(--accent); color: #fff; border: none; cursor: pointer; font-weight: 600; }
         button.danger { background: var(--danger); }
         
-        #searchInput { border: 2px solid var(--accent); flex-grow: 1; font-size: 14px; background: white; padding: 10px; }
+        #searchInput { border: 2px solid var(--accent); flex-grow: 1; font-size: 16px; background: white; padding: 12px; border-radius: 8px; }
 
         .table-responsive { width: 100%; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; } 
@@ -68,10 +68,10 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center;
         }
 
-        /* REGRAS DE VISIBILIDADE */
+        /* CONFIGURAÇÃO DE VISIBILIDADE */
         body.modo-assinante #adminPanel, body.modo-assinante .col-admin { display: none !important; }
         
-        /* Oculta as linhas por padrão no modo assinante */
+        /* Oculta as linhas inicialmente apenas no modo assinante */
         body.modo-assinante tbody tr { display: none; }
 
         #initialOverlay {
@@ -104,9 +104,9 @@
 
 <div id="initialOverlay">
     <div class="popup-entry">
-        <h2 style="margin-top:0">Bem-vindo</h2>
+        <h2 style="margin-top:0">Lista de Presença</h2>
         <button class="btn-entry-aluno" onclick="escolherAcesso('aluno')">Assinar Lista</button>
-        <button class="btn-auth" style="width:100%; border:1px solid #ccc; padding:10px; border-radius:8px" onclick="escolherAcesso('admin')">Acesso Admin</button>
+        <button style="width:100%; background:none; border:none; color:#666; font-size:12px; text-decoration:underline; cursor:pointer;" onclick="escolherAcesso('admin')">Acesso Admin</button>
     </div>
 </div>
 
@@ -119,16 +119,16 @@
         </div>
         
         <div class="controls" id="adminPanel">
-            <input id="nameInput" placeholder="Nome" style="flex:2;"/>
+            <input id="nameInput" placeholder="Nome Completo" style="flex:2;"/>
             <input id="turmaInput" placeholder="Turma" style="flex:1;"/>
-            <button id="addBtn">Add</button>
-            <button id="exportExcel" style="background:#1d6f42">Excel</button>
-            <button id="btnOpenPdfModal" style="background:#e11d48">PDF</button>
-            <button id="clearAllBtn" class="danger">Limpar Tudo</button>
+            <button id="addBtn">Adicionar</button>
+            <button id="exportExcel" style="background:#1d6f42">Exportar Planilha</button>
+            <button id="btnOpenPdfModal" style="background:#e11d48">Gerar PDF</button>
+            <button id="clearAllBtn" class="danger">Limpar Banco</button>
         </div>
 
         <div class="controls">
-            <input id="searchInput" type="text" placeholder="🔍 DIGITE SEU NOME PARA ASSINAR..." onkeyup="filtrarTabela()">
+            <input id="searchInput" type="text" placeholder="🔍 DIGITE SEU NOME PARA APARECER NA LISTA..." oninput="filtrarTabela()">
         </div>
 
         <div class="table-responsive">
@@ -166,7 +166,7 @@
         <div class="signature-wrapper"><canvas id="sigCanvas"></canvas></div>
         <div style="display: flex; gap: 8px; margin-top: 10px;">
             <button onclick="fecharModais()" style="background:#ccc; flex:1">Sair</button>
-            <button id="saveData" style="flex:2; background: var(--success); font-weight:bold;">CONFIRMAR TUDO</button>
+            <button id="saveData" style="flex:2; background: var(--success); font-weight:bold;">CONFIRMAR</button>
         </div>
     </div>
 </div>
@@ -213,18 +213,21 @@
         document.getElementById('btnNao').className = !valor ? 'btn-auth active-nao' : 'btn-auth';
     }
 
+    // FUNÇÃO DE BUSCA OTIMIZADA
     function filtrarTabela() {
-        const filter = document.getElementById("searchInput").value.toUpperCase();
+        const input = document.getElementById("searchInput").value;
+        const filter = input.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
         const tr = document.getElementById("tableBody").getElementsByTagName("tr");
         const modoAssinante = document.body.classList.contains('modo-assinante');
 
         for (let i = 0; i < tr.length; i++) {
+            // Pega o texto do nome e limpa acentos para comparar
+            let txt = tr[i].innerText.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
             const isSigned = tr[i].getAttribute('data-signed') === 'true';
-            const txt = tr[i].innerText.toUpperCase();
 
             if (modoAssinante) {
-                // SÓ MOSTRA SE digitar 3 letras E não estiver assinado
-                if (filter.length >= 3 && txt.indexOf(filter) > -1 && !isSigned) {
+                // SÓ MOSTRA SE digitar 3 letras E o nome bater
+                if (filter.length >= 3 && txt.indexOf(filter) > -1) {
                     tr[i].style.display = "";
                 } else {
                     tr[i].style.display = "none";
@@ -280,6 +283,8 @@
                 addressReal = d.address.road ? (d.address.road + ", " + (d.address.house_number || "S/N")) : d.display_name;
                 document.getElementById('geoStatus').innerText = "📍 " + addressReal;
             });
+        }, () => {
+            document.getElementById('geoStatus').innerText = "📍 GPS Indisponível";
         });
 
         navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }).then(s => {
@@ -337,6 +342,7 @@
         const n = document.getElementById('nameInput').value;
         const t = document.getElementById('turmaInput').value;
         if(n) db.ref('participantes').push().set({ name: n, turma: t, signed: false });
+        document.getElementById('nameInput').value = "";
     };
 
     document.getElementById('exportExcel').onclick = async () => {
