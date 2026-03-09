@@ -24,7 +24,6 @@
         }
 
         .header-container { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
-        .logo-escola { height: 45px; width: auto; }
         h1 { margin: 0; font-size: 18px; color: #333; }
 
         .controls { display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap; }
@@ -33,7 +32,14 @@
         button.danger { background: var(--danger); }
         button.ghost { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
         
-        #searchInput { border: 2px solid var(--accent); flex-grow: 1; font-size: 14px; background: white; }
+        /* BARRA DE PESQUISA EM DESTAQUE */
+        #searchInput { 
+            border: 2px solid var(--accent); 
+            flex-grow: 1; 
+            font-size: 16px; 
+            background: white;
+            padding: 12px;
+        }
 
         .table-responsive { width: 100%; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; } 
@@ -50,7 +56,6 @@
         .col-acao { width: 105px; text-align: center; }
 
         .btn-group { display: flex; gap: 4px; justify-content: center; }
-
         .status-txt { font-weight: bold; font-size: 9px; text-transform: uppercase; }
         .pendente { color: var(--danger); }
         .assinado { color: var(--success); }
@@ -71,7 +76,9 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center;
         }
 
+        /* ESTADO INICIAL DA TABELA NO MODO ASSINANTE */
         body.modo-assinante #adminPanel, body.modo-assinante .col-admin { display: none !important; }
+        body.modo-assinante tr { display: none; } /* Oculta todas as linhas por padrão */
 
         #initialOverlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.7);
@@ -93,6 +100,16 @@
         }
         .btn-auth.active-sim { background: var(--success); color: white; border-color: #15803d; }
         .btn-auth.active-nao { background: var(--danger); color: white; border-color: #b91c1c; }
+
+        .search-tip { 
+            text-align: center; 
+            font-size: 12px; 
+            color: var(--accent); 
+            margin-bottom: 8px; 
+            font-weight: bold;
+            display: none;
+        }
+        body.modo-assinante .search-tip { display: block; }
     </style>
 </head>
 <body>
@@ -103,9 +120,9 @@
 
 <div id="initialOverlay">
     <div class="popup-entry">
-        <h2 style="margin-top:0">Bem-vindo</h2>
-        <button class="btn-entry-aluno" onclick="escolherAcesso('aluno')">Assinar Lista</button>
-        <button class="btn-auth" style="width:100%" onclick="escolherAcesso('admin')">Acesso Admin</button>
+        <h2 style="margin-top:0">Lista de Presença</h2>
+        <button class="btn-entry-aluno" onclick="escolherAcesso('aluno')">Assinar Agora</button>
+        <button class="btn-auth" style="width:100%" onclick="escolherAcesso('admin')">Painel do Professor</button>
     </div>
 </div>
 
@@ -118,16 +135,19 @@
         </div>
         
         <div class="controls" id="adminPanel">
-            <input id="nameInput" placeholder="Nome" style="flex:2;"/>
+            <input id="nameInput" placeholder="Nome do Aluno" style="flex:2;"/>
             <input id="turmaInput" placeholder="Turma" style="flex:1;"/>
             <button id="addBtn">Add</button>
-            <button id="exportExcel" style="background:#1d6f42">Planilha</button>
-            <button id="btnOpenPdfModal" style="background:#e11d48">Gerar PDF</button>
-            <button id="clearAllBtn" class="danger">Limpar Tudo</button>
+            <button id="exportExcel" style="background:#1d6f42">Excel</button>
+            <button id="btnOpenPdfModal" style="background:#e11d48">PDF</button>
+            <button id="clearAllBtn" class="danger">Limpar</button>
         </div>
 
         <div class="controls">
-            <input id="searchInput" type="text" placeholder="🔍 BUSCAR SEU NOME..." onkeyup="filtrarTabela()">
+            <div style="width:100%">
+                <div class="search-tip">Digite seu nome para assinar:</div>
+                <input id="searchInput" type="text" placeholder="🔍 DIGITE SEU NOME AQUI..." onkeyup="filtrarTabela()">
+            </div>
         </div>
 
         <div class="table-responsive">
@@ -159,19 +179,17 @@
         </div>
         <p id="geoStatus" style="font-size:10px; color:var(--warning); font-weight: bold;">📍 Validando GPS...</p>
         
-        <div id="cameraArea">
-            <video id="video" autoplay playsinline></video>
-            <img id="photoPreview" style="display:none;" />
-        </div>
+        <video id="video" autoplay playsinline></video>
+        <img id="photoPreview" style="display:none;" />
         
-        <button id="takePhoto" style="width:100%; margin: 5px 0; background:#333; padding: 12px; font-weight: bold;">📸 TIRAR FOTO </button>
-        <button id="clearMedia" onclick="resetMedia()" style="width:100%; margin-bottom: 5px; background:var(--warning); color:white; border:none; padding: 6px; border-radius: 6px;">🔄 LIMPAR E REFAZER FOTO</button>
+        <button id="takePhoto" style="width:100%; margin: 5px 0; background:#333; padding: 12px; font-weight: bold;">📸 TIRAR FOTO (OBRIGATÓRIO)</button>
+        <button id="clearMedia" onclick="resetMedia()" style="width:100%; margin-bottom: 5px; background:var(--warning); color:white; border:none; padding: 6px; border-radius: 6px;">🔄 REFAZER FOTO</button>
         
         <div class="signature-wrapper"><canvas id="sigCanvas"></canvas></div>
         
         <div style="display: flex; gap: 8px; margin-top: 10px;">
             <button onclick="fecharModais()" style="background:#ccc; flex:1">Sair</button>
-            <button id="saveData" style="flex:2; background: var(--success); font-weight:bold; font-size: 16px;">CONFIRMAR TUDO</button>
+            <button id="saveData" style="flex:2; background: var(--success); font-weight:bold;">CONFIRMAR TUDO</button>
         </div>
     </div>
 </div>
@@ -198,8 +216,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     
-    let sigPad, localStream, currentUserId = null, addressReal = "Buscando...", autorizacaoSelecionada = null;
-    let fotoCapturada = null; // Variável para garantir que a foto foi tirada AGORA
+    let sigPad, localStream, currentUserId = null, addressReal = "Buscando...", autorizacaoSelecionada = null, fotoCapturada = null;
 
     function escolherAcesso(tipo) {
         if (tipo === 'aluno') {
@@ -219,16 +236,25 @@
         document.getElementById('btnNao').className = !valor ? 'btn-auth active-nao' : 'btn-auth';
     }
 
+    // NOVA LÓGICA DE FILTRO (OCULTA POR PADRÃO NO MODO ALUNO)
     function filtrarTabela() {
         const filter = document.getElementById("searchInput").value.toUpperCase();
         const tr = document.getElementById("tableBody").getElementsByTagName("tr");
         const modoAssinante = document.body.classList.contains('modo-assinante');
+
         for (let i = 0; i < tr.length; i++) {
             const isSigned = tr[i].getAttribute('data-signed') === 'true';
             const txt = tr[i].innerText.toUpperCase();
+
             if (modoAssinante) {
-                tr[i].style.display = (filter.length >= 3 && txt.indexOf(filter) > -1 && !isSigned) ? "" : "none";
+                // Se o pai digitou 3 ou mais letras e o nome bater
+                if (filter.length >= 3 && txt.indexOf(filter) > -1 && !isSigned) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
             } else {
+                // No modo admin, mostra tudo ou filtra normalmente
                 tr[i].style.display = (filter === "" || txt.indexOf(filter) > -1) ? "" : "none";
             }
         }
@@ -256,6 +282,7 @@
             `;
             body.appendChild(tr);
         });
+        filtrarTabela(); // Re-aplica o filtro após carregar dados
     });
 
     function ver(src) { document.getElementById('fullImage').src = src; document.getElementById('viewModal').style.display = 'flex'; }
@@ -267,10 +294,7 @@
     }
 
     function abrirAssinatura(id, nome) {
-        currentUserId = id; 
-        autorizacaoSelecionada = null;
-        fotoCapturada = null; // Reseta a foto obrigatória ao abrir
-        
+        currentUserId = id; autorizacaoSelecionada = null; fotoCapturada = null;
         document.getElementById('nomeAssinando').innerText = nome;
         document.getElementById('btnSim').className = 'btn-auth';
         document.getElementById('btnNao').className = 'btn-auth';
@@ -282,8 +306,6 @@
                 addressReal = d.address.road ? (d.address.road + ", " + (d.address.house_number || "S/N")) : d.display_name;
                 document.getElementById('geoStatus').innerText = "📍 " + addressReal;
             });
-        }, () => {
-            document.getElementById('geoStatus').innerText = "📍 GPS não disponível";
         });
 
         navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }).then(s => {
@@ -304,39 +326,30 @@
         const c = document.createElement('canvas');
         c.width = v.videoWidth; c.height = v.videoHeight;
         c.getContext('2d').drawImage(v, 0, 0);
-        
-        fotoCapturada = c.toDataURL('image/jpeg'); // Salva na variável global
+        fotoCapturada = c.toDataURL('image/jpeg');
         document.getElementById('photoPreview').src = fotoCapturada;
         document.getElementById('photoPreview').style.display = 'block';
         v.style.display = 'none';
     };
 
     function resetMedia() {
-        fotoCapturada = null; // Exige nova foto
+        fotoCapturada = null;
         document.getElementById('photoPreview').style.display = 'none';
         document.getElementById('video').style.display = 'block';
     }
 
     document.getElementById('saveData').onclick = () => {
-        // Validação 1: Autorização
-        if (!autorizacaoSelecionada) return alert("⚠️ Você deve responder SIM ou NÃO na autorização.");
-        
-        // Validação 2: Foto (Travado para só aceitar se tiver clicado no botão)
-        if (!fotoCapturada) return alert("⚠️ É OBRIGATÓRIO tirar a foto para confirmar a presença!");
-        
-        // Validação 3: Assinatura
-        if (sigPad.isEmpty()) return alert("⚠️ É OBRIGATÓRIO assinar o campo abaixo!");
+        if (!autorizacaoSelecionada) return alert("⚠️ Responda SIM ou NÃO.");
+        if (!fotoCapturada) return alert("⚠️ Tire a foto primeiro.");
+        if (sigPad.isEmpty()) return alert("⚠️ Assine primeiro.");
 
         db.ref('participantes/' + currentUserId).update({
-            signed: true, 
-            photo: fotoCapturada, 
-            sigData: sigPad.toDataURL('image/jpeg'),
-            time: new Date().toLocaleString(), 
-            geo: addressReal,
-            autorizado: autorizacaoSelecionada
+            signed: true, photo: fotoCapturada, sigData: sigPad.toDataURL('image/jpeg'),
+            time: new Date().toLocaleString(), geo: addressReal, autorizado: autorizacaoSelecionada
         }).then(() => {
             fecharModais();
             document.getElementById('successToast').style.display = 'block';
+            document.getElementById('searchInput').value = ""; // Limpa a busca para ocultar novamente
             setTimeout(() => { document.getElementById('successToast').style.display = 'none'; filtrarTabela(); }, 2000);
         });
     };
@@ -383,10 +396,8 @@
     }
 
     document.getElementById('clearAllBtn').onclick = () => {
-        if(confirm("ATENÇÃO: Deseja apagar TODOS os registros da lista?")) {
-            if(prompt("Digite a senha master para apagar tudo:") === '1992') {
-                db.ref('participantes').remove();
-            }
+        if(confirm("Apagar tudo?")) {
+            if(prompt("Senha:") === '1992') db.ref('participantes').remove();
         }
     };
 </script>
