@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
     <title>Frequência Digital</title>
     <style>
+        /* VARIÁVEIS DE CORES E ESTILOS GERAIS */
         :root{--accent:#0b74e6; --danger:#ef4444; --success:#16a34a; --warning:#f97316; --bg-light:#f5f7fb;}
         
         body {
@@ -18,6 +19,7 @@
             overflow-x: hidden;
         }
 
+        /* CONTAINER PRINCIPAL COM EFEITO GLASSMORPHISM */
         .container {
             max-width: 100%;
             margin: 0 auto;
@@ -41,36 +43,49 @@
         
         #searchInput { border: 2px solid var(--accent); flex-grow: 1; font-size: 14px; background: white; }
 
-        .table-responsive { width: 100%; overflow-x: hidden; }
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; } 
+        /* TABELA RESPONSIVA */
+        .table-responsive { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; } 
         
         th, td { 
-            padding: 8px 2px;
+            padding: 8px 4px;
             border-bottom: 1px solid #eee; 
             text-align: left; 
             font-size: 14px; 
-            word-wrap: break-word;
+            vertical-align: middle;
         }
 
-        .col-status { width: 80px; }
-        .col-nome { width: 55%; }
+        .col-nome { min-width: 150px; }
+        .col-status { width: 70px; }
         .col-admin-reg { width: 75px; }
         .col-admin-gps { width: 110px; }
-        .col-acao { width: 75px; }
+        
+        .col-acao { width: 95px; text-align: center; }
+        .btn-group { display: flex; gap: 4px; justify-content: center; align-items: center; }
 
         .status-txt { font-weight: bold; font-size: 9px; text-transform: uppercase; }
         .pendente { color: var(--danger); }
         .assinado { color: var(--success); }
         
-        .signed-thumb { height: 32px; width: 32px; border-radius: 4px; border: 1px solid #ddd; object-fit: cover; }
+        /* MINIATURAS DAS FOTOS NA TABELA */
+        .signed-thumb { height: 32px; width: 32px; border-radius: 4px; border: 1px solid #ddd; object-fit: cover; cursor: pointer; transition: transform 0.2s; }
+        .signed-thumb:hover { transform: scale(1.1); }
+
         .geo-label { font-size: 8px; color: #666; display: block; line-height: 1.1; }
 
+        /* ESTILOS DE MODAIS */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,.9); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 10px; }
         .card { background: #fff; padding: 12px; border-radius: 12px; width: 100%; max-width: 400px; box-sizing: border-box; max-height: 95vh; overflow-y: auto; position: relative; }
         
         #video, #photoPreview { width: 100%; max-height: 230px; object-fit: cover; border-radius: 8px; background: #000; }
         .signature-wrapper { border: 2px solid #333; border-radius: 8px; height: 140px; background: white; margin-top: 5px; }
 
+        /* VISUALIZADOR DE IMAGEM AMPLIADA */
+        #viewModal { z-index: 2000; flex-direction: column; }
+        #viewModal img { max-width: 95%; max-height: 80vh; border-radius: 8px; box-shadow: 0 0 20px rgba(0,0,0,0.5); border: 3px solid white; background-color: white; }
+        .close-view { position: absolute; top: 20px; right: 20px; background: var(--danger); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; }
+
+        /* TOAST DE SUCESSO AO ASSINAR */
         #successToast {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: var(--success); color: white; padding: 20px 40px; border-radius: 50px;
@@ -78,60 +93,138 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center;
         }
 
+        /* OCULTAR ELEMENTOS ADMIN NO MODO ASSINANTE */
         body.modo-assinante #adminPanel, body.modo-assinante .col-admin { display: none !important; }
+
+        /* OVERLAY DE ENTRADA (LOGIN) */
+        #initialOverlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px); z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .popup-entry {
+            background: white; padding: 30px; border-radius: 20px;
+            text-align: center; width: 90%; max-width: 350px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .btn-entry-aluno {
+            background: var(--success); color: white; border: none;
+            width: 100%; padding: 18px; font-size: 20px; font-weight: bold;
+            border-radius: 12px; cursor: pointer; margin-bottom: 12px;
+        }
+        .btn-entry-admin {
+            background: #eee; color: #555; border: 1px solid #ccc;
+            width: 100%; padding: 10px; border-radius: 8px; cursor: pointer;
+        }
+        #appContent { display: none; }
+        .pdf-option-btn { width: 100%; margin: 8px 0; padding: 15px; font-size: 16px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; }
+        
+        /* NOVO ESTILO PARA O CHECKBOX DE AUTORIZAÇÃO */
+        .auth-box {
+            background: #f0f9ff;
+            border: 2px solid #bae6fd;
+            padding: 12px;
+            border-radius: 10px;
+            margin: 10px 0;
+            text-align: left;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+        }
+        .auth-box input { width: 22px; height: 22px; cursor: pointer; flex-shrink: 0; margin: 0; }
+        .auth-box span { font-size: 13px; color: #0369a1; font-weight: 600; line-height: 1.3; }
     </style>
 </head>
 <body>
 
-<div id="successToast">✅ ASSINATURA CONCLUÍDA!</div>
+<div id="viewModal" class="modal" onclick="this.style.display='none'">
+    <button class="close-view">&times;</button>
+    <img id="fullImage" src="" alt="Visualização">
+</div>
 
-<div class="container">
-    <div class="header-container">
-        <img src="logo.png" alt="Logo" class="logo-escola" onerror="this.style.display='none'">
-        <h1>Frequência Digital</h1>
+<div id="initialOverlay">
+    <div class="popup-entry">
+        <img src="logo.png" style="height: 60px; margin-bottom: 15px;" onerror="this.style.display='none'">
+        <h2 style="margin: 0 0 10px 0; font-size: 20px;">Bem-vindo</h2>
+        <p style="color: #666; font-size: 14px; margin-bottom: 20px;">Selecione o tipo de acesso:</p>
+        <button class="btn-entry-aluno" onclick="escolherAcesso('aluno')">Assinar Lista</button>
+        <button class="btn-entry-admin" onclick="escolherAcesso('admin')">Acesso Admin</button>
     </div>
-    
-    <div class="controls" id="adminPanel">
-        <input id="nameInput" placeholder="Nome" style="flex:2;"/>
-        <input id="turmaInput" placeholder="Turma" style="flex:1;"/>
-        <button id="addBtn">Adicionar</button>
+</div>
+
+<div id="appContent">
+    <div id="successToast">✅ ASSINATURA CONCLUÍDA!</div>
+
+    <div class="container">
+        <div class="header-container">
+            <img src="logo.png" alt="Logo" class="logo-escola" onerror="this.style.display='none'">
+            <h1>Frequência Digital</h1>
+            <button onclick="location.href=window.location.pathname" style="margin-left:auto; background:#ddd; color:#333; padding:4px 8px; font-size:10px">Sair</button>
+        </div>
         
-        <input type="file" id="importFile" accept=".txt" style="display:none;">
-        <button id="importBtn" style="background:#6366f1">Importar TXT</button>
-        
-        <button id="showQrBtn" class="ghost">QRcode</button>
-        <button id="exportExcel" style="background:#1d6f42">Gerar Planilha</button>
-        <button id="clearAllBtn" class="danger">Limpar Tabela</button>
-    </div>
+        <div class="controls" id="adminPanel">
+            <input id="nameInput" placeholder="Nome" style="flex:2;"/>
+            <input id="turmaInput" placeholder="Turma" style="flex:1;"/>
+            <button id="addBtn">Adicionar</button>
+            <input type="file" id="importFile" accept=".txt" style="display:none;">
+            <button id="importBtn" style="background:#6366f1">Importar TXT</button>
+            <button id="showQrBtn" class="ghost">QRcode</button>
+            <button id="exportExcel" style="background:#1d6f42">Gerar Planilha</button>
+            <button id="btnOpenPdfModal" style="background:#e11d48">Gerar PDF</button>
+            <button id="clearAllBtn" class="danger">Limpar Tabela</button>
+        </div>
 
-    <div class="controls">
-        <input id="searchInput" type="text" placeholder="🔍 BUSCAR SEU NOME..." onkeyup="filtrarTabela()">
-    </div>
+        <div class="controls">
+            <input id="searchInput" type="text" placeholder="🔍 BUSCAR SEU NOME..." onkeyup="filtrarTabela()">
+        </div>
 
-    <div class="table-responsive">
-        <table id="mainTable">
-            <thead>
-                <tr>
-                    <th class="col-status">Status</th>
-                    <th class="col-nome">Nome/Turma</th>
-                    <th class="col-admin col-admin-reg">Fotos</th>
-                    <th class="col-admin col-admin-gps">GPS</th>
-                    <th class="col-acao">Ação</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-        </table>
+        <div class="table-responsive">
+            <table id="mainTable">
+                <thead>
+                    <tr>
+                        <th class="col-status">Status</th>
+                        <th class="col-nome">Nome/Turma</th>
+                        <th class="col-admin col-admin-reg">Fotos</th>
+                        <th class="col-admin col-admin-gps">GPS</th>
+                        <th class="col-acao">Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="pdfModal" class="modal">
+    <div class="card" style="text-align:center;">
+        <h3>Exportar PDF</h3>
+        <p>Escolha quais dados deseja no arquivo:</p>
+        <button class="pdf-option-btn" style="background:var(--accent); color:white;" onclick="gerarPdfRelatorio('todos')">Todos os Cadastrados</button>
+        <button class="pdf-option-btn" style="background:var(--success); color:white;" onclick="gerarPdfRelatorio('assinados')">Somente quem assinou</button>
+        <button onclick="fecharModais()" class="ghost" style="width:100%; margin-top:10px">Cancelar</button>
     </div>
 </div>
 
 <div id="signModal" class="modal">
     <div class="card">
         <h3 id="nomeAssinando" style="margin:0">Assinar</h3>
-        <p id="geoStatus" style="font-size:9px; color:var(--warning); margin: 2px 0;">📍 Validando localização...</p>
+        
+        <label class="auth-box" for="authCheckbox">
+            <input type="checkbox" id="authCheckbox">
+            <span>Autorizo a participação do meu filho(a) nos eventos exclusivos do 1º ano.</span>
+        </label>
+
+        <p id="geoStatus" style="font-size:10px; color:var(--warning); margin: 5px 0; line-height: 1.2; font-weight: bold;">📍 Validando localização...</p>
+        
         <video id="video" autoplay playsinline></video>
         <img id="photoPreview" style="display:none;" />
+        
         <button id="takePhoto" style="width:100%; margin: 5px 0; background:#333; padding: 12px;">📸 TIRAR FOTO</button>
-        <div class="signature-wrapper"><canvas id="sigCanvas" style="width:100%;height:100%"></canvas></div>
+        <button id="clearMedia" style="width:100%; margin-bottom: 5px; background:var(--warning); color:white; border:none; padding: 8px; border-radius: 6px; font-weight: bold;">🔄 LIMPAR E REFAZER</button>
+        
+        <div class="signature-wrapper"><canvas id="sigCanvas"></canvas></div>
+        
         <div style="display: flex; gap: 8px; margin-top: 10px;">
             <button onclick="fecharModais()" style="background:#ccc; flex:1">Sair</button>
             <button id="saveData" style="flex:2; background: var(--success); font-size: 14px;">CONFIRMAR</button>
@@ -151,93 +244,140 @@
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
 <script>
+    /* CONFIGURAÇÕES DE ACESSO */
+    const SENHA_ACESSO_ADMIN = 'frequencia1992'; 
     const ADMIN_PASSWORD = '1992';
+    
+    /* INICIALIZAÇÃO FIREBASE */
     const firebaseConfig = {
         apiKey: "AIzaSyBy4gbEfmMgm-zgMmGq6h3oQ_-gQy2l2R0",
         databaseURL: "https://frenquencia-digital-default-rtdb.firebaseio.com",
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    
     let sigPad, localStream, currentUserId = null, addressReal = "Buscando...";
 
+    /* FUNÇÃO PARA TROCAR ENTRE MODO ALUNO E ADMIN */
+    function escolherAcesso(tipo) {
+        if (tipo === 'aluno') {
+            document.body.classList.add('modo-assinante');
+            document.getElementById('initialOverlay').style.display = 'none';
+            document.getElementById('appContent').style.display = 'block';
+            if (!window.location.search.includes('modo=1')) {
+                window.history.pushState({}, '', '?modo=1');
+            }
+        } else {
+            if (prompt("Senha de acesso administrativo:") === SENHA_ACESSO_ADMIN) {
+                document.body.classList.remove('modo-assinante');
+                document.getElementById('initialOverlay').style.display = 'none';
+                document.getElementById('appContent').style.display = 'block';
+            } else {
+                alert("Senha incorreta!");
+            }
+        }
+        filtrarTabela();
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
-    const modoAssinante = urlParams.has('modo');
-    if (modoAssinante) document.body.classList.add('modo-assinante');
+    if (urlParams.has('modo')) { escolherAcesso('aluno'); }
 
     function filtrarTabela() {
         const filter = document.getElementById("searchInput").value.toUpperCase();
         const tr = document.getElementById("tableBody").getElementsByTagName("tr");
+        const modoAssinante = document.body.classList.contains('modo-assinante');
+
         for (let i = 0; i < tr.length; i++) {
+            const isSigned = tr[i].getAttribute('data-signed') === 'true';
             const txt = tr[i].innerText.toUpperCase();
-            tr[i].style.display = (modoAssinante ? (filter.length >= 3 && txt.indexOf(filter) > -1) : (filter === "" || txt.indexOf(filter) > -1)) ? "" : "none";
+
+            if (modoAssinante) {
+                if (filter.length >= 3 && txt.indexOf(filter) > -1 && !isSigned) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            } else {
+                tr[i].style.display = (filter === "" || txt.indexOf(filter) > -1) ? "" : "none";
+            }
         }
+    }
+
+    function visualizarImagem(src) {
+        const modal = document.getElementById('viewModal');
+        const img = document.getElementById('fullImage');
+        img.src = src;
+        modal.style.display = 'flex';
     }
 
     db.ref('participantes').on('value', (snapshot) => {
         const tableBody = document.getElementById('tableBody');
         tableBody.innerHTML = '';
         const data = snapshot.val();
-        if (data) Object.keys(data).forEach(key => {
-            const p = data[key];
-            const tr = document.createElement('tr');
-            const statusTxt = p.signed ? '<span class="status-txt assinado">Assinado</span>' : '<span class="status-txt pendente">Pendente</span>';
-            tr.innerHTML = `
-                <td class="col-status">${statusTxt}</td>
-                <td class="col-nome"><b>${p.name}</b><br><small>${p.turma || 'S/T'}</small></td>
-                <td class="col-admin col-admin-reg">${p.signed ? `<img src="${p.sigData}" class="signed-thumb"><img src="${p.photo}" class="signed-thumb">` : '-'}</td>
-                <td class="col-admin col-admin-gps"><span class="geo-label">${p.geo || '-'}</span></td>
-                <td class="col-acao" style="display:flex; gap:2px">
-                    ${p.signed ? `<button onclick="tentarRefazer('${key}','${p.name}')" style="font-size:9px; padding:4px">Ref.</button>` : `<button onclick="abrirAssinatura('${key}','${p.name}')" style="padding:4px 8px">ASSINAR</button>`}
-                    ${!modoAssinante ? `<button class="danger" onclick="excluir('${key}','${p.name}')" style="padding:4px 6px">X</button>` : ''}
-                </td>
-            `;
-            tableBody.appendChild(tr);
-        });
+        if (data) {
+            Object.keys(data).forEach(key => {
+                const p = data[key];
+                const tr = document.createElement('tr');
+                tr.setAttribute('data-signed', p.signed ? 'true' : 'false');
+                
+                const statusTxt = p.signed ? '<span class="status-txt assinado">Assinado</span>' : '<span class="status-txt pendente">Pendente</span>';
+                tr.innerHTML = `
+                    <td class="col-status">${statusTxt}</td>
+                    <td class="col-nome"><b>${p.name}</b><br><small>${p.turma || 'S/T'}</small></td>
+                    <td class="col-admin col-admin-reg">${p.signed ? `<img src="${p.sigData}" class="signed-thumb" onclick="visualizarImagem('${p.sigData}')"><img src="${p.photo}" class="signed-thumb" onclick="visualizarImagem('${p.photo}')">` : '-'}</td>
+                    <td class="col-admin col-admin-gps"><span class="geo-label">${p.geo || '-'}</span></td>
+                    <td class="col-acao">
+                        <div class="btn-group">
+                            ${p.signed ? `<button onclick="tentarRefazer('${key}','${p.name}')" style="font-size:9px; padding:4px">Ref.</button>` : `<button onclick="abrirAssinatura('${key}','${p.name}')" style="padding:4px 8px">ASSINAR</button>`}
+                            ${!document.body.classList.contains('modo-assinante') ? `<button class="danger" onclick="excluir('${key}','${p.name}')" style="padding:4px 6px">X</button>` : ''}
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
         filtrarTabela();
     });
-
-    // --- NOVA LÓGICA DE IMPORTAÇÃO TXT ---
-    document.getElementById('importBtn').onclick = () => document.getElementById('importFile').click();
-    document.getElementById('importFile').onchange = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-            const linhas = evt.target.result.split(/\r?\n/);
-            linhas.forEach(linha => {
-                if (linha.includes(",")) {
-                    const [nome, turma] = linha.split(",").map(s => s.trim());
-                    if (nome) db.ref('participantes').push().set({ name: nome, turma: turma, signed: false });
-                }
-            });
-            alert("Importação de texto concluída!");
-            e.target.value = "";
-        };
-        reader.readAsText(file);
-    };
 
     function abrirAssinatura(id, nome) {
         currentUserId = id;
         document.getElementById('nomeAssinando').innerText = nome;
+        document.getElementById('authCheckbox').checked = false; // Resetar checkbox ao abrir
         document.getElementById('signModal').style.display = 'flex';
+        document.getElementById('geoStatus').innerText = "📍 Buscando endereço...";
+        document.getElementById('geoStatus').style.color = "var(--warning)";
+
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((pos) => {
                 fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`)
                 .then(r => r.json()).then(d => {
-                    addressReal = d.address.road ? (d.address.road + ", " + (d.address.house_number || "S/N")) : d.display_name;
-                    document.getElementById('geoStatus').innerText = "📍 Local OK";
+                    addressReal = d.address.road ? (d.address.road + ", " + (d.address.house_number || "S/N") + " - " + (d.address.suburb || "")) : d.display_name;
+                    document.getElementById('geoStatus').innerText = "📍 " + addressReal;
                     document.getElementById('geoStatus').style.color = "green";
+                }).catch(() => {
+                    document.getElementById('geoStatus').innerText = "📍 Localização obtida (Erro no mapa)";
                 });
+            }, () => {
+                document.getElementById('geoStatus').innerText = "❌ GPS desativado";
+                document.getElementById('geoStatus').style.color = "red";
             });
         }
+        
         setTimeout(() => {
             const canvas = document.querySelector("#sigCanvas");
             canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
-            sigPad = new SignaturePad(canvas);
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            sigPad = new SignaturePad(canvas, { backgroundColor: 'rgb(255, 255, 255)' });
         }, 300);
+
         navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }).then(s => {
             localStream = s;
             document.getElementById('video').srcObject = s;
@@ -256,19 +396,34 @@
         document.getElementById('video').style.display = 'none';
     };
 
+    /* SALVAR DADOS COM VALIDAÇÃO DE AUTORIZAÇÃO OBRIGATÓRIA */
     document.getElementById('saveData').onclick = () => {
         const photo = document.getElementById('photoPreview').src;
-        if(sigPad.isEmpty() || !photo.startsWith('data')) return alert("Foto e Assinatura!");
+        const autorizado = document.getElementById('authCheckbox').checked;
+
+        // VALIDAÇÃO: Se não autorizar, não deixa prosseguir
+        if (!autorizado) {
+            return alert("Para assinar, você precisa marcar a autorização de participação nos eventos.");
+        }
+        
+        if(sigPad.isEmpty() || !photo.startsWith('data')) {
+            return alert("Foto e Assinatura obrigatórias!");
+        }
+        
         db.ref('participantes/' + currentUserId).update({
-            signed: true, sigData: sigPad.toDataURL(), photo: photo, 
-            time: new Date().toLocaleString(), geo: addressReal
+            signed: true, 
+            sigData: sigPad.toDataURL('image/jpeg'), 
+            photo: photo, 
+            time: new Date().toLocaleString(), 
+            geo: addressReal,
+            autorizado: "SIM" // Como é obrigatório, sempre será SIM se chegar aqui
         }).then(() => { 
             fecharModais();
             const toast = document.getElementById('successToast');
             toast.style.display = 'block';
+            document.getElementById('searchInput').value = "";
             setTimeout(() => { 
                 toast.style.display = 'none';
-                document.getElementById('searchInput').value = "";
                 filtrarTabela();
             }, 2000);
         });
@@ -293,20 +448,136 @@
 
     function excluir(id, n) { if(prompt(`Senha p/ excluir ${n}:`) === ADMIN_PASSWORD) db.ref('participantes/' + id).remove(); }
     function tentarRefazer(id, n) { if(prompt("Senha p/ REFAZER:") === ADMIN_PASSWORD) abrirAssinatura(id, n); }
-    document.getElementById('clearAllBtn').onclick = () => { if(prompt("Senha:") === ADMIN_PASSWORD) db.ref('participantes').remove(); };
-    document.getElementById('exportExcel').onclick = () => {
-        db.ref('participantes').once('value', (snapshot) => {
-            const rows = [["Status", "Nome", "Turma", "Data/Hora", "Localização"]];
-            snapshot.forEach(child => {
-                const p = child.val();
-                rows.push([p.signed ? "Assinado" : "Pendente", p.name, p.turma || "S/T", p.time || "-", p.geo || "-"]);
+    document.getElementById('clearAllBtn').onclick = () => { if(prompt("Digite a senha para apagar TUDO:") === ADMIN_PASSWORD) db.ref('participantes').remove(); };
+    
+    document.getElementById('clearMedia').onclick = () => {
+        if(sigPad) sigPad.clear();
+        document.getElementById('photoPreview').src = "";
+        document.getElementById('photoPreview').style.display = 'none';
+        document.getElementById('video').style.display = 'block';
+    };
+
+    document.getElementById('importBtn').onclick = () => document.getElementById('importFile').click();
+    document.getElementById('importFile').onchange = (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            const linhas = evt.target.result.split(/\r?\n/);
+            linhas.forEach(linha => {
+                if (linha.includes(",")) {
+                    const [nome, turma] = linha.split(",").map(s => s.trim());
+                    if (nome) db.ref('participantes').push().set({ name: nome, turma: turma, signed: false });
+                }
             });
-            const ws = XLSX.utils.aoa_to_sheet(rows);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Frequencia");
-            XLSX.writeFile(wb, "frequencia.xlsx");
+            alert("Importação concluída!");
+        };
+        reader.readAsText(file);
+    };
+
+    /* EXPORTAÇÃO EXCEL ATUALIZADA COM COLUNA DE AUTORIZAÇÃO */
+    document.getElementById('exportExcel').onclick = async () => {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Lista de Presença');
+        worksheet.columns = [
+            { header: 'STATUS', key: 'status', width: 12 },
+            { header: 'AUTORIZAÇÃO', key: 'autorizado', width: 15 },
+            { header: 'NOME DO ALUNO', key: 'name', width: 40 },
+            { header: 'TURMA', key: 'turma', width: 12 },
+            { header: 'DATA/HORA', key: 'time', width: 22 },
+            { header: 'ENDEREÇO/GPS', key: 'geo', width: 50 },
+            { header: 'ASSINATURA', key: 'sig', width: 25 },
+            { header: 'FOTO DO ALUNO', key: 'photo', width: 25 }
+        ];
+        db.ref('participantes').once('value', async (snapshot) => {
+            const data = snapshot.val();
+            if (!data) return alert("Sem dados.");
+            let currentRow = 2;
+            for (const key in data) {
+                const p = data[key];
+                const row = worksheet.addRow({ 
+                    status: p.signed ? "OK" : "PENDENTE", 
+                    autorizado: p.autorizado || "-",
+                    name: p.name, 
+                    turma: p.turma || "-", 
+                    time: p.time || "-", 
+                    geo: p.geo || "-" 
+                });
+                row.height = 85; 
+                row.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+                if (p.signed) {
+                    if (p.sigData) {
+                        const imgSig = workbook.addImage({ base64: p.sigData, extension: 'jpeg' });
+                        worksheet.addImage(imgSig, { tl: { col: 6, row: currentRow - 1, xOffset: 5, yOffset: 5 }, br: { col: 7, row: currentRow, xOffset: -5, yOffset: -5 }, editAs: 'oneCell' });
+                    }
+                    if (p.photo) {
+                        const imgPhoto = workbook.addImage({ base64: p.photo, extension: 'jpeg' });
+                        worksheet.addImage(imgPhoto, { tl: { col: 7, row: currentRow - 1, xOffset: 5, yOffset: 5 }, br: { col: 8, row: currentRow, xOffset: -5, yOffset: -5 }, editAs: 'oneCell' });
+                    }
+                }
+                currentRow++;
+            }
+            const buffer = await workbook.xlsx.writeBuffer();
+            saveAs(new Blob([buffer]), "frequencia_digital_autorizada.xlsx");
         });
     };
+
+    document.getElementById('btnOpenPdfModal').onclick = () => {
+        document.getElementById('pdfModal').style.display = 'flex';
+    };
+
+    /* EXPORTAÇÃO PDF ATUALIZADA COM COLUNA DE AUTORIZAÇÃO */
+    async function gerarPdfRelatorio(filtro) {
+        fecharModais();
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('p', 'mm', 'a4');
+        
+        doc.setFontSize(16);
+        doc.text("Relatório de Frequência Digital", 14, 15);
+        doc.setFontSize(10);
+        doc.text(`Gerado em: ${new Date().toLocaleString()}`, 14, 22);
+
+        db.ref('participantes').once('value', async (snapshot) => {
+            const data = snapshot.val();
+            if (!snapshot.exists()) return alert("Sem dados.");
+
+            const rawData = Object.values(data);
+            const filteredData = rawData.filter(item => filtro === 'assinados' ? item.signed : true);
+
+            const rows = filteredData.map(p => [
+                p.signed ? "OK" : "Pendente",
+                p.autorizado || "-",
+                `${p.name}\n(${p.turma || 'S/T'})`,
+                p.time || "-",
+                p.geo || "-",
+                "", 
+                "" 
+            ]);
+
+            doc.autoTable({
+                startY: 28,
+                head: [['Status', 'Autor.', 'Nome/Turma', 'Data/Hora', 'Localização', 'Assin.', 'Foto']],
+                body: rows,
+                styles: { fontSize: 7, valign: 'middle', overflow: 'linebreak' },
+                columnStyles: { 5: { cellWidth: 25 }, 6: { cellWidth: 25 } },
+                bodyStyles: { minCellHeight: 20 },
+                didDrawCell: (data) => {
+                    if (data.section === 'body' && (data.column.index === 5 || data.column.index === 6)) {
+                        const p = filteredData[data.row.index];
+                        if (p && p.signed) {
+                            const imgData = data.column.index === 5 ? p.sigData : p.photo;
+                            if (imgData) {
+                                const imgW = 20; const imgH = 15;
+                                const posX = data.cell.x + (data.cell.width - imgW) / 2;
+                                const posY = data.cell.y + (data.cell.height - imgH) / 2;
+                                doc.addImage(imgData, 'JPEG', posX, posY, imgW, imgH);
+                            }
+                        }
+                    }
+                }
+            });
+            doc.save(`frequencia_autorizacao_${Date.now()}.pdf`);
+        });
+    }
 </script>
 </body>
 </html>
