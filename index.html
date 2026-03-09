@@ -30,16 +30,8 @@
         input, button { padding: 8px; border-radius: 6px; border: 1px solid #ddd; font-size: 12px; }
         button { background: var(--accent); color: #fff; border: none; cursor: pointer; font-weight: 600; }
         button.danger { background: var(--danger); }
-        button.ghost { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
         
-        /* BARRA DE PESQUISA EM DESTAQUE */
-        #searchInput { 
-            border: 2px solid var(--accent); 
-            flex-grow: 1; 
-            font-size: 16px; 
-            background: white;
-            padding: 12px;
-        }
+        #searchInput { border: 2px solid var(--accent); flex-grow: 1; font-size: 14px; background: white; padding: 10px; }
 
         .table-responsive { width: 100%; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; } 
@@ -76,9 +68,11 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center;
         }
 
-        /* ESTADO INICIAL DA TABELA NO MODO ASSINANTE */
+        /* REGRAS DE VISIBILIDADE */
         body.modo-assinante #adminPanel, body.modo-assinante .col-admin { display: none !important; }
-        body.modo-assinante tr { display: none; } /* Oculta todas as linhas por padrão */
+        
+        /* Oculta as linhas por padrão no modo assinante */
+        body.modo-assinante tbody tr { display: none; }
 
         #initialOverlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.7);
@@ -100,16 +94,6 @@
         }
         .btn-auth.active-sim { background: var(--success); color: white; border-color: #15803d; }
         .btn-auth.active-nao { background: var(--danger); color: white; border-color: #b91c1c; }
-
-        .search-tip { 
-            text-align: center; 
-            font-size: 12px; 
-            color: var(--accent); 
-            margin-bottom: 8px; 
-            font-weight: bold;
-            display: none;
-        }
-        body.modo-assinante .search-tip { display: block; }
     </style>
 </head>
 <body>
@@ -120,9 +104,9 @@
 
 <div id="initialOverlay">
     <div class="popup-entry">
-        <h2 style="margin-top:0">Lista de Presença</h2>
-        <button class="btn-entry-aluno" onclick="escolherAcesso('aluno')">Assinar Agora</button>
-        <button class="btn-auth" style="width:100%" onclick="escolherAcesso('admin')">Painel do Professor</button>
+        <h2 style="margin-top:0">Bem-vindo</h2>
+        <button class="btn-entry-aluno" onclick="escolherAcesso('aluno')">Assinar Lista</button>
+        <button class="btn-auth" style="width:100%; border:1px solid #ccc; padding:10px; border-radius:8px" onclick="escolherAcesso('admin')">Acesso Admin</button>
     </div>
 </div>
 
@@ -135,19 +119,16 @@
         </div>
         
         <div class="controls" id="adminPanel">
-            <input id="nameInput" placeholder="Nome do Aluno" style="flex:2;"/>
+            <input id="nameInput" placeholder="Nome" style="flex:2;"/>
             <input id="turmaInput" placeholder="Turma" style="flex:1;"/>
             <button id="addBtn">Add</button>
             <button id="exportExcel" style="background:#1d6f42">Excel</button>
             <button id="btnOpenPdfModal" style="background:#e11d48">PDF</button>
-            <button id="clearAllBtn" class="danger">Limpar</button>
+            <button id="clearAllBtn" class="danger">Limpar Tudo</button>
         </div>
 
         <div class="controls">
-            <div style="width:100%">
-                <div class="search-tip">Digite seu nome para assinar:</div>
-                <input id="searchInput" type="text" placeholder="🔍 DIGITE SEU NOME AQUI..." onkeyup="filtrarTabela()">
-            </div>
+            <input id="searchInput" type="text" placeholder="🔍 DIGITE SEU NOME PARA ASSINAR..." onkeyup="filtrarTabela()">
         </div>
 
         <div class="table-responsive">
@@ -178,15 +159,11 @@
             </div>
         </div>
         <p id="geoStatus" style="font-size:10px; color:var(--warning); font-weight: bold;">📍 Validando GPS...</p>
-        
         <video id="video" autoplay playsinline></video>
         <img id="photoPreview" style="display:none;" />
-        
         <button id="takePhoto" style="width:100%; margin: 5px 0; background:#333; padding: 12px; font-weight: bold;">📸 TIRAR FOTO (OBRIGATÓRIO)</button>
         <button id="clearMedia" onclick="resetMedia()" style="width:100%; margin-bottom: 5px; background:var(--warning); color:white; border:none; padding: 6px; border-radius: 6px;">🔄 REFAZER FOTO</button>
-        
         <div class="signature-wrapper"><canvas id="sigCanvas"></canvas></div>
-        
         <div style="display: flex; gap: 8px; margin-top: 10px;">
             <button onclick="fecharModais()" style="background:#ccc; flex:1">Sair</button>
             <button id="saveData" style="flex:2; background: var(--success); font-weight:bold;">CONFIRMAR TUDO</button>
@@ -236,7 +213,6 @@
         document.getElementById('btnNao').className = !valor ? 'btn-auth active-nao' : 'btn-auth';
     }
 
-    // NOVA LÓGICA DE FILTRO (OCULTA POR PADRÃO NO MODO ALUNO)
     function filtrarTabela() {
         const filter = document.getElementById("searchInput").value.toUpperCase();
         const tr = document.getElementById("tableBody").getElementsByTagName("tr");
@@ -247,14 +223,14 @@
             const txt = tr[i].innerText.toUpperCase();
 
             if (modoAssinante) {
-                // Se o pai digitou 3 ou mais letras e o nome bater
+                // SÓ MOSTRA SE digitar 3 letras E não estiver assinado
                 if (filter.length >= 3 && txt.indexOf(filter) > -1 && !isSigned) {
                     tr[i].style.display = "";
                 } else {
                     tr[i].style.display = "none";
                 }
             } else {
-                // No modo admin, mostra tudo ou filtra normalmente
+                // MODO ADMIN: mostra tudo ou filtra normal
                 tr[i].style.display = (filter === "" || txt.indexOf(filter) > -1) ? "" : "none";
             }
         }
@@ -282,15 +258,13 @@
             `;
             body.appendChild(tr);
         });
-        filtrarTabela(); // Re-aplica o filtro após carregar dados
+        filtrarTabela();
     });
 
     function ver(src) { document.getElementById('fullImage').src = src; document.getElementById('viewModal').style.display = 'flex'; }
     
     function excluir(id, nome) {
-        if (confirm(`Deseja realmente excluir ${nome}?`)) {
-            db.ref('participantes/' + id).remove();
-        }
+        if (confirm(`Deseja realmente excluir ${nome}?`)) db.ref('participantes/' + id).remove();
     }
 
     function abrirAssinatura(id, nome) {
@@ -339,9 +313,9 @@
     }
 
     document.getElementById('saveData').onclick = () => {
-        if (!autorizacaoSelecionada) return alert("⚠️ Responda SIM ou NÃO.");
-        if (!fotoCapturada) return alert("⚠️ Tire a foto primeiro.");
-        if (sigPad.isEmpty()) return alert("⚠️ Assine primeiro.");
+        if (!autorizacaoSelecionada) return alert("Responda SIM ou NÃO.");
+        if (!fotoCapturada) return alert("Tire a foto obrigatória.");
+        if (sigPad.isEmpty()) return alert("Assine o campo.");
 
         db.ref('participantes/' + currentUserId).update({
             signed: true, photo: fotoCapturada, sigData: sigPad.toDataURL('image/jpeg'),
@@ -349,7 +323,7 @@
         }).then(() => {
             fecharModais();
             document.getElementById('successToast').style.display = 'block';
-            document.getElementById('searchInput').value = ""; // Limpa a busca para ocultar novamente
+            document.getElementById('searchInput').value = "";
             setTimeout(() => { document.getElementById('successToast').style.display = 'none'; filtrarTabela(); }, 2000);
         });
     };
@@ -367,17 +341,11 @@
 
     document.getElementById('exportExcel').onclick = async () => {
         const wb = new ExcelJS.Workbook(); const ws = wb.addWorksheet('Lista');
-        ws.columns = [
-            {header:'NOME', key:'name', width:30}, {header:'TURMA', key:'turma', width:10},
-            {header:'AUTORIZADO', key:'auth', width:15}, {header:'DATA', key:'time', width:20}, {header:'GPS', key:'geo', width:40}
-        ];
+        ws.columns = [{header:'NOME', key:'name', width:30}, {header:'TURMA', key:'turma', width:10}, {header:'AUTORIZADO', key:'auth', width:15}, {header:'DATA', key:'time', width:20}, {header:'GPS', key:'geo', width:40}];
         db.ref('participantes').once('value', snap => {
             const data = snap.val();
-            for(let k in data) {
-                const p = data[k];
-                ws.addRow({name: p.name, turma: p.turma, auth: p.autorizado || '-', time: p.time || '-', geo: p.geo || '-'});
-            }
-            wb.xlsx.writeBuffer().then(b => saveAs(new Blob([b]), "relatorio_frequencia.xlsx"));
+            for(let k in data) { const p = data[k]; ws.addRow({name: p.name, turma: p.turma, auth: p.autorizado || '-', time: p.time || '-', geo: p.geo || '-'}); }
+            wb.xlsx.writeBuffer().then(b => saveAs(new Blob([b]), "relatorio.xlsx"));
         });
     };
 
@@ -390,15 +358,13 @@
             const final = data.filter(p => filtro === 'assinados' ? p.signed : true);
             const rows = final.map(p => [p.name, p.turma || '-', p.autorizado || '-', p.time || '-']);
             doc.autoTable({ head: [['Nome', 'Turma', 'Autorização', 'Data/Hora']], body: rows });
-            doc.save("lista_frequencia.pdf");
+            doc.save("lista.pdf");
             fecharModais();
         });
     }
 
     document.getElementById('clearAllBtn').onclick = () => {
-        if(confirm("Apagar tudo?")) {
-            if(prompt("Senha:") === '1992') db.ref('participantes').remove();
-        }
+        if(confirm("Apagar tudo?")) { if(prompt("Senha:") === '1992') db.ref('participantes').remove(); }
     };
 </script>
 </body>
