@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
     <title>Frequência Digital</title>
     <style>
-        /* RESTAURANDO O VISUAL ORIGINAL */
         :root{--accent:#0b74e6; --danger:#ef4444; --success:#16a34a; --warning:#f97316; --bg-light:#f5f7fb;}
         
         body {
@@ -48,7 +47,9 @@
         .col-status { width: 70px; }
         .col-admin-reg { width: 75px; }
         .col-admin-gps { width: 110px; }
-        .col-acao { width: 95px; text-align: center; }
+        .col-acao { width: 105px; text-align: center; }
+
+        .btn-group { display: flex; gap: 4px; justify-content: center; }
 
         .status-txt { font-weight: bold; font-size: 9px; text-transform: uppercase; }
         .pendente { color: var(--danger); }
@@ -57,7 +58,6 @@
         .signed-thumb { height: 32px; width: 32px; border-radius: 4px; border: 1px solid #ddd; object-fit: cover; cursor: pointer; }
         .geo-label { font-size: 8px; color: #666; display: block; line-height: 1.1; }
 
-        /* MODAIS */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,.9); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 10px; }
         .card { background: #fff; padding: 12px; border-radius: 12px; width: 100%; max-width: 400px; box-sizing: border-box; max-height: 95vh; overflow-y: auto; }
         
@@ -81,7 +81,6 @@
         .popup-entry { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 90%; max-width: 350px; }
         .btn-entry-aluno { background: var(--success); color: white; border: none; width: 100%; padding: 18px; font-size: 20px; font-weight: bold; border-radius: 12px; cursor: pointer; margin-bottom: 12px; }
 
-        /* ESTILO DA AUTORIZAÇÃO SIM/NÃO */
         .auth-container {
             background: #f8fafc; border: 1px solid #e2e8f0;
             padding: 12px; border-radius: 10px; margin: 10px 0; text-align: center;
@@ -152,7 +151,6 @@
 <div id="signModal" class="modal">
     <div class="card">
         <h3 id="nomeAssinando" style="margin:0">Assinar</h3>
-        
         <div class="auth-container">
             <span class="auth-question">Autorizo a participação do meu filho(a) nos eventos exclusivos do 1º ano?</span>
             <div class="auth-buttons">
@@ -160,16 +158,12 @@
                 <button type="button" id="btnNao" class="btn-auth" onclick="setAutorizacao(false)">NÃO</button>
             </div>
         </div>
-
         <p id="geoStatus" style="font-size:10px; color:var(--warning); font-weight: bold;">📍 Validando GPS...</p>
         <video id="video" autoplay playsinline></video>
         <img id="photoPreview" style="display:none;" />
-        
         <button id="takePhoto" style="width:100%; margin: 5px 0; background:#333; padding: 12px;">📸 TIRAR FOTO</button>
         <button id="clearMedia" onclick="resetMedia()" style="width:100%; margin-bottom: 5px; background:var(--warning); color:white; border:none; padding: 6px; border-radius: 6px;">🔄 LIMPAR E REFAZER</button>
-        
         <div class="signature-wrapper"><canvas id="sigCanvas"></canvas></div>
-        
         <div style="display: flex; gap: 8px; margin-top: 10px;">
             <button onclick="fecharModais()" style="background:#ccc; flex:1">Sair</button>
             <button id="saveData" style="flex:2; background: var(--success); font-weight:bold;">CONFIRMAR</button>
@@ -204,14 +198,12 @@
     function escolherAcesso(tipo) {
         if (tipo === 'aluno') {
             document.body.classList.add('modo-assinante');
-            document.getElementById('initialOverlay').style.display = 'none';
-            document.getElementById('appContent').style.display = 'block';
         } else {
-            if (prompt("Senha Admin:") === 'admin1992') {
-                document.getElementById('initialOverlay').style.display = 'none';
-                document.getElementById('appContent').style.display = 'block';
-            }
+            if (prompt("Senha Admin:") !== 'frequencia1992') return;
+            document.body.classList.remove('modo-assinante');
         }
+        document.getElementById('initialOverlay').style.display = 'none';
+        document.getElementById('appContent').style.display = 'block';
         filtrarTabela();
     }
 
@@ -239,6 +231,7 @@
     db.ref('participantes').on('value', snap => {
         const body = document.getElementById('tableBody'); body.innerHTML = '';
         const data = snap.val();
+        const isAdmin = !document.body.classList.contains('modo-assinante');
         if (data) Object.keys(data).forEach(key => {
             const p = data[key];
             const tr = document.createElement('tr');
@@ -248,13 +241,24 @@
                 <td class="col-nome"><b>${p.name}</b><br><small>${p.turma || ''}</small></td>
                 <td class="col-admin col-admin-reg">${p.signed ? `<img src="${p.sigData}" class="signed-thumb" onclick="ver('${p.sigData}')"><img src="${p.photo}" class="signed-thumb" onclick="ver('${p.photo}')">` : '-'}</td>
                 <td class="col-admin col-admin-gps"><span class="geo-label">${p.geo || '-'}</span></td>
-                <td class="col-acao"><button onclick="abrirAssinatura('${key}','${p.name}')" style="padding:4px 8px">${p.signed ? 'Ref.' : 'ASSINAR'}</button></td>
+                <td class="col-acao">
+                    <div class="btn-group">
+                        <button onclick="abrirAssinatura('${key}','${p.name}')" style="padding:4px 8px">${p.signed ? 'Ref.' : 'ASSINAR'}</button>
+                        ${isAdmin ? `<button class="danger" onclick="excluir('${key}','${p.name}')" style="padding:4px 8px">X</button>` : ''}
+                    </div>
+                </td>
             `;
             body.appendChild(tr);
         });
     });
 
     function ver(src) { document.getElementById('fullImage').src = src; document.getElementById('viewModal').style.display = 'flex'; }
+    
+    function excluir(id, nome) {
+        if (confirm(`Deseja realmente excluir ${nome}?`)) {
+            db.ref('participantes/' + id).remove();
+        }
+    }
 
     function abrirAssinatura(id, nome) {
         currentUserId = id; autorizacaoSelecionada = null;
@@ -356,6 +360,14 @@
             fecharModais();
         });
     }
+
+    document.getElementById('clearAllBtn').onclick = () => {
+        if(confirm("ATENÇÃO: Deseja apagar TODOS os registros da lista?")) {
+            if(prompt("Digite a senha master para apagar tudo:") === '1992') {
+                db.ref('participantes').remove();
+            }
+        }
+    };
 </script>
 </body>
 </html>
