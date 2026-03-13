@@ -55,11 +55,29 @@
         .signed-thumb { height: 32px; width: 32px; border-radius: 4px; border: 1px solid #ddd; object-fit: cover; cursor: pointer; }
         .geo-label { font-size: 8px; color: #666; display: block; line-height: 1.1; }
 
+        /* MODAL E CARD */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,.9); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 10px; }
         .card { background: #fff; padding: 12px; border-radius: 12px; width: 100%; max-width: 400px; box-sizing: border-box; max-height: 95vh; overflow-y: auto; }
         
-        #video, #photoPreview { width: 100%; max-height: 230px; object-fit: cover; border-radius: 8px; background: #000; }
-        .signature-wrapper { border: 2px solid #333; border-radius: 8px; height: 140px; background: white; margin-top: 5px; }
+        #video, #photoPreview { width: 100%; max-height: 200px; object-fit: cover; border-radius: 8px; background: #000; }
+        
+        /* BOX DA ASSINATURA - CORRIGIDO */
+        .signature-wrapper { 
+            border: 2px solid #333; 
+            border-radius: 8px; 
+            height: 160px; 
+            background: #ffffff; 
+            margin-top: 10px;
+            position: relative;
+            touch-action: none; /* Previne scroll ao assinar */
+        }
+        canvas { 
+            width: 100%; 
+            height: 100%; 
+            border-radius: 8px; 
+            display: block;
+            background-color: #ffffff;
+        }
 
         #successToast {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -144,11 +162,17 @@
             </div>
         </div>
         <p id="geoStatus" style="font-size:10px; color:var(--warning); font-weight: bold;">📍 Validando GPS...</p>
+        
         <video id="video" autoplay playsinline></video>
         <img id="photoPreview" style="display:none;" />
-        <button id="takePhoto" style="width:100%; margin: 5px 0; background:#333; padding: 12px; font-weight: bold; color:white; border-radius:8px; border:none;">📸 TIRAR FOTO (OBRIGATÓRIO)</button>
-        <div class="signature-wrapper"><canvas id="sigCanvas"></canvas></div>
-        <div style="display: flex; gap: 8px; margin-top: 10px;">
+        <button id="takePhoto" style="width:100%; margin: 8px 0; background:#333; padding: 12px; font-weight: bold; color:white; border-radius:8px; border:none;">📸 TIRAR FOTO OBRIGATÓRIA</button>
+        
+        <div class="signature-wrapper">
+            <canvas id="sigCanvas"></canvas>
+        </div>
+        <button type="button" onclick="sigPad.clear()" style="width:100%; background:none; color:#666; border:none; font-size:10px; margin-top:5px; text-decoration:underline;">Limpar Assinatura</button>
+
+        <div style="display: flex; gap: 8px; margin-top: 15px;">
             <button onclick="fecharModais()" style="background:#ccc; flex:1; border-radius:8px; border:none; padding:10px">Sair</button>
             <button id="saveData" style="flex:2; background: var(--success); font-weight:bold; color:white; border-radius:8px; border:none; padding:10px">CONFIRMAR TUDO</button>
         </div>
@@ -243,7 +267,8 @@
     document.getElementById('exportPdfBtn').onclick = () => {
         const { jsPDF } = window.jspdf; const doc = new jsPDF();
         db.ref('participantes').once('value', snap => {
-            const data = Object.values(snap.val() || {});
+            const val = snap.val(); if(!val) return;
+            const data = Object.values(val);
             const rows = data.map(p => [p.name, p.turma || '-', p.signed ? 'SIM' : 'NÃO', p.time || '-']);
             doc.autoTable({ head: [['Nome', 'Turma', 'Assinou', 'Data']], body: rows });
             doc.save("frequencia.pdf");
@@ -260,27 +285,47 @@
                 if(parts[0]) db.ref('participantes').push().set({ name: parts[0].trim(), turma: parts[1]?.trim() || "", signed: false });
             });
             alert("Importado!");
+            input.value = "";
         };
         reader.readAsText(input.files[0]);
     }
 
-    // --- ASSINATURA E FOTO ---
+    // --- ASSINATURA E FOTO - CORREÇÃO DA TELA PRETA ---
     function abrirAssinatura(id, nome) {
         currentUserId = id; autorizacaoSelecionada = null; fotoCapturada = null;
         document.getElementById('nomeAssinando').innerText = nome;
         document.getElementById('signModal').style.display = 'flex';
+        
+        // Reset Visual da Foto
+        document.getElementById('video').style.display = 'block';
+        document.getElementById('photoPreview').style.display = 'none';
+
+        // GPS
         navigator.geolocation.getCurrentPosition(pos => {
             fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`)
-            .then(r => r.json()).then(d => addressReal = d.display_name);
-        });
+            .then(r => r.json()).then(d => addressReal = d.display_name || "Local não identificado");
+        }, () => addressReal = "GPS Desativado");
+
+        // Câmera
         navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }).then(s => {
             localStream = s; document.getElementById('video').srcObject = s;
         });
+
+        // CORREÇÃO: Inicia SignaturePad somente após o Modal estar visível
         setTimeout(() => {
             const cv = document.getElementById("sigCanvas");
-            cv.width = cv.offsetWidth; cv.height = cv.offsetHeight;
-            sigPad = new SignaturePad(cv);
-        }, 500);
+            // Ajusta o tamanho do canvas para o tamanho real da div pai
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            cv.width = cv.offsetWidth * ratio;
+            cv.height = cv.offsetHeight * ratio;
+            cv.getContext("2d").scale(ratio, ratio);
+            
+            sigPad = new SignaturePad(cv, {
+                backgroundColor: 'rgb(255, 255, 255)',
+                penColor: 'rgb(0, 0, 0)'
+            });
+            sigPad.clear(); // Garante fundo branco
+        }, 300);
     }
 
     document.getElementById('takePhoto').onclick = () => {
@@ -295,14 +340,21 @@
     };
 
     document.getElementById('saveData').onclick = () => {
-        if (!autorizacaoSelecionada || !fotoCapturada || sigPad.isEmpty()) return alert("Preencha tudo (Autorização, Foto e Assinatura)!");
+        if (!autorizacaoSelecionada) return alert("Selecione SIM ou NÃO na autorização!");
+        if (!fotoCapturada) return alert("A foto é obrigatória!");
+        if (sigPad.isEmpty()) return alert("A assinatura é obrigatória!");
+
         db.ref('participantes/' + currentUserId).update({
-            signed: true, photo: fotoCapturada, sigData: sigPad.toDataURL('image/jpeg'),
-            time: new Date().toLocaleString(), geo: addressReal, autorizado: autorizacaoSelecionada
+            signed: true, 
+            photo: fotoCapturada, 
+            sigData: sigPad.toDataURL('image/jpeg'),
+            time: new Date().toLocaleString(), 
+            geo: addressReal, 
+            autorizado: autorizacaoSelecionada
         }).then(() => {
             fecharModais();
             document.getElementById('successToast').style.display = 'block';
-            setTimeout(() => location.reload(), 2000);
+            setTimeout(() => location.reload(), 1500);
         });
     };
 
@@ -315,6 +367,7 @@
         const n = document.getElementById('nameInput').value;
         const t = document.getElementById('turmaInput').value;
         if(n) db.ref('participantes').push().set({ name: n, turma: t, signed: false });
+        document.getElementById('nameInput').value = "";
     };
 
     function excluir(id) { if(confirm("Excluir?")) db.ref('participantes/' + id).remove(); }
