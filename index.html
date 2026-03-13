@@ -27,7 +27,7 @@
         h1 { margin: 0; font-size: 18px; color: #333; }
 
         .controls { display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap; }
-        input, button { padding: 8px; border-radius: 6px; border: 1px solid #ddd; font-size: 12px; }
+        input, button { padding: 8px; border-radius: 6px; border: 1px solid #ddd; font-size: 11px; }
         button { background: var(--accent); color: #fff; border: none; cursor: pointer; font-weight: 600; }
         button.danger { background: var(--danger); }
         
@@ -38,7 +38,7 @@
         
         th, td { 
             padding: 8px 4px; border-bottom: 1px solid #eee; 
-            text-align: left; font-size: 14px; vertical-align: middle;
+            text-align: left; font-size: 13px; vertical-align: middle;
         }
 
         .col-nome { min-width: 150px; }
@@ -77,19 +77,6 @@
         }
         .popup-entry { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 90%; max-width: 350px; }
         .btn-entry-aluno { background: var(--success); color: white; border: none; width: 100%; padding: 18px; font-size: 20px; font-weight: bold; border-radius: 12px; cursor: pointer; margin-bottom: 12px; }
-
-        .auth-container {
-            background: #f8fafc; border: 1px solid #e2e8f0;
-            padding: 12px; border-radius: 10px; margin: 10px 0; text-align: center;
-        }
-        .auth-question { font-size: 13px; color: #334155; font-weight: 600; margin-bottom: 10px; display: block; line-height: 1.4; }
-        .auth-buttons { display: flex; gap: 10px; justify-content: center; }
-        .btn-auth {
-            flex: 1; padding: 10px; border: 2px solid #cbd5e1;
-            background: white; color: #64748b; border-radius: 8px; font-weight: bold;
-        }
-        .btn-auth.active-sim { background: var(--success); color: white; border-color: #15803d; }
-        .btn-auth.active-nao { background: var(--danger); color: white; border-color: #b91c1c; }
     </style>
 </head>
 <body>
@@ -102,12 +89,12 @@
     <div class="popup-entry">
         <h2 style="margin-top:0">Bem-vindo</h2>
         <button class="btn-entry-aluno" onclick="escolherAcesso('aluno')">Assinar Lista</button>
-        <button class="btn-auth" style="width:100%; border:1px solid #ccc; padding:10px; border-radius:8px" onclick="escolherAcesso('admin')">Acesso Admin</button>
+        <button style="width:100%; border:1px solid #ccc; padding:10px; border-radius:8px; cursor:pointer" onclick="escolherAcesso('admin')">Painel Admin</button>
     </div>
 </div>
 
 <div id="appContent" style="display:none;">
-    <div id="successToast">✅ ASSINATURA CONCLUÍDA!</div>
+    <div id="successToast">✅ CONCLUÍDO!</div>
     <div class="container">
         <div class="header-container">
             <h1>Frequência Digital</h1>
@@ -115,14 +102,13 @@
         </div>
         
         <div class="controls" id="adminPanel">
-            <input id="nameInput" placeholder="Nome" style="flex:2;"/>
-            <input id="turmaInput" placeholder="Turma" style="flex:1;"/>
+            <input id="nameInput" placeholder="Nome" style="width:100px"/>
+            <input id="turmaInput" placeholder="Turma" style="width:60px"/>
             <button id="addBtn">Add</button>
-            
             <button onclick="document.getElementById('importTxt').click()" style="background:#6366f1">Importar TXT</button>
             <input type="file" id="importTxt" style="display:none" accept=".txt" onchange="importarTxt(this)">
-            
-            <button id="exportExcel" style="background:#1d6f42">Exportar Excel</button>
+            <button id="exportExcelBtn" style="background:#1d6f42">Excel</button>
+            <button id="exportPdfBtn" style="background:#e11d48">PDF</button>
             <button id="clearAllBtn" class="danger">Limpar Tudo</button>
         </div>
 
@@ -150,22 +136,21 @@
 <div id="signModal" class="modal">
     <div class="card">
         <h3 id="nomeAssinando" style="margin:0">Assinar</h3>
-        <div class="auth-container">
-            <span class="auth-question">Autorizo a participação do meu filho(a) nos eventos?</span>
-            <div class="auth-buttons">
-                <button type="button" id="btnSim" class="btn-auth" onclick="setAutorizacao(true)">SIM</button>
-                <button type="button" id="btnNao" class="btn-auth" onclick="setAutorizacao(false)">NÃO</button>
+        <div class="auth-container" style="background:#f8fafc; border:1px solid #e2e8f0; padding:10px; border-radius:10px; margin:10px 0; text-align:center;">
+            <span style="font-size:12px; font-weight:bold;">Autoriza a participação em eventos?</span>
+            <div style="display:flex; gap:10px; margin-top:10px">
+                <button type="button" id="btnSim" style="flex:1; padding:10px; border-radius:8px; border:1px solid #ccc; background:#fff; color:#333;" onclick="setAutorizacao(true)">SIM</button>
+                <button type="button" id="btnNao" style="flex:1; padding:10px; border-radius:8px; border:1px solid #ccc; background:#fff; color:#333;" onclick="setAutorizacao(false)">NÃO</button>
             </div>
         </div>
         <p id="geoStatus" style="font-size:10px; color:var(--warning); font-weight: bold;">📍 Validando GPS...</p>
         <video id="video" autoplay playsinline></video>
         <img id="photoPreview" style="display:none;" />
-        <button id="takePhoto" style="width:100%; margin: 5px 0; background:#333; padding: 12px; font-weight: bold;">📸 TIRAR FOTO (OBRIGATÓRIO)</button>
-        <button id="clearMedia" onclick="resetMedia()" style="width:100%; margin-bottom: 5px; background:var(--warning); color:white; border:none; padding: 6px; border-radius: 6px;">🔄 REFAZER FOTO</button>
+        <button id="takePhoto" style="width:100%; margin: 5px 0; background:#333; padding: 12px; font-weight: bold; color:white; border-radius:8px; border:none;">📸 TIRAR FOTO (OBRIGATÓRIO)</button>
         <div class="signature-wrapper"><canvas id="sigCanvas"></canvas></div>
         <div style="display: flex; gap: 8px; margin-top: 10px;">
-            <button onclick="fecharModais()" style="background:#ccc; flex:1">Sair</button>
-            <button id="saveData" style="flex:2; background: var(--success); font-weight:bold;">CONFIRMAR TUDO</button>
+            <button onclick="fecharModais()" style="background:#ccc; flex:1; border-radius:8px; border:none; padding:10px">Sair</button>
+            <button id="saveData" style="flex:2; background: var(--success); font-weight:bold; color:white; border-radius:8px; border:none; padding:10px">CONFIRMAR TUDO</button>
         </div>
     </div>
 </div>
@@ -175,6 +160,8 @@
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
 <script>
     const firebaseConfig = { apiKey: "AIzaSyBy4gbEfmMgm-zgMmGq6h3oQ_-gQy2l2R0", databaseURL: "https://frenquencia-digital-default-rtdb.firebaseio.com" };
@@ -184,12 +171,8 @@
     let sigPad, localStream, currentUserId = null, addressReal = "Buscando...", autorizacaoSelecionada = null, fotoCapturada = null;
 
     function escolherAcesso(tipo) {
-        if (tipo === 'aluno') {
-            document.body.classList.add('modo-assinante');
-        } else {
-            if (prompt("Senha Admin:") !== 'frequencia1992') return;
-            document.body.classList.remove('modo-assinante');
-        }
+        if (tipo === 'aluno') { document.body.classList.add('modo-assinante'); } 
+        else { if (prompt("Senha Admin:") !== 'frequencia1992') return; document.body.classList.remove('modo-assinante'); }
         document.getElementById('initialOverlay').style.display = 'none';
         document.getElementById('appContent').style.display = 'block';
         filtrarTabela();
@@ -197,8 +180,10 @@
 
     function setAutorizacao(valor) {
         autorizacaoSelecionada = valor ? "SIM" : "NÃO";
-        document.getElementById('btnSim').className = valor ? 'btn-auth active-sim' : 'btn-auth';
-        document.getElementById('btnNao').className = !valor ? 'btn-auth active-nao' : 'btn-auth';
+        document.getElementById('btnSim').style.background = valor ? 'var(--success)' : '#fff';
+        document.getElementById('btnSim').style.color = valor ? '#fff' : '#333';
+        document.getElementById('btnNao').style.background = !valor ? 'var(--danger)' : '#fff';
+        document.getElementById('btnNao').style.color = !valor ? '#fff' : '#333';
     }
 
     function filtrarTabela() {
@@ -210,13 +195,9 @@
         for (let i = 0; i < tr.length; i++) {
             let txt = tr[i].getAttribute('data-nome') || "";
             const isSigned = tr[i].getAttribute('data-signed') === 'true';
-
             if (modoAssinante) {
-                if (filter.length >= 3 && txt.indexOf(filter) > -1 && !isSigned) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
-                }
+                if (filter.length >= 3 && txt.indexOf(filter) > -1 && !isSigned) tr[i].style.display = "";
+                else tr[i].style.display = "none";
             } else {
                 tr[i].style.display = (filter === "" || txt.indexOf(filter) > -1) ? "" : "none";
             }
@@ -227,7 +208,6 @@
         const body = document.getElementById('tableBody'); body.innerHTML = '';
         const data = snap.val();
         const isAdmin = !document.body.classList.contains('modo-assinante');
-        
         if (data) Object.keys(data).forEach(key => {
             const p = data[key];
             const nomeParaBusca = p.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
@@ -235,15 +215,13 @@
             tr.setAttribute('data-nome', nomeParaBusca);
             tr.setAttribute('data-signed', p.signed);
             tr.innerHTML = `
-                <td class="col-status">${p.signed ? '<span class="status-txt assinado">Assinado</span>' : '<span class="status-txt pendente">Pendente</span>'}</td>
+                <td class="col-status">${p.signed ? '<span class="status-txt assinado">SIM</span>' : '<span class="status-txt pendente">NÃO</span>'}</td>
                 <td class="col-nome"><b>${p.name}</b><br><small>${p.turma || ''}</small></td>
                 <td class="col-admin col-admin-reg">${p.signed ? `<img src="${p.sigData}" class="signed-thumb" onclick="ver('${p.sigData}')"><img src="${p.photo}" class="signed-thumb" onclick="ver('${p.photo}')">` : '-'}</td>
                 <td class="col-admin col-admin-gps"><span class="geo-label">${p.geo || '-'}</span></td>
                 <td class="col-acao">
-                    <div class="btn-group">
-                        <button onclick="abrirAssinatura('${key}','${p.name}')" style="padding:4px 8px">${p.signed ? 'Ref.' : 'ASSINAR'}</button>
-                        ${isAdmin ? `<button class="danger" onclick="excluir('${key}')" style="padding:4px 8px">X</button>` : ''}
-                    </div>
+                    <button onclick="abrirAssinatura('${key}','${p.name}')" style="padding:5px 10px; border-radius:5px">${p.signed ? 'Ref.' : 'ASSINAR'}</button>
+                    ${isAdmin ? `<button class="danger" onclick="excluir('${key}')">X</button>` : ''}
                 </td>
             `;
             body.appendChild(tr);
@@ -251,51 +229,57 @@
         filtrarTabela();
     });
 
-    // FUNÇÃO DE IMPORTAÇÃO TXT (NOME, TURMA)
+    // --- FUNÇÕES DE EXPORTAÇÃO ---
+    document.getElementById('exportExcelBtn').onclick = async () => {
+        const wb = new ExcelJS.Workbook(); const ws = wb.addWorksheet('Presença');
+        ws.columns = [{header:'NOME', key:'n'}, {header:'TURMA', key:'t'}, {header:'ASSINOU', key:'s'}, {header:'AUTORIZA', key:'a'}, {header:'DATA', key:'d'}];
+        db.ref('participantes').once('value', snap => {
+            const data = snap.val();
+            for(let k in data) ws.addRow({n: data[k].name, t: data[k].turma, s: data[k].signed?'SIM':'NÃO', a: data[k].autorizado||'-', d: data[k].time||'-'});
+            wb.xlsx.writeBuffer().then(b => saveAs(new Blob([b]), "lista.xlsx"));
+        });
+    };
+
+    document.getElementById('exportPdfBtn').onclick = () => {
+        const { jsPDF } = window.jspdf; const doc = new jsPDF();
+        db.ref('participantes').once('value', snap => {
+            const data = Object.values(snap.val() || {});
+            const rows = data.map(p => [p.name, p.turma || '-', p.signed ? 'SIM' : 'NÃO', p.time || '-']);
+            doc.autoTable({ head: [['Nome', 'Turma', 'Assinou', 'Data']], body: rows });
+            doc.save("frequencia.pdf");
+        });
+    };
+
     function importarTxt(input) {
         if (!input.files[0]) return;
         const reader = new FileReader();
         reader.onload = function(e) {
             const lines = e.target.result.split('\n');
             lines.forEach(line => {
-                if(line.trim() !== "") {
-                    const parts = line.split(',');
-                    const nome = parts[0]?.trim();
-                    const turma = parts[1]?.trim() || "";
-                    if(nome) db.ref('participantes').push().set({ name: nome, turma: turma, signed: false });
-                }
+                const parts = line.split(',');
+                if(parts[0]) db.ref('participantes').push().set({ name: parts[0].trim(), turma: parts[1]?.trim() || "", signed: false });
             });
-            alert("Nomes importados do arquivo TXT!");
-            input.value = "";
+            alert("Importado!");
         };
         reader.readAsText(input.files[0]);
     }
 
+    // --- ASSINATURA E FOTO ---
     function abrirAssinatura(id, nome) {
         currentUserId = id; autorizacaoSelecionada = null; fotoCapturada = null;
         document.getElementById('nomeAssinando').innerText = nome;
-        document.getElementById('btnSim').className = 'btn-auth';
-        document.getElementById('btnNao').className = 'btn-auth';
         document.getElementById('signModal').style.display = 'flex';
-        
         navigator.geolocation.getCurrentPosition(pos => {
             fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`)
-            .then(r => r.json()).then(d => {
-                addressReal = d.address.road ? (d.address.road + ", " + (d.address.house_number || "S/N")) : d.display_name;
-                document.getElementById('geoStatus').innerText = "📍 " + addressReal;
-            });
-        }, () => { document.getElementById('geoStatus').innerText = "📍 GPS Indisponível"; });
-
+            .then(r => r.json()).then(d => addressReal = d.display_name);
+        });
         navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }).then(s => {
             localStream = s; document.getElementById('video').srcObject = s;
-            document.getElementById('video').style.display = 'block';
-            document.getElementById('photoPreview').style.display = 'none';
         });
-
         setTimeout(() => {
             const cv = document.getElementById("sigCanvas");
             cv.width = cv.offsetWidth; cv.height = cv.offsetHeight;
-            sigPad = new SignaturePad(cv, {backgroundColor: 'rgb(255,255,255)'});
+            sigPad = new SignaturePad(cv);
         }, 500);
     }
 
@@ -310,25 +294,15 @@
         v.style.display = 'none';
     };
 
-    function resetMedia() {
-        fotoCapturada = null;
-        document.getElementById('photoPreview').style.display = 'none';
-        document.getElementById('video').style.display = 'block';
-    }
-
     document.getElementById('saveData').onclick = () => {
-        if (!autorizacaoSelecionada) return alert("Responda SIM ou NÃO.");
-        if (!fotoCapturada) return alert("⚠️ É OBRIGATÓRIO tirar a foto!");
-        if (sigPad.isEmpty()) return alert("Assine primeiro.");
-
+        if (!autorizacaoSelecionada || !fotoCapturada || sigPad.isEmpty()) return alert("Preencha tudo (Autorização, Foto e Assinatura)!");
         db.ref('participantes/' + currentUserId).update({
             signed: true, photo: fotoCapturada, sigData: sigPad.toDataURL('image/jpeg'),
             time: new Date().toLocaleString(), geo: addressReal, autorizado: autorizacaoSelecionada
         }).then(() => {
             fecharModais();
             document.getElementById('successToast').style.display = 'block';
-            document.getElementById('searchInput').value = "";
-            setTimeout(() => { document.getElementById('successToast').style.display = 'none'; filtrarTabela(); }, 2000);
+            setTimeout(() => location.reload(), 2000);
         });
     };
 
@@ -341,17 +315,9 @@
         const n = document.getElementById('nameInput').value;
         const t = document.getElementById('turmaInput').value;
         if(n) db.ref('participantes').push().set({ name: n, turma: t, signed: false });
-        document.getElementById('nameInput').value = "";
     };
 
-    function excluir(id) {
-        if (confirm(`Excluir este registro?`)) db.ref('participantes/' + id).remove();
-    }
-
-    document.getElementById('clearAllBtn').onclick = () => {
-        if(confirm("Apagar tudo?") && prompt("Senha:") === '1992') db.ref('participantes').remove();
-    };
-
+    function excluir(id) { if(confirm("Excluir?")) db.ref('participantes/' + id).remove(); }
     function ver(src) { document.getElementById('fullImage').src = src; document.getElementById('viewModal').style.display = 'flex'; }
 </script>
 </body>
